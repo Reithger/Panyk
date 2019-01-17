@@ -1,10 +1,11 @@
 # Panyk
 Comp-4721 Software Design Term Project
 
-Mac Clevinger - Architect/Archivist
-Sienna Collette - Process Coordinator/Documentation
-Nick Cuthbertson - Product Owner/Quality Assurance
-Regan Lynch - Team Leader
+Team:
+ - Mac Clevinger - Architect/Archivist
+ - Sienna Collette - Process Coordinator/Documentation
+ - Nick Cuthbertson - Product Owner/Quality Assurance
+ - Regan Lynch - Team Leader
 
 Working Title: Panyk, a Travel Planner
 
