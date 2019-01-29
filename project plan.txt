@@ -1,0 +1,65 @@
+Milestone 1, basic design of program at a high level
+requirements, 
+	Functionality, Platform, implementation language, submit on Moodle 
+architecture, (presentation/short 5-10 minutes)
+	Abstractions, Relationships, -UML, Major subsystems & components, consider from previous class, 
+
+
+Trip
+
+title:
+dates:
+destinations:
+etc:
+
+Itinerary : Corales scheduled events
+
+Users, list of trips
+calendar-days-itinerary
+
+Scheduleable <i>
+Time
+
+
+	Reservation<> requires preparation?
+
+			Date
+			Location
+			Paid/Not Paid/N.A
+			Contacts
+			Participants
+			
+		Shows/Concerts/Conference
+			Tickets
+			
+
+				
+	
+		Restaurants
+			
+		Tours
+		Activities
+		
+	Transportation
+		''
+		Flights
+		Local Travel
+		Ferry
+		Trains
+
+		Info for baggage
+		
+		
+
+		
+	Accomodation<>
+		types-enum 
+		Hotel; address, contact, duration, price per night , name
+		Staying w friend
+		Rental- cabin
+
+	PhoneBook
+
+	
+
+		
