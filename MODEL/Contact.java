@@ -17,7 +17,7 @@ public interface Contact {
 	public void setJobTitle(String title);
 	
 	public String getEmail();
-	public void setEmail(String email);
+	public void setEmail(String emailAddr);
 	
 	public String getDisplayTitle();
 	public void setDisplayTitle(String displayAs);
@@ -29,5 +29,5 @@ public interface Contact {
 	public void setPhoneNumber(String number);
 	
 	public Address getAddress();
-	public void setAddress(Address address);
+	public void setAddress(Address newAddress);
 }
