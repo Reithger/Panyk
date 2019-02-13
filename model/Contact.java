@@ -1,5 +1,10 @@
 package model;
-
+/*
+ * May want to refactor to make a leaner version of contact
+Will need to go further into the implementation to decide if 
+that will create more problems or improve things 
+ * 
+ * */
 public interface Contact {
 
 	public String getName();
