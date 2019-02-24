@@ -2,7 +2,14 @@ package intermediary;
 
 import java.util.TimerTask;
 
-import visual.frame.Frame;
+/**
+ * This class extends the TimerTask class to specify what behavior should occur periodically
+ * for a provided object of the Intermediary type. (Very specific intent, but easily copied
+ * for usage in having any object have periodic behavior.)
+ * 
+ * @author Mac Clevinger
+ *
+ */
 
 public class TimerRepeat extends TimerTask{
 
@@ -29,8 +36,8 @@ public class TimerRepeat extends TimerTask{
 	
 	@Override
 	public void run(){
+		//Whatever is here happens at whatever rate specified by a Timer object when this TimerRepeat is scheduled with it
 		parent.clock();
 	}
-
 	
 }

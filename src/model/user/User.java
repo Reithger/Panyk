@@ -3,6 +3,15 @@ package model.user;
 import java.util.HashMap;
 import model.trip.Trip;
 
+/**
+ * This class is the contact point that the Intermediary can use to access the data in the
+ * Model (only one User is logged in at a time, and their info is necessary to access the
+ * information, so it seemed a good focal point.)
+ * 
+ * @author Mac Clevinger
+ *
+ */
+
 public class User {
 
 //---  Instance Variables   -------------------------------------------------------------------

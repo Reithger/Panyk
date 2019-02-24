@@ -7,6 +7,23 @@ import input.Communication;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
+/**
+ * This class is the core of the View; Intermediary (the Controller) communicates with this
+ * class to receive user input and display the Model. This class will be supported by helper
+ * classes which automate certain kinds of display patterns (i.e, certain configurations
+ * such as the calendar; designed visualizations of stored data.)
+ * 
+ * Communication between this and Intermediary via user input can be done by updating the
+ * static Communication object in the clickBehaviour and keyBehaviour methods of Panel objects.
+ * Intermediary is on a constant clock cycle to detect updates to Communication to respond to
+ * user input this way.
+ * 
+ * Current contents are very tentative, design is not finalized, just getting the foot in the door.
+ * 
+ * @author Mac Clevinger
+ *
+ */
+
 public class Display {
 	
 	private final static Font FONT_ONE = new Font("Arial Bold", Font.BOLD, 18);

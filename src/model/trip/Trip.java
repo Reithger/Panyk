@@ -1,9 +1,7 @@
 package model.trip;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-
 import model.trip.feature.Feature;
 import model.trip.schedule.Schedulable;
 
