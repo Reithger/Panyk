@@ -1,5 +1,33 @@
 package model.trip.feature;
 
-public class PhotoAlbum implements Feature{
+import java.util.ArrayList;
 
+public class PhotoAlbum implements Feature
+{
+	ArrayList<String> imagePaths = new ArrayList<String>();
+	
+	public PhotoAlbum(ArrayList<String> toImages)
+	{
+		imagePaths=toImages;
+	}
+	
+	public ArrayList<String> getImagePaths()
+	{
+		return imagePaths;
+	}
+	
+	public void setImages(ArrayList<String> newImages)
+	{
+		imagePaths=newImages;
+	}
+	
+	public void addImage(String newImagesPath)
+	{
+		imagePaths.add(newImagesPath);
+	}
+	
+	public void deleteImage(String badImage)
+	{
+		imagePaths.remove(badImage);
+	}
 }
