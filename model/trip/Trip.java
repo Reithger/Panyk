@@ -3,6 +3,7 @@ package model.trip;
 import java.util.Date;
 import java.util.HashMap;
 import model.trip.feature.Feature;
+import model.trip.schedule.Appointment;
 import model.trip.schedule.Schedulable;
 
 public class Trip {
@@ -18,9 +19,9 @@ public class Trip {
 	/** */
 	private String description;
 	/** */
-	private HashMap<String, Feature> features;
+	//private HashMap<String, Feature> features;
 	/** */
-	private HashMap<String, Schedulable> scheduled;
+	private HashMap<String, Appointment> scheduled;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -29,13 +30,24 @@ public class Trip {
 	 * @param inTitle
 	 */
 	
-	public Trip(String inTitle) {
+	public Trip(String inTitle) 
+	{
+		
 		title = inTitle;
 		start = new Date();
 		end = new Date();
 		description = "Describe your trip here!";
-		features = new HashMap<String, Feature>();
-		scheduled = new HashMap<String, Schedulable>();
+		//features = new HashMap<String, Feature>();
+		//scheduled = new HashMap<String, Schedulable>();
+	}
+	
+	public Trip(String inTitle, Date inStart, Date inEnd, String inDescribe) 
+	{
+		
+		title = inTitle;
+		start = inStart;
+		end = inEnd;
+		description = inDescribe;
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -76,19 +88,19 @@ public class Trip {
 	
 //---  Adder Methods   ------------------------------------------------------------------------
 	
-	public void addFeature(String name, Feature feat) { 
+	/*public void addFeature(String name, Feature feat) { 
 		features.put(name, feat);
-	}
+	}*/
 	
-	public void addScheduledItem(String name, Schedulable sched) {
-		scheduled.put(name, sched);
+	public void addScheduledItem(String name, Appointment a) {
+		scheduled.put(name, a);
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
 	
-	public void removeFeature(String name) {
+	/*public void removeFeature(String name) {
 		features.remove(name);
-	}
+	}*/
 	
 	public void removedScheduledItem(String name) {
 		scheduled.remove(name);
@@ -99,3 +111,4 @@ public class Trip {
 	
 	
 }
+
