@@ -1,3 +1,4 @@
+package database;
 /*
 Database Table Printer
 Copyright (C) 2014  Hami Galip Torun

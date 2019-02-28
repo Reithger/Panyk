@@ -1,3 +1,4 @@
+package database;
 import java.sql.Date;
 
 public class DBTester {
