@@ -30,7 +30,8 @@ public class User {
 	 * 
 	 */
 	
-	public User() {
+	public User() 
+	{
 		
 	}
 	
@@ -58,6 +59,8 @@ public class User {
 	 */
 	
 	private void makeTrip() {
+		
+		Trip t = new Trip(null);
 		
 	}
 	
