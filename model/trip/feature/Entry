@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class Entry 
 {
-	Date written = new Date();
-	String text = new String();
+	private Date written = new Date();
+	private String text = new String();
 	
 	public Entry(String journal)
 	{
