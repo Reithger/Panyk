@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Diary implements Feature
 {
-	ArrayList<Entry> pages = new ArrayList<Entry>();
+	private ArrayList<Entry> pages = new ArrayList<Entry>();
 	
 	public Diary(ArrayList<Entry> entries)
 	{
