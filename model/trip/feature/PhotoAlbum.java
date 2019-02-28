@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class PhotoAlbum implements Feature
 {
-	ArrayList<String> imagePaths = new ArrayList<String>();
+	private ArrayList<String> imagePaths = new ArrayList<String>();
 	
 	public PhotoAlbum(ArrayList<String> toImages)
 	{
