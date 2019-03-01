@@ -1,23 +1,21 @@
 package database;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * This class serves as the facilitator for accessing a database of information.
  * 
- * address stored as string
- * phone number stored as string
- * contact stored as string
- * type stored as sting
- * participant(s) stored as string
+ * all values currently stored as strings in the database
  * 
- * @author 
+ * @author Regan Lynch
  *
  */
 
@@ -59,40 +57,13 @@ public class Database {
                 //if connection was successful
                 if(this.connection != null) {
                 	Statement state = this.connection.createStatement();
-                	//create the user table
-                	if(this.getTable("users") == null) {
-                		//id, username, password, fname, lname, DOB, createdAt
-                		state.execute("CREATE TABLE users(id int,"+"username varchar(60),"+"password varchar(60),"+"fname varchar(60),"+"lname varchar(60),"+"DoB date,"+"createdAt date,"+"primary key(id));");
-                	}
-                	//create trips table
-                	if(this.getTable("trips") == null) {
-                		//id, userID, tripTitle, destination, startDate, endDate, 
-                		state.execute("CREATE TABLE trips(id int,"+"userID int,"+"tripTitle varchar(60),"+"destination varchar(60),"+"startDate date,"+"endDate date,"+"primary key(id));");
-                	}
-                	//create scheduleItems table
-                	if(this.getTable("scheduleItems") == null) {
-                		//id, tripID, type
-                		state.execute("CREATE TABLE scheduleItems(id int,"+"userID int,"+"type varchar(60),"+"primary key(id));");
-                	}
-                	//create contacts table
-                	if(this.getTable("contacts") == null) {
-                		//id, scheduleItemID, fname, lname, company, jobTitle, displayAs, email, webpage, PhoneNumber, Address
-                		state.execute("CREATE TABLE contacts(id int,"+"scheduleItemID int,"+"fname varchar(60),"+"lname varchar(60),"+"company varchar(60),"+"jobTitle varchar(60),"+"displayAs varchar(60),"+"email varchar(60),"+"webpage varchar(60),"+"phoneNumber varchar(60),"+"address varchar(60),"+"primary key(id));");
-                	}
-                	//create transportation table
-                	if(this.getTable("transportation") == null) {
-                		//id, scheduleItemID, startTime, endTime
-                		state.execute("CREATE TABLE transportation(id int,"+"scheduleItemID int,"+"startTime date,"+"endTime date,"+"primary key(id));");
-                	}
-                	if(this.getTable("accommodations") == null) {
-                		//id, tripID, scheduleItemID, name, checkIn, checkOut, paid, address, contact
-                		state.execute("CREATE TABLE accommodations(id int,"+"tripID int,"+"scheduleItemID int,"+"name varchar(60),"+"checkIn date,"+"checkOut date,"+"paid boolean,"+"address varchar(60),"+"contact varchar(60),"+"primary key(id));");
-                	}
-                	if(this.getTable("reservations") == null) {
-                		//id, scheduleItemID, tripID, contact, participants, startDate, endDate, address, type
-                		state.execute("CREATE TABLE reservations(id int,"+"scheduleItemID int,"+"tripID int,"+"contact varchar(60),"+"participants varchar(60),"+"startDate date,"+"endDate date,"+"address varchar(60),"+"type varchar(60),"+"primary key(id));");
-                	}
-                	
+                	//create table types as needed
+                	for(TableType table : TableType.values()) {
+                		//if a table type isnt already in the database -> create it
+                		if(this.getTable(table.toString()) == null) {
+                			state.execute(table.sqlCreateTable);
+                		}
+                	}	
                 }               
             }
  
@@ -106,7 +77,7 @@ public class Database {
 	/**
 	 * Gets connection to database 
 	 * 
-	 * @return
+	 * @return	connecttion to database
 	 */
 	
 	public Connection connect() {
@@ -133,7 +104,7 @@ public class Database {
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
-	 * Get result set the given table name.
+	 * Get result set of the given table name.
 	 * 
 	 * @param table_name
 	 * @return
@@ -148,355 +119,193 @@ public class Database {
 		ResultSet result=null;
 		try {
 			state=this.connection.createStatement();
-		}catch(SQLException sqlE1) {}
-		
+		}catch(SQLException sqlE1) {
+			return null;
+		}
 		try {
 			result=state.executeQuery("SELECT * FROM " + table_name);
-		}catch(SQLException sqlE2) {}
-		
+		}catch(SQLException sqlE2) {
+			return null;
+		}
 		return result;
 	}
 	
-//---  Adder Methods   ------------------------------------------------------------------------
+//---  Adder Method   ------------------------------------------------------------------------
 	
-	/**
-	 *
-	 * Adds user to the database
+	
+	/**	adds an entry into a desired table
 	 * 
-	 * @param id
-	 * @param username
-	 * @param password
-	 * @param firstName
-	 * @param lastName
-	 * @param DoB
-	 * @param createdAt
+	 * @param table		table you wish to insert into
+	 * @param values	values of fields you wish to insert into table
+	 * @return	if insertion was successful
 	 */
-	
-	public void addUser(int id, String username, String password, String firstName, String lastName, Date DoB, Date createdAt){
+	public boolean addEntry(TableType table, String... values) {
 		if(this.connect() == null) {
 			System.out.println("no connection can be established to the database");
-			return;
+			return false;
 		}
+		if(table.fields.length != values.length) {
+			System.out.println("error inserting into table "+ table.toString() + ": number of fields provided does not equal number of fields needed");
+			return false;
+		}
+		//check if entry exists in database
+		
+		
 		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO users(id,username,password,fname,lname,DoB,createdAt) values(?,?,?,?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setString(2, username);
-			prep.setString(3,  password);
-			prep.setString(4,  firstName);
-			prep.setString(5,  lastName);
-			prep.setDate(6, DoB);
-			prep.setDate(7, createdAt);
+			PreparedStatement prep = this.connection.prepareStatement(table.sqlInsertTable);
+			for(int i = 0; i < values.length; i++) {
+				prep.setString(i + 1, values[i]);
+			}
 			prep.executeUpdate();
 		}catch(Exception e) {
 			System.out.println("-----");
-			System.out.println("ERROR inserting id: " + id + "  into user database");
-			System.out.println(e.getMessage());
+			System.out.println("ERROR inserting id: " + values[0] + "  into " + table.toString() + " database");
+			System.out.println("primary key " + values[0] + " already exists in table");
 			System.out.println("-----");
+			return false;
 		}
+		return true;
 	}
 	
-	/**
-	 * 
-	 * Adds trip to database
-	 * 
-	 * @param id
-	 * @param userID
-	 * @param tripTitle
-	 * @param destination
-	 * @param startDate
-	 * @param endDate
-	 */
+// --- deleter method --------------------------------------------------------------------------------
 	
-	public void addTrip(int id, int userID, String tripTitle, String destination, Date startDate, Date endDate) {
-		//id, userID, tripTitle, destination, startDate, endDate, 
+	
+	/**	deletes entries from tables
+	 * 
+	 * @param table		table you wish to delete from
+	 * @param searchKeys	search parameters for deletion
+	 * @return	if deletion was successful
+	 */
+	public boolean deleteEntry(TableType table, String... searchKeys) {
 		if(this.connect() == null) {
 			System.out.println("no connection can be established to the database");
-			return;
+			return false;
+		}
+		if(searchKeys.length != table.fields.length) {
+			System.out.println("error deleting from table "+ table.toString() + ": number of search fields provided does not equal number of fields needed");
+			return false;
 		}
 		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO trips(id,userID,tripTitle,destination,startDate,endDate) values(?,?,?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, userID);
-			prep.setString(3,  tripTitle);
-			prep.setString(4,  destination);
-			prep.setDate(5,  startDate);
-			prep.setDate(6, endDate);
-			prep.executeUpdate();
+			String sqlDelete = "DELETE FROM " + table.toString() + " WHERE";
+			int nullCount = 0;
+			boolean priorSearch = false;
+			for(int i = 0; i < searchKeys.length; i++) {
+				if(searchKeys[i] != null) {
+					if(priorSearch) {
+						sqlDelete += " AND";
+					}
+					sqlDelete += " " + table.fields[i] + "='" + searchKeys[i] + "'";
+					priorSearch = true;
+				}else {
+					nullCount++;
+				}
+			}
+			sqlDelete += ";";
+			if(nullCount != searchKeys.length) {
+				PreparedStatement prep = this.connection.prepareStatement(sqlDelete);
+				prep.executeUpdate();
+			}else {
+				System.out.println("error deleting table: " + table.toString() + " --> no search keys defined");
+				return false;
+			}
 		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into trips database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
+			System.out.println("error deleting from table: " + table.toString());
+			return false;
 		}
+		return true;
 	}
 	
-	/**
-	 * Adds schedule item to database
-	 * 
-	 * @param id
-	 * @param userID
-	 * @param type
-	 */
+//--- search method  ------------------------------------------------------------------------
 	
-	public void addScheduleItem(int id, int userID, String type) {
-		//id, tripID, type 
+	
+	/**	searches tables based on search parameters
+	 * 
+	 * @param table		table you wish to query
+	 * @param searchKeys	fields you wish to search by 
+	 * @return	list of string array containing elements that matched your search
+	 */
+	public List<String[]> search(TableType table, String... searchKeys) {
+		ResultSet result = null;
 		if(this.connect() == null) {
 			System.out.println("no connection can be established to the database");
-			return;
+			return null;
+		}
+		if(searchKeys.length != table.fields.length) {
+			System.out.println("error searching table "+ table.toString() + ": number of search fields provided does not equal number of fields needed");
+			return null;
 		}
 		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO scheduleItems(id,userID,type) values(?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, userID);
-			prep.setString(3, type);
-			prep.executeUpdate();
+			String sqlSearch = "SELECT * FROM " + table.toString() + " WHERE";
+			int nullCount = 0;
+			boolean priorSearch = false;
+			for(int i = 0; i < searchKeys.length; i++) {
+				if(searchKeys[i] != null) {
+					if(priorSearch) {
+						sqlSearch += " AND";
+					}
+					sqlSearch += " " + table.fields[i] + "='" + searchKeys[i] + "'";
+					priorSearch = true;
+				}else {
+					nullCount++;
+				}
+			}
+			sqlSearch += ";";
+			if(nullCount != searchKeys.length) {
+				Statement state=null;
+				try {
+					state=this.connection.createStatement();
+					result=state.executeQuery(sqlSearch);
+					return ResultSetToList(result);
+				}catch(SQLException sqlE2) {
+					return null;
+				}
+			}else {
+				System.out.println("error searching table: " + table.toString() + " --> no search keys defined");
+				return null;
+			}
 		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into scheduleItems database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
+			System.out.println("error searching in table: " + table.toString());
+			return null;
 		}
 	}
 	
-	/**
-	 * Adds contact to database
+	
+//---  Print Method   ------------------------------------------------------------------------
+	
+	
+	/**	prints table to console
 	 * 
-	 * @param id
-	 * @param scedID
-	 * @param fname
-	 * @param lname
-	 * @param company
-	 * @param jobTitle
-	 * @param displayAs
-	 * @param email
-	 * @param webpage
-	 * @param phoneNumber
-	 * @param address
+	 * @param type	table you wish to print
 	 */
-	
-	public void addContact(int id, int scedID, String fname, String lname, String company, String jobTitle, String displayAs, String email, String webpage, String phoneNumber, String address) {
-		//id, scheduleItemID, fname, lname, company, jobTitle, displayAs, email, webpage, PhoneNumber, Address 
-		if(this.connect() == null) {
-			System.out.println("no connection can be established to the database");
-			return;
-		}
-		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO contacts(id,scheduleItemID,fname,lname,company,jobTitle,displayAs,email,webpage,phoneNumber,address) values(?,?,?,?,?,?,?,?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, scedID);
-			prep.setString(3, fname);
-			prep.setString(4, lname);
-			prep.setString(5, company);
-			prep.setString(6, jobTitle);
-			prep.setString(7, displayAs);
-			prep.setString(8, email);
-			prep.setString(9, webpage);
-			prep.setString(10, phoneNumber);
-			prep.setString(11, address);
-			prep.executeUpdate();
-		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into contacts database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
-		}
+	public void printTable(TableType type) {
+		DBTablePrinter.printTable(this.connection, type.toString());
 	}
-
-	/**
-	 * Adds transportation to database
+	
+// -- helper methods -------------------------------------------------------------------------
+	
+	
+	/**	returns list off string arrays based on input ResultSet
 	 * 
-	 * @param id
-	 * @param scedID
-	 * @param startTime
-	 * @param endTime
+	 * @param set	
+	 * @return	list of string arrays containing values from a table entry
 	 */
-	
-	public void addTransportation(int id, int scedID, Date startTime, Date endTime) {
-		//id, scheduleItemID, startTime, endTime
-		if(this.connect() == null) {
-			System.out.println("no connection can be established to the database");
-			return;
-		}
+	private static List<String[]> ResultSetToList(ResultSet set){
 		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO transportation(id,scheduleItemID,startTime,endTime) values(?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, scedID);
-			prep.setDate(3, startTime);
-			prep.setDate(4, endTime);
-			prep.executeUpdate();
-		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into transportation database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
+			int nCol = set.getMetaData().getColumnCount();
+			List<String[]> table = new ArrayList<>();
+			while( set.next()) {
+			    String[] row = new String[nCol];
+			    for( int iCol = 1; iCol <= nCol; iCol++ ){
+			            String obj = set.getString( iCol );
+			            row[iCol-1] = (obj == null) ?null: obj;
+			    }
+			    table.add( row );
+			}
+			return table;
+		} catch (SQLException e) {
+			System.out.println("error converting ResultSet to 2D array");
 		}
-	}
-	
-	/**
-	 * Adds accommodations to database
-	 * 
-	 * @param id
-	 * @param tripID
-	 * @param scedID
-	 * @param name
-	 * @param checkIn
-	 * @param checkOut
-	 * @param paid
-	 * @param address
-	 * @param contact
-	 */
-	
-	public void addAccommodation(int id, int tripID, int scedID, String name, Date checkIn, Date checkOut, Boolean paid, String address, String contact) {
-		//id, tripID, scheduleItemID, name, checkIn, checkOut, paid, address, contact
-		if(this.connect() == null) {
-			System.out.println("no connection can be established to the database");
-			return;
-		}
-		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO accommodations(id,tripID,scheduleItemID,name,checkIn,checkOut,paid,address,contact) values(?,?,?,?,?,?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, tripID);
-			prep.setInt(3, scedID);
-			prep.setString(4, name);
-			prep.setDate(5, checkIn);
-			prep.setDate(6, checkOut);
-			prep.setBoolean(7, paid);
-			prep.setString(8, address);
-			prep.setString(9, contact);
-			prep.executeUpdate();
-		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into accommodation database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
-		}
-	}
-
-	/**
-	 *
-	 * Adds accommodations to database
-	 * 
-	 * @param id
-	 * @param scedID
-	 * @param tripID
-	 * @param contact
-	 * @param participant
-	 * @param startDate
-	 * @param endDate
-	 * @param address
-	 * @param type
-	 */
-	
-	public void addReservation(int id, int scedID, int tripID, String contact, String participant, Date startDate, Date endDate, String address, String type) {
-		//id, scheduleItemID, tripID, contact, participants, startDate, endDate, address, type
-		if(this.connect() == null) {
-			System.out.println("no connection can be established to the database");
-			return;
-		}
-		try {
-			PreparedStatement prep = this.connection.prepareStatement("INSERT INTO reservations(id,scheduleItemID,tripID,contact,participants,startDate,endDate,address,type) values(?,?,?,?,?,?,?,?,?)");
-			prep.setInt(1, id);
-			prep.setInt(2, scedID);
-			prep.setInt(3, tripID);
-			prep.setString(4, contact);
-			prep.setString(5, participant);
-			prep.setDate(6, startDate);
-			prep.setDate(7, endDate);
-			prep.setString(8, address);
-			prep.setString(9, type);
-			prep.executeUpdate();
-		}catch(Exception e) {
-		System.out.println("-----");
-		System.out.println("ERROR inserting id: " + id + "  into reservation database");
-		System.out.println(e.getMessage());
-		System.out.println("-----");
-		}
-	}
-	
-	
-	//test delete from database - works
-//	public void DeleteUser(int ID) {
-//		if(this.connection == null) {
-//			if(this.connect() == null) {
-//				System.out.println("no connection can be established to the database");
-//				return;
-//			}
-//		}
-//		try {
-//			PreparedStatement prep = this.connection.prepareStatement("DELETE FROM users WHERE id='"+ID+"';");
-//			prep.executeUpdate();
-//		}catch(Exception e) {
-//			System.out.println("error deleting user");
-//		}
-//	}
-	
-	//##########################################################################################################################################################################################################
-	//###########################################################################################################################################################################################################
-	
-	
-//---  Print Methods   ------------------------------------------------------------------------
-	
-	/**
-	 * Print all users to console
-	 */
-	
-	public void printUsers() {
-		DBTablePrinter.printTable(this.connection, "users");
-	}
-	
-	
-	/**
-	 * Print trips table
-	 */
-	
-	public void printTrips() {
-		DBTablePrinter.printTable(this.connection, "trips");
-	}
-	
-	
-	/**
-	 * Print schedule items table
-	 */
-	
-	public void printScheduleItems() {
-		DBTablePrinter.printTable(this.connection, "scheduleItems");
-	}
-	
-
-	/**
-	 * Print contacts table
-	 */
-	
-	public void printContacts() {
-		DBTablePrinter.printTable(this.connection, "contacts");
-	}
-	
-
-	/**
-	 * Print transportation table
-	 */
-	
-	public void printTransportation() {
-		DBTablePrinter.printTable(this.connection, "transportation");
-	}
-	
-
-	/**
-	 * Print accommodations table
-	 */
-	
-	public void printAccommodations() {
-		DBTablePrinter.printTable(this.connection, "accommodations");
-	}
-	
-	
-
-	/**
-	 * Print reservations table
-	 */
-	
-	public void printReservations() {
-		DBTablePrinter.printTable(this.connection, "reservations");
-	}
+		return null;
+	} 
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------
