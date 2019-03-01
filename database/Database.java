@@ -148,9 +148,6 @@ public class Database {
 			System.out.println("error inserting into table "+ table.toString() + ": number of fields provided does not equal number of fields needed");
 			return false;
 		}
-		//check if entry exists in database
-		
-		
 		try {
 			PreparedStatement prep = this.connection.prepareStatement(table.sqlInsertTable);
 			for(int i = 0; i < values.length; i++) {
