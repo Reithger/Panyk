@@ -1,55 +1,50 @@
 package database;
-import java.sql.Date;
+
+
+import java.util.Arrays;
+import java.util.List;
 
 public class DBTester {
 
 	public static void main(String[] args) {
 		
-		Database test = new Database("test_db");
+		Database db = new Database("test_db");
 		
-		//test users table
-		//id, username, password, fname, lname, DOB, createdAt
-		test.addUser(1, "reganlynch", "pass", "regan", "lynch", new Date(0), new Date(1));
-		test.printUsers();
+		//test insertion
+		db.addEntry(TableType.users, "2", "reganlynch", "pass", "regan", "lynch", "1996", "1996");		
+		db.addEntry(TableType.users,  "1", "reganlynch", "word", "regan", "lynch", "1996", "1996");
+		db.printTable(TableType.users);
+		
+		//test deletion
+		db.deleteEntry(TableType.users, "2", null, null, null, null, null, null);
+		db.printTable(TableType.users);
+		
+		//test searching 
+		db.addEntry(TableType.users, "2", "reganlynch", "pass", "regan", "lynch", "1996", "1996");	
+		List<String[]> foundEntries = db.search(TableType.users, null, "reganlynch", null, null, null, null, null);
+		for(String[] entry : foundEntries) {
+			System.out.println(Arrays.toString(entry));
+		}
 		System.out.println();
 		
-		//test trips table
-		//id, userID, tripTitle, destination, startDate, endDate, 
-		test.addTrip(3, 4, "my mexican trip", "mexico", new Date(0), new Date(1));
-		test.printTrips();
-		System.out.println();
+		//---------------
 		
-		//test schedule items table
-		//id, userID, type
-		test.addScheduleItem(1, 2, "trip type");
-		test.printScheduleItems();
-		System.out.println();
+		//test the same things on another table..
+		db.addEntry(TableType.contacts, "1", "2", "regan", "lynch", "dnd", "dev", "cool guy", "dunno", "web page dummy", "911", "123blvd");
+		db.addEntry(TableType.contacts, "4", "6", "regan", "lynch", "dnd", "dev", "cool guy", "dunno", "web page dummy", "911", "123blvd");
+		db.printTable(TableType.contacts);
 		
-		//test contacts table
-		//id, scheduleItemID, fname, lname, company, jobTitle, displayAs, email, webpage, PhoneNumber, Address
-		test.addContact(1, 2, "regan", "lynch", "dnd", "dev", "cool guy", "dunno", "web page dummy", "911", "123blvd");
-		test.printContacts();
-		System.out.println();
+		//test deletion
+		db.deleteEntry(TableType.contacts, null, "6", null, "lynch", "dnd", null, "cool guy", "dunno", null, "911", "123blvd");
+		db.printTable(TableType.contacts);
 		
-		//test transportation table
-		//id, scheduleItemID, startTime, endTime
-		test.addTransportation(2, 3, new Date(0), new Date(1));
-		test.printTransportation();
-		System.out.println();
-		
-		//test accommodations table
-		//id, tripID, scheduleItemID, name, checkIn, checkOut, paid, address, contact
-		test.addAccommodation(1, 2, 3, "regan", new Date(1), new Date(1), true, "123Blvd", "steve");
-		test.printAccommodations();
-		System.out.println();
-		
-		//test reservations table
-		//id, scheduleItemID, tripID, contact, participants, startDate, endDate, address, type
-		test.addReservation(1, 2, 3, "steve", "regan", new Date(1), new Date(3), "123 blvd", "motel");
-		test.printReservations();
-		System.out.println();
-		
-		
-	}
+		//test searching 
+		db.addEntry(TableType.contacts, "4", "6", "regan", "lynch", "dnd", "dev", "cool guy", "dunno", "web page dummy", "911", "123blvd");
+		foundEntries = db.search(TableType.contacts,  null, null, null, "lynch", "dnd", null, "cool guy", null, null, "911", "123blvd");
+		for(String[] entry : foundEntries) {
+			System.out.println(Arrays.toString(entry));
+		}	
+	
+	}//end main
 
-}
+}//end class
