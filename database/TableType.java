@@ -60,6 +60,7 @@ public enum TableType {
 	}
 	
 	/**
+	 *
 	 *  generates the sql statement required to initialize a table type
 	 */
 	private void generateCreateTableSQL() {
