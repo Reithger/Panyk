@@ -36,6 +36,10 @@ public class Intermediary {
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
+	/**
+	 * 
+	 */
+	
 	public Intermediary() {
 		display = new Display(1000, 1000);
 		timer = new Timer();
@@ -43,6 +47,11 @@ public class Intermediary {
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
+	
+	/**
+	 * 
+	 * 
+	 */
 	
 	public void clock() {
 		String happen = Communication.get("Control");

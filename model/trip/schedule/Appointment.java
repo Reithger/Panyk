@@ -1,8 +1,6 @@
 package model.trip.schedule;
 
 import java.util.Date;
-import java.util.HashMap;
-
 import model.trip.logistic.ProtoAddress;
 
 /**
@@ -12,97 +10,98 @@ import model.trip.logistic.ProtoAddress;
  * @author nrcuthbertson
  *
  */
+
 public class Appointment {
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
+	/** */
 	private String title;
+	/** */
 	private Date start;
+	/** */
 	private Date end;
+	/** */
 	private String type;
+	/** */
 	private String comments;
+	/** */
 	private float price;
+	/** */
 	private ProtoAddress location;
 	
-	public Appointment(String called, Date begin, Date cease, String description, String userComments, float cost, ProtoAddress pa)
-	{
+//---  Constructors   -------------------------------------------------------------------------
+	
+	public Appointment(String called, Date begin, Date cease, String description, String userComments, float cost, ProtoAddress pa){
 		if(called.equals(null))
-		{
-			called="untitled";
-		}
-		title=called;
-		start=begin;
-		end=cease;
-		type=description;
-		comments=userComments;
-		price=cost;
-		location=pa;
+			called = "untitled";
+		else
+			title = called;
+		start = begin;
+		end = cease;
+		type = description;
+		comments = userComments;
+		price = cost;
+		location = pa;
 	}
 	
-	public Date getStartDate() 
-	{
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	public Date getStartDate(){
 		return start;
 	}
 
-	public Date getEndDate() 
-	{
+	public Date getEndDate(){
 		return end;
 	}
 
-	public String getType() 
-	{
+	public String getType(){
 		return type;
 	}
-
-	public void setStartDate(Date in) 
-	{
-		start=in;
-		
-	}
-
-	public void setEndDate(Date d) 
-	{
-		end=d;
-		
-	}
 	
-	public String getComments() 
-	{
+	public String getComments(){
 		return comments;
 	}
 
-	public void setComments(String commentary) {
-		comments=commentary;
-		
-	}
-
-	public String getTitle() 
-	{
+	public String getTitle(){
 		return title;
 	}
-
-	public void setTitle(String name) 
-	{
-		title=name;
-		
-	}
 	
-	public float getPrice()
-	{
+	public float getPrice(){
 		return price;
 	}
-	
-	public void setPrice(float f)
-	{
-		price=f;
-	}
-	
-	public ProtoAddress getLocation()
-	{
+
+	public ProtoAddress getLocation(){
 		return location;
 	}
 	
-	public void setLocation(ProtoAddress newLoc)
-	{
-		location=newLoc;
+//---  Setter Methods   -----------------------------------------------------------------------
+	
+	public void setStartDate(Date in){
+		start = in;
+		
+	}
+
+	public void setEndDate(Date d){
+		end = d;
+		
+	}
+
+	public void setComments(String commentary){
+		comments = commentary;
+		
+	}
+
+	public void setTitle(String name){
+		title = name;
+	}
+	
+	public void setPrice(float f){
+		price = f;
+	}
+	
+	public void setLocation(ProtoAddress newLoc){
+		location = newLoc;
 	}
 	
 }

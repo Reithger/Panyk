@@ -26,17 +26,41 @@ import visual.panel.ElementPanel;
 
 public class Display {
 	
+//---  Constant Values   ----------------------------------------------------------------------
+	
+	/** */
 	private final static Font FONT_ONE = new Font("Arial Bold", Font.BOLD, 18);
+	/** */
 	private final static Color COLOR_ONE = new Color(30, 80, 175);
+	/** */
 	private final static Color COLOR_TWO = new Color(90, 80, 175);
+	/** */
 	private final static Color COLOR_WHITE = new Color(255, 255, 255);
+	/** */
 	private final static Color COLOR_BLACK = new Color(0, 0, 0);
+	/** */
 	private final static int EVENT_LOGIN = 1;
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
+	/** */
 	private WindowFrame display;
+	/** */
 	private int width;
+	/** */
 	private int height;
+	/** */
 	private int elementCount;
+	
+//---  Constructors   -------------------------------------------------------------------------
+	
+	/**
+	 * Constructor for objects of the Display type that assigns a provided width and height to the wholly
+	 * encompassing WindowFrame object and instructs it to display the program's initial screen (log-in).
+	 * 
+	 * @param inWidth - int value representing the width of the WindowFrame that displays the program.
+	 * @param inHeight - int value representing the height of the WindowFrame that displays the program.
+	 */
 	
 	public Display(int inWidth, int inHeight) {
 		width = inWidth;
@@ -45,6 +69,15 @@ public class Display {
 		elementCount = 0;
 		initialScreen();
 	}
+	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	/**
+	 * This method instructs the Display object to present the initial screen as designed
+	 * within this method; effectively a title screen for branding purposes and possible
+	 * settings allocation. Just click the continue button for log-in.
+	 * 
+	 */
 	
 	private void initialScreen() {
 		ElementPanel titlePanel = new ElementPanel(0, 0, display.getWidth(), display.getHeight()) {
@@ -67,9 +100,25 @@ public class Display {
 		designTextField(titlePanel, wid/2, hei/2, wid/10, hei/15, 5, 2, true);
 		display.addPanel("Title", titlePanel);
 	}
-	
+
 	/**
-	 * Priority intervals of 10
+	 * This method instructs the Display object to present the log-in screen as designed
+	 * within this method; takes in Username and Password information to attempt to log the
+	 * user in. If succesful, moves onward to a Trip select screen.
+	 */
+	
+	public void logInScreen() {
+		display.hidePanel("Title");
+	}
+
+//---  Composite Methods   --------------------------------------------------------------------
+		
+	/**
+	 * This method automates the composite of ElementPanel basic elements to create a text-input
+	 * box that corresponds to the provided code for receiving user input and using it for functions.
+	 * 
+	 * Priority intervals are of 10 so that each Composite method can have its own organization of
+	 * basic elements as well as be placed relative to other Composite structures.
 	 * 
 	 * @param pan
 	 * @param x
@@ -86,8 +135,4 @@ public class Display {
 		
 	}
 
-	public void logInScreen() {
-		display.hidePanel("Title");
-	}
-	
 }

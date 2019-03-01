@@ -8,20 +8,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//address stored as string
-//phone number stored as string
-//contact stored as string
-//type stored as sting
-//participant(s) stored as string
+/**
+ * This class serves as the facilitator for accessing a database of information.
+ * 
+ * address stored as string
+ * phone number stored as string
+ * contact stored as string
+ * type stored as sting
+ * participant(s) stored as string
+ * 
+ * @author 
+ *
+ */
 
 public class Database {
 	
-	public static final String DB_DIRECTORY = "C:/sqlite3/databases/";
+//---  Constant Values   ----------------------------------------------------------------------
 	
-	public String name;
-	public Connection connection;
+	/** */
+	private static final String DB_DIRECTORY = "C:/sqlite3/databases/";	//TODO: Can't hardcode an address in final
 	
-	//initializes a new database with name db_name--------------------------------------------------------------------
+//---  Instance Variables   -------------------------------------------------------------------
+	
+	/** */
+	private String name;
+	/** */
+	private Connection connection;
+	
+//---  Constructors   -------------------------------------------------------------------------
+	
+	/**
+	 * Constructor for objects of the Database type; initializes a new database with name db_name.
+	 * 
+	 * @param db_name - String object
+	 */
+	
 	public Database(String db_name) {
 		this.name = db_name;
    	 	this.connection = null;
@@ -80,7 +101,14 @@ public class Database {
         }
 	}
 	
-	//gets connection to database------------------------------------------------------------------------------------------
+//---  Operations   ---------------------------------------------------------------------------
+	
+	/**
+	 * Gets connection to database 
+	 * 
+	 * @return
+	 */
+	
 	public Connection connect() {
 		if(this.connection == null) {
 	        try {
@@ -102,7 +130,15 @@ public class Database {
 
 	}
 	
-	//get result set the given table name------------------------------------------------------------------------------------------
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	/**
+	 * Get result set the given table name.
+	 * 
+	 * @param table_name
+	 * @return
+	 */
+	
 	public ResultSet getTable(String table_name) {
 		if(this.connect() ==  null) {
 			System.out.println("no connection can be established to the database");
@@ -121,7 +157,21 @@ public class Database {
 		return result;
 	}
 	
-	//adds user to the database-------------------------------------------------------------------------------------------
+//---  Adder Methods   ------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * Adds user to the database
+	 * 
+	 * @param id
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param DoB
+	 * @param createdAt
+	 */
+	
 	public void addUser(int id, String username, String password, String firstName, String lastName, Date DoB, Date createdAt){
 		if(this.connect() == null) {
 			System.out.println("no connection can be established to the database");
@@ -145,7 +195,18 @@ public class Database {
 		}
 	}
 	
-	//adds trip to database----------------------------------------------------------------------------------------------
+	/**
+	 * 
+	 * Adds trip to database
+	 * 
+	 * @param id
+	 * @param userID
+	 * @param tripTitle
+	 * @param destination
+	 * @param startDate
+	 * @param endDate
+	 */
+	
 	public void addTrip(int id, int userID, String tripTitle, String destination, Date startDate, Date endDate) {
 		//id, userID, tripTitle, destination, startDate, endDate, 
 		if(this.connect() == null) {
@@ -169,7 +230,14 @@ public class Database {
 		}
 	}
 	
-	//adds schedule item to database----------------------------------------------------------------------------------------------
+	/**
+	 * Adds schedule item to database
+	 * 
+	 * @param id
+	 * @param userID
+	 * @param type
+	 */
+	
 	public void addScheduleItem(int id, int userID, String type) {
 		//id, tripID, type 
 		if(this.connect() == null) {
@@ -190,7 +258,22 @@ public class Database {
 		}
 	}
 	
-	//adds contact to database----------------------------------------------------------------------------------------------
+	/**
+	 * Adds contact to database
+	 * 
+	 * @param id
+	 * @param scedID
+	 * @param fname
+	 * @param lname
+	 * @param company
+	 * @param jobTitle
+	 * @param displayAs
+	 * @param email
+	 * @param webpage
+	 * @param phoneNumber
+	 * @param address
+	 */
+	
 	public void addContact(int id, int scedID, String fname, String lname, String company, String jobTitle, String displayAs, String email, String webpage, String phoneNumber, String address) {
 		//id, scheduleItemID, fname, lname, company, jobTitle, displayAs, email, webpage, PhoneNumber, Address 
 		if(this.connect() == null) {
@@ -218,9 +301,16 @@ public class Database {
 		System.out.println("-----");
 		}
 	}
+
+	/**
+	 * Adds transportation to database
+	 * 
+	 * @param id
+	 * @param scedID
+	 * @param startTime
+	 * @param endTime
+	 */
 	
-	
-	//adds transportation to database----------------------------------------------------------------------------------------------
 	public void addTransportation(int id, int scedID, Date startTime, Date endTime) {
 		//id, scheduleItemID, startTime, endTime
 		if(this.connect() == null) {
@@ -242,7 +332,20 @@ public class Database {
 		}
 	}
 	
-	//adds accommodations to database----------------------------------------------------------------------------------------------
+	/**
+	 * Adds accommodations to database
+	 * 
+	 * @param id
+	 * @param tripID
+	 * @param scedID
+	 * @param name
+	 * @param checkIn
+	 * @param checkOut
+	 * @param paid
+	 * @param address
+	 * @param contact
+	 */
+	
 	public void addAccommodation(int id, int tripID, int scedID, String name, Date checkIn, Date checkOut, Boolean paid, String address, String contact) {
 		//id, tripID, scheduleItemID, name, checkIn, checkOut, paid, address, contact
 		if(this.connect() == null) {
@@ -268,9 +371,22 @@ public class Database {
 		System.out.println("-----");
 		}
 	}
+
+	/**
+	 *
+	 * Adds accommodations to database
+	 * 
+	 * @param id
+	 * @param scedID
+	 * @param tripID
+	 * @param contact
+	 * @param participant
+	 * @param startDate
+	 * @param endDate
+	 * @param address
+	 * @param type
+	 */
 	
-	
-	//adds accommodations to database----------------------------------------------------------------------------------------------
 	public void addReservation(int id, int scedID, int tripID, String contact, String participant, Date startDate, Date endDate, String address, String type) {
 		//id, scheduleItemID, tripID, contact, participants, startDate, endDate, address, type
 		if(this.connect() == null) {
@@ -317,41 +433,70 @@ public class Database {
 	//##########################################################################################################################################################################################################
 	//###########################################################################################################################################################################################################
 	
-	//print all users to console--------------------------------------------------------------------------------------------
+	
+//---  Print Methods   ------------------------------------------------------------------------
+	
+	/**
+	 * Print all users to console
+	 */
+	
 	public void printUsers() {
 		DBTablePrinter.printTable(this.connection, "users");
 	}
 	
-	//print trips table--------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Print trips table
+	 */
+	
 	public void printTrips() {
 		DBTablePrinter.printTable(this.connection, "trips");
 	}
 	
-	//print schedule items table--------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Print schedule items table
+	 */
+	
 	public void printScheduleItems() {
 		DBTablePrinter.printTable(this.connection, "scheduleItems");
 	}
 	
-	//print contacts table--------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Print contacts table
+	 */
+	
 	public void printContacts() {
 		DBTablePrinter.printTable(this.connection, "contacts");
 	}
 	
-	//print transportation table--------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Print transportation table
+	 */
+	
 	public void printTransportation() {
 		DBTablePrinter.printTable(this.connection, "transportation");
 	}
 	
-	//print accommodations table--------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Print accommodations table
+	 */
+	
 	public void printAccommodations() {
 		DBTablePrinter.printTable(this.connection, "accommodations");
 	}
 	
 	
-	//print reservations table--------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Print reservations table
+	 */
+	
 	public void printReservations() {
 		DBTablePrinter.printTable(this.connection, "reservations");
 	}
-	
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------

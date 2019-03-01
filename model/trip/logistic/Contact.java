@@ -1,33 +1,56 @@
 package model.trip.logistic;
-/*
- * May want to refactor to make a leaner version of contact
-Will need to go further into the implementation to decide if 
-that will create more problems or improve things 
+
+/**
+ * This interface defines the functionality of a Contact-type object; that it, in
+ * whatever format it may be, can have certain traits be stored and accessed relating
+ * to Contact information for a person or business.
  * 
- * */
+ * Note: May want to refactor to make a leaner version of contact; will need to go further
+ * into the implementation to decide if that will create more problems or improve things. 
+ * 
+ * Also, yeah, this is way too all-encompassing and vague; we don't want objects that would
+ * consistently have attributes be unused/in the way. Should break up/redesign.
+ * 
+ * @author 
+ *
+ */
+
 public interface Contact {
 
-	public String getName();
-	public void setName(String name);
+//---  Getter Methods   -----------------------------------------------------------------------
 	
-	public String getCompany();
-	public void setCompany(String companyName);
+	public abstract String getName();
 	
-	public String getJobTitle();
-	public void setJobTitle(String title);
+	public abstract String getCompany();
 	
-	public String getEmail();
-	public void setEmail(String emailAddr);
+	public abstract String getJobTitle();
+
+	public abstract String getEmail();
+
+	public abstract String getDisplayTitle();
+
+	public abstract String getWebPage();
+
+	public abstract PhoneNumber getPhoneNumber();
+
+	public abstract Address getAddress();
 	
-	public String getDisplayTitle();
-	public void setDisplayTitle(String displayAs);
+//---  Setter Methods   -----------------------------------------------------------------------
 	
-	public String getWebPage();
-	public void setWebPage(String url);
+	public abstract void setName(String name);
 	
-	public PhoneNumber getPhoneNumber();
-	public void setPhoneNumber(String number);
+	public abstract void setCompany(String companyName);
 	
-	public Address getAddress();
-	public void setAddress(Address newAddress);
+	public abstract void setJobTitle(String title);
+	
+	public abstract void setEmail(String emailAddr);
+	
+	public abstract void setDisplayTitle(String displayAs);
+	
+	public abstract void setWebPage(String url);
+	
+	public abstract void setPhoneNumber(String number);
+	
+	public abstract void setAddress(Address newAddress);
+	
 }
