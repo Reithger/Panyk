@@ -45,7 +45,7 @@ public class Intermediary {
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void clock() {
-		String happen = Communication.get();
+		String happen = Communication.get("Control");
 		if(happen == null)
 			return;
 		if(happen.equals("next")) {
