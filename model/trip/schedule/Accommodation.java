@@ -4,54 +4,96 @@ import java.util.Date;
 import java.util.HashMap;
 
 import model.trip.logistic.Contact;
+import model.trip.logistic.ProtoAddress;
 
-public class Accommodation implements Schedulable{
-	
-	public Contact getContact() {
-		return null;
+public class Accommodation
+{
+	/*String title;
+	Date checkIn;
+	Date checkOut;
+	Contact accomContact;
+	String type;
+	String comments;*/
+	Appointment booking;
+
+	//constructor
+	public Accommodation(String called, Date cIn, Date cOut, Contact myContact, String description, String accomments, float price, ProtoAddress loc)
+	{
+		booking = new Appointment(called, cIn, cOut, myContact, description, accomments, price, loc);
 	}
 	
-	public void setContact(Contact accommContact) {
-		
+	
+	//misc setters and getters
+	public Contact getContact() 
+	{
+		return booking.getContact();
 	}
 	
-	public Date getCheckInDate() {
-		return null;
+	public void setContact(Contact newContact) 
+	{
+		booking.setContact(newContact);
 	}
 	
-	public void setCheckInDate(Date checkIn) {
-		
+	public Date getStartDate() 
+	{
+		return booking.getStartDate();
 	}
 	
-	public Date getCheckOutDate() {
-		return null;
+	public void setStartDate(Date givenCheckIn) 
+	{
+		booking.setStartDate(givenCheckIn);
 	}
 	
-	public void setCheckOutDate(Date checkOut) {
-		
+	public Date getEndDate() 
+	{
+		return booking.getEndDate();
+	}
+	
+	public void setEndDate(Date givenCheckOut) 
+	{
+		booking.setEndDate(givenCheckOut);
 	}
 
-	@Override
+	/*@Override
 	public HashMap<String, String> getDisplayData() {
 		// TODO Auto-generated method stub
 		return null;
+	}*/
+
+	public String getType() 
+	{
+		return booking.getType();
 	}
 
-	@Override
-	public Date getDate() {
-		// TODO Auto-generated method stub
-		return null;
+
+
+	public String getComments() 
+	{
+		return booking.getComments();
 	}
 
-	@Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+
+
+
+	public void setComments(String commentary) 
+	{
+		booking.setComments(commentary);
+		
 	}
 
-	@Override
-	public void setDate(Date in) {
-		// TODO Auto-generated method stub
+
+
+	public String getTitle() 
+	{
+		return booking.getTitle();
+	}
+
+
+
+
+	public void setTitle(String name) 
+	{
+		booking.setTitle(name);
 		
 	}
 
