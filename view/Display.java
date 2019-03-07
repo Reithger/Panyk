@@ -31,6 +31,10 @@ public class Display {
 	/** */
 	private final static Font FONT_ONE = new Font("Arial Bold", Font.BOLD, 18);
 	/** */
+	private final static Font FONT_TWO = new Font("SansSerif", Font.BOLD, 40);
+	/** */
+	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 12);
+	/** */
 	private final static Color COLOR_ONE = new Color(30, 80, 175);
 	/** */
 	private final static Color COLOR_TWO = new Color(90, 80, 175);
@@ -90,14 +94,15 @@ public class Display {
 		};
 		
 		titlePanel.addRectangle("rect1", 0, 0, 0, titlePanel.getWidth(), titlePanel.getHeight(), COLOR_ONE, false);
+		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, new Color(200,150,170), false);
+		titlePanel.addText("tex1", 15, width/2, height / 3, width/4, height/5, "Plein Air", FONT_TWO, true);
+		titlePanel.addRectangle("rect3", 14, width/2, 3*height/5, width/10, height/20, COLOR_WHITE, true);
+		titlePanel.addButton("but1", 15, width/2, 3*height/5, width/20, height/20, EVENT_LOGIN, true);
 		/*
 		titlePanel.addText("text1", 2, width/2, height/2, width/5, height/5, "Welcome", FONT_ONE, true);
 		titlePanel.addButton("but1", 5, width/2, height/2, width/5, height/10, COLOR_TWO, EVENT_LOGIN, true);
 		titlePanel.addText("text2", 10, width/2, height/2, width/5, height/10, "Log In", FONT_ONE, true);
 		*/
-		int wid = titlePanel.getWidth();
-		int hei = titlePanel.getHeight();
-		designTextField(titlePanel, wid/2, hei/2, wid/10, hei/15, 5, 2, true);
 		display.addPanel("Title", titlePanel);
 	}
 
@@ -109,6 +114,13 @@ public class Display {
 	
 	public void logInScreen() {
 		display.hidePanel("Title");
+		ElementPanel login = new ElementPanel(0, 0, width, height);
+		login.addRectangle("rect1", 0, 0, 0, width, height, COLOR_ONE, false);
+		login.addRectangle("rect2", 3, width/2, height/3, width/2, height/3, COLOR_WHITE, COLOR_BLACK, true);
+		login.addText("tex1", 5, width/2, height/3, width/2, height/3, "Log In", FONT_TWO, true);
+		designTextField(login, width/2, height/2 + height/6, width/6, height/12, 10, 1, true);
+		designTextField(login, width/2, height/2 + height/3, width/6, height/12, 10, 2, true);
+		display.addPanel("Login", login);
 	}
 
 //---  Composite Methods   --------------------------------------------------------------------
@@ -131,7 +143,7 @@ public class Display {
 	
 	private void designTextField(ElementPanel pan, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle("rec_" + elementCount++, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
-		pan.addTextEntry("tex_in_" + elementCount++, priority * 10 + 1, x, y, panWid, panHei, code, FONT_ONE, centered);
+		pan.addTextEntry("tex_in_" + elementCount++, priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);
 		
 	}
 

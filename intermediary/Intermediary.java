@@ -41,7 +41,7 @@ public class Intermediary {
 	 */
 	
 	public Intermediary() {
-		display = new Display(1000, 1000);
+		display = new Display(1000, 600);
 		timer = new Timer();
 		timer.schedule(new TimerRepeat(this), 0, REFRESH_RATE);
 	}
