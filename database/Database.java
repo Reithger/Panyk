@@ -1,3 +1,4 @@
+
 package database;
 
 import java.sql.Connection;
@@ -24,7 +25,7 @@ public class Database {
 //---  Constant Values   ----------------------------------------------------------------------
 	
 	/** */
-	private static final String DB_DIRECTORY = "C:/sqlite3/databases/";	//TODO: Can't hardcode an address in final
+	private static final String DB_DIRECTORY = System.getProperty("user.dir").replaceAll("\\\\", "/") + "/";  	//get the current directory of the user (ie: where the program is installed)
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -45,30 +46,27 @@ public class Database {
 		this.name = db_name;
    	 	this.connection = null;
 		
-        String url = "jdbc:sqlite:"+ DB_DIRECTORY + db_name + ".db";
- 
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
+        this.connect();
 
-                System.out.println("A new database successfully created..."); 
-                System.out.println("new database path --> "+ DB_DIRECTORY + db_name + ".db");
-                //connect to db
-                this.connection = this.connect();
-                //if connection was successful
-                if(this.connection != null) {
-                	Statement state = this.connection.createStatement();
-                	//create table types as needed
-                	for(TableType table : TableType.values()) {
-                		//if a table type isnt already in the database -> create it
-                		if(this.getTable(table.toString()) == null) {
-                			state.execute(table.sqlCreateTable);
-                		}
-                	}	
-                }               
-            }
- 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());  
+        if (this.connection != null) {
+
+            System.out.println("connected to database --> "+ DB_DIRECTORY + db_name + ".db");
+
+        	Statement state = null;
+			try {
+				state = this.connection.createStatement();
+	        	//create table types as needed
+	        	for(TableType table : TableType.values()) {
+	        		//if a table type isnt already in the database -> create it
+	        		if(this.getTable(table.toString()) == null) {
+							state.execute(table.sqlCreateTable);
+	        		}
+	        	}
+        	}catch(Exception e) {
+        		System.out.println(e.getMessage());
+        	}             
+        }else {
+        	System.out.println("connecttion to database " + DB_DIRECTORY + db_name + ".db" + " could not be established");
         }
 	}
 	
@@ -80,25 +78,17 @@ public class Database {
 	 * @return	connecttion to database
 	 */
 	
-	public Connection connect() {
+	public void connect() {
 		if(this.connection == null) {
 	        try {
 	            // db parameters
 	            String url = "jdbc:sqlite:"+ DB_DIRECTORY + this.name + ".db";
 	            // create a connection to the database
 	            this.connection = DriverManager.getConnection(url);
-	            System.out.println("connection to database established");
-	            return this.connection;
-	            
 	        } catch (SQLException e) {
 	            System.out.println(e.getMessage());
 	        }
-	        System.out.println("connection to database failed");
-	        return null;
-		}else {
-			return this.connection;
 		}
-
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -111,7 +101,7 @@ public class Database {
 	 */
 	
 	public ResultSet getTable(String table_name) {
-		if(this.connect() ==  null) {
+		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return null;
 		}
@@ -140,7 +130,7 @@ public class Database {
 	 * @return	if insertion was successful
 	 */
 	public boolean addEntry(TableType table, String... values) {
-		if(this.connect() == null) {
+		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
 		}
@@ -148,6 +138,9 @@ public class Database {
 			System.out.println("error inserting into table "+ table.toString() + ": number of fields provided does not equal number of fields needed");
 			return false;
 		}
+		//check if entry exists in database
+		
+		
 		try {
 			PreparedStatement prep = this.connection.prepareStatement(table.sqlInsertTable);
 			for(int i = 0; i < values.length; i++) {
@@ -174,7 +167,7 @@ public class Database {
 	 * @return	if deletion was successful
 	 */
 	public boolean deleteEntry(TableType table, String... searchKeys) {
-		if(this.connect() == null) {
+		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
 		}
@@ -223,7 +216,7 @@ public class Database {
 	 */
 	public List<String[]> search(TableType table, String... searchKeys) {
 		ResultSet result = null;
-		if(this.connect() == null) {
+		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return null;
 		}
@@ -300,7 +293,7 @@ public class Database {
 			}
 			return table;
 		} catch (SQLException e) {
-			System.out.println("error converting ResultSet to 2D array");
+			System.out.println("error converting ResultSet to list");
 		}
 		return null;
 	} 
