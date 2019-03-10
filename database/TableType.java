@@ -1,7 +1,6 @@
 package database;
 
 
-
 /**	enumeration definition for each table type in the database
  * 
  * @author Regan Lynch
@@ -16,7 +15,7 @@ public enum TableType {
 	
 	
 	//id, username, password, fname, lname, DOB, createdAt
-	users("id","varchar(60)", "username","varchar(60)", "password","varchar(60)", "fname","varchar(60)", "lname","varchar(60)", "DoB", "varchar(60)", "createdAt", "varchar(60)", "id"),
+	users("id","varchar(60)", "username","varchar(60)", "fname","varchar(60)", "lname","varchar(60)", "DoB", "varchar(60)", "createdAt", "varchar(60)", "salted_password","varchar(60)","salt", "varchar(60)", "id"),
 	
 	//id, userID, tripTitle, destination, startDate, endDate
 	trips("id", "varchar(60)", "userID", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "id" ),
@@ -60,7 +59,6 @@ public enum TableType {
 	}
 	
 	/**
-	 *
 	 *  generates the sql statement required to initialize a table type
 	 */
 	private void generateCreateTableSQL() {
