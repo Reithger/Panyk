@@ -1,6 +1,9 @@
 package model.user;
 
+import java.util.Calendar;
 import java.util.HashMap;
+
+import database.*;
 import model.trip.Trip;
 
 /**
@@ -12,6 +15,14 @@ import model.trip.Trip;
  *
  */
 
+/**
+ * @author Regan
+ *
+ */
+/**
+ * @author Regan
+ *
+ */
 public class User {
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -24,15 +35,37 @@ public class User {
 	private String password;
 	
 //---  Constructors   -------------------------------------------------------------------------
-	
-	/**
-	 * 
-	 * 
-	 */
-	
-	public User() 
-	{
 		
+	
+	/**	creates a user object, also creates an entry in the database for this user
+	 * 
+	 * - values ARE NOT CHECKED before entering them into the db 
+	 * 				-> make sure values are in proper format prior to creating a user object
+	 * 
+	 * @param fname
+	 * @param lname
+	 * @param username
+	 * @param password
+	 * @param DOB
+	 */
+	public User(String fname, String lname, String username, String password, String DOB) 
+	{
+		this.username = username;
+		this.password = password;
+		int ID = this.generateUserID();
+		String day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+		String month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
+		String year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+		if(month.length() == 1) {
+			month = "0" + month;
+		}
+		if(day.length() == 1) {
+			day = "0" + day;
+		}
+		String createdOn = year + "-" + month + "-" + day;
+		
+		Database db = new Database();
+		db.addEntry(TableType.users, Integer.toString(ID), username, password, fname, lname, DOB, createdOn);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -82,4 +115,17 @@ public class User {
 		return false;
 	}
 	
+	/* - generate a user ID based on the username
+	 * - we base the ID off the user name as we want each ID to be distinct from the others (just like username)
+	 * 
+	 * -technically this algorithm doesnt produce unique user IDs (if two usernames have the same letters in them then the userIDS will be the same ) //TODO: fix this!
+	 * */
+	private int generateUserID() {
+		int sum = 0;
+		for(int i = 0; i < this.username.length(); i++) {
+			sum += (int) this.username.charAt(i);
+		}
+		return sum;
+	}
+
 }
