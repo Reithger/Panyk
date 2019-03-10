@@ -3,6 +3,7 @@ package model.user;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import controller.Encryptor;
 import database.*;
 import model.trip.Trip;
 
@@ -12,17 +13,9 @@ import model.trip.Trip;
  * information, so it seemed a good focal point.)
  * 
  * @author Mac Clevinger
- *
+ * @author Regan Lynch
  */
 
-/**
- * @author Regan
- *
- */
-/**
- * @author Regan
- *
- */
 public class User {
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -64,8 +57,10 @@ public class User {
 		}
 		String createdOn = year + "-" + month + "-" + day;
 		
+		String[] hash = Encryptor.createSaltedHash(password);
+		
 		Database db = new Database();
-		db.addEntry(TableType.users, Integer.toString(ID), username, password, fname, lname, DOB, createdOn);
+		db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
