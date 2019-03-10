@@ -118,7 +118,6 @@ public class Display {
 	 * settings allocation. Just click the continue button for log-in.
 	 * 
 	 */
-	
 	private void initialScreen() 
 	{
 		ElementPanel titlePanel = new ElementPanel(0, 0, display.getWidth(), display.getHeight()) {
