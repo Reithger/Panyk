@@ -27,6 +27,10 @@ public class Database {
 	/** */
 	private static final String DB_DIRECTORY = System.getProperty("user.dir").replaceAll("\\\\", "/") + "/";  	//get the current directory of the user (ie: where the program is installed)
 	
+	/** 
+	 * static final database name -> so that other classes can access the database
+	 * */
+	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
@@ -42,15 +46,15 @@ public class Database {
 	 * @param db_name - String object
 	 */
 	
-	public Database(String db_name) {
-		this.name = db_name;
+	public Database() {
+		this.name = DB_NAME;
    	 	this.connection = null;
 		
         this.connect();
 
         if (this.connection != null) {
 
-            System.out.println("connected to database --> "+ DB_DIRECTORY + db_name + ".db");
+            System.out.println("connected to database --> "+ DB_DIRECTORY + this.name + ".db");
 
         	Statement state = null;
 			try {
@@ -66,7 +70,7 @@ public class Database {
         		System.out.println(e.getMessage());
         	}             
         }else {
-        	System.out.println("connecttion to database " + DB_DIRECTORY + db_name + ".db" + " could not be established");
+        	System.out.println("connecttion to database " + DB_DIRECTORY + this.name + ".db" + " could not be established");
         }
 	}
 	
