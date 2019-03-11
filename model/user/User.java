@@ -59,7 +59,11 @@ public class User {
 		String[] hash = Encryptor.createSaltedHash(password);
 		
 		Database db = new Database();
-		db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+		boolean result = db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+		if(!result) {
+			username = null;
+			password = null;
+		}
 	}
 	
 	public User(String usernameIn, String passwordIn) {
@@ -127,4 +131,18 @@ public class User {
 		return sum;
 	}
 
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	public boolean validate() {
+		return username != null && password != null;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
 }

@@ -7,5 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="lib" path="C:/Users/Reithger/Documents/GitHub/Panyk/svi.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Reithger/Documents/GitHub/Panyk/sqlite_driver.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -130,6 +130,8 @@ public class Database {
 	
 	public boolean checkUserExists(String username) {
 		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
+		if(users == null)
+			return false;
 		return(users.size() != 0);
 	}
 	
@@ -178,6 +180,7 @@ public class Database {
 			}
 			prep.executeUpdate();
 		} catch(Exception e) {
+			e.printStackTrace();
 			System.out.println("-----");
 			System.out.println("ERROR inserting id: " + values[0] + "  into " + table.toString() + " database");
 			System.out.println("primary key " + values[0] + " already exists in table");

@@ -184,6 +184,12 @@ public class Display {
 					String uname = this.getElementStoredText("text_username");
 					String pass  = this.getElementStoredText("text_password");
 					
+					Communication.set(Intermediary.CREATE_USER_FIRSTNAME, fn);
+					Communication.set(Intermediary.CREATE_USER_LASTNAME, ln);
+					Communication.set(Intermediary.CREATE_USER_DOB, dob);
+					Communication.set(Intermediary.CREATE_USER_USERNAME, uname);
+					Communication.set(Intermediary.CREATE_USER_PASSWORD, pass);
+					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_USER_CREATE);
 				}
 				else if(event == EVENT_BACK_TO_LOGIN) {
@@ -227,8 +233,15 @@ public class Display {
 		display.addPanel("Create Account", createAcc);
 	}
 
+	/**
+	 * 
+	 */
+	
 	public void tripSelectScreen() {
-		
+		ElementPanel tS = new ElementPanel(0, 0, width, height);
+		tS.addRectangle("back1", 0, 0, 0, width, height, COLOR_ONE, false);
+		tS.addText("tex1", 5, width/2, height/2, width/10, height/10, "Select Trip", FONT_TWO, true);
+		display.add(tS);
 	}
 	
 	/**
@@ -264,30 +277,4 @@ public class Display {
 		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
 	
-	//---------------------------------------------------------------------------------------------
-	
-	/** determines if a string (dob) is in the format YYYY-MM-DD
-	 * 
-	 * @param dob
-	 * @return
-	 */
-	private static boolean validDOB(String dob) {
-		String[] split = dob.split("-");
-		if(split.length != 3) {
-			return false;
-		}
-		try {
-			int year = Integer.parseInt(split[0]);
-			int month = Integer.parseInt(split[1]);
-			int day = Integer.parseInt(split[2]);
-			if(month > 12 || day > 31 || year > Calendar.getInstance().get(Calendar.YEAR)) {		//if the year is greater than the current year
-				return false;
-			}
-		}catch(Exception e) {
-			return false;
-		}
-		return true;
-	}
-
 }
-

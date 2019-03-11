@@ -1,5 +1,6 @@
 package intermediary;
 
+import java.util.Calendar;
 import java.util.Timer;
 
 import database.Database;
@@ -74,7 +75,7 @@ public class Intermediary {
 	
 	public void clock() {
 		String happen = Communication.get(CONTROL);
-		//System.out.println(happen);
+		Communication.set(CONTROL, CONTROL_NULL);
 		if(happen == null)
 			return;
 		switch(happen) {
@@ -117,30 +118,78 @@ public class Intermediary {
 		String firstname = Communication.get(CREATE_USER_FIRSTNAME);
 		String lastname = Communication.get(CREATE_USER_LASTNAME);
 		
+		if(username == null || username.equals("")) {
+			System.out.println("Username invalid during User Account Creation: Intermediary > createNewUser");
+			return;
+		}
+		if(password == null || password.equals("")) {
+			System.out.println("Password invalid during User Account Creation: Intermediary > createNewUser");
+			return;
+		}
+		if(dob == null || dob.equals("") || !validDOB(dob)) {
+			System.out.println("D.O.B. invalid during User Account Creation: Intermediary > createNewUser");
+			return;
+		}
+		if(firstname == null || firstname.equals("")) {
+			System.out.println("Firstname invalid during User Account Creation: Intermediary > createNewUser");
+			return;
+		}
+		if(lastname == null || lastname.equals("")) {
+			System.out.println("Lastname invalid during User Account Creation: Intermediary > createNewUser");
+			return;
+		}
+			
 		boolean checkExists = database.checkUserExists(username);
 		if(!checkExists) {
 			user = new User(firstname, lastname, username, password, dob);
+			if(user.validate()) {
+				Communication.set(CONTROL, CONTROL_TRIP_SELECT);
+			}
 		}
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
 	
 	private void goToLogin() {
-		Communication.set(CONTROL, CONTROL_NULL);
 		display.resetView();
 		display.logInScreen();
 	}
 	
 	private void goToCreateAccount() {
-		Communication.set(CONTROL, CONTROL_NULL);
 		display.resetView();
 		display.createAccountScreen();
 	}
 
 	private void goToTripSelect() {
-		Communication.set(CONTROL, CONTROL_NULL);
 		display.resetView();
 		display.createAccountScreen();
 	}
 	
+//---  Mechanics   ----------------------------------------------------------------------------	
+	
+	/** 
+	 * This method determines if a string (dob) is in the format YYYY-MM-DD
+	 * 
+	 * @param dob
+	 * @return
+	 */
+	
+	private static boolean validDOB(String dob) {
+		String[] split = dob.split("-");
+		if(split.length != 3) {
+			return false;
+		}
+		try {
+			int year = Integer.parseInt(split[0]);
+			int month = Integer.parseInt(split[1]);
+			int day = Integer.parseInt(split[2]);
+			if(month > 12 || day > 31 || year > Calendar.getInstance().get(Calendar.YEAR)) {		//if the year is greater than the current year
+				return false;
+			}
+		}
+		catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
 }
