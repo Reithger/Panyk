@@ -180,13 +180,11 @@ public class Display {
 					//create the user based on passed in information
 					String fn    = this.getElementStoredText("text_firstname");
 					String ln    = this.getElementStoredText("text_lastname");
-					String dob   = this.getElementStoredText("text_dob");
 					String uname = this.getElementStoredText("text_username");
 					String pass  = this.getElementStoredText("text_password");
 					
 					Communication.set(Intermediary.CREATE_USER_FIRSTNAME, fn);
 					Communication.set(Intermediary.CREATE_USER_LASTNAME, ln);
-					Communication.set(Intermediary.CREATE_USER_DOB, dob);
 					Communication.set(Intermediary.CREATE_USER_USERNAME, uname);
 					Communication.set(Intermediary.CREATE_USER_PASSWORD, pass);
 					
@@ -200,31 +198,27 @@ public class Display {
 		//background
 		createAcc.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
 		//title
-		createAcc.addText("create_acc_title", 1, width/2, 65, width, height/5, "Create your account", FONT_TWO, true);
+		createAcc.addText("create_acc_title", 1, width/2, 95, width, height/5, "Create your account", FONT_TWO, true);
 		//first name
-		createAcc.addText("fn", 2, width/2, 130, 200, 100, "First name", FONT_ONE, true);
-		designTextField(createAcc, "firstname", width/2, 130, 200, 30, 3, 10002, true);
+		createAcc.addText("fn",              2, width/2, 180, 200, 100, "First name", FONT_ONE, true);
+		designTextField(createAcc, "firstname", width/2, 180, 200, 30, 3, 10002, true);
 
 		//last name
-		createAcc.addText("ln", 4, width/2, 200, 200, 100, "Last name", FONT_ONE, true);
-		designTextField(createAcc, "lastname", width/2, 200, 200, 30, 5, 10003, true);
-
-		//DOB
-		createAcc.addText("dob", 4, width/2, 270, 500, 100, "Date of birth (YYYY-MM-DD)", FONT_ONE, true);
-		designTextField(createAcc, "dob", width/2, 270, 200, 30, 5, 10007, true);
+		createAcc.addText("ln",             4, width/2, 250, 200, 100, "Last name", FONT_ONE, true);
+		designTextField(createAcc, "lastname", width/2, 250, 200, 30, 5, 10003, true);
 
 		//username
-		createAcc.addText("uname", 6, width/2, 340, 200, 100, "Username", FONT_ONE, true);
-		designTextField(createAcc, "username", width/2, 340, 200, 30, 7, 10004, true);
+		createAcc.addText("uname",          6, width/2, 320, 200, 100, "Username", FONT_ONE, true);
+		designTextField(createAcc, "username", width/2, 320, 200, 30, 7, 10004, true);
 
 		//password
-		createAcc.addText("pass", 8, width/2, 410, 200, 100, "Password", FONT_ONE, true);
-		designTextField(createAcc, "password", width/2, 410, 200, 30, 9, 10005, true);
+		createAcc.addText("pass",           8, width/2, 390, 200, 100, "Password", FONT_ONE, true);
+		designTextField(createAcc, "password", width/2, 390, 200, 30, 9, 10005, true);
 
 		//create account button
-		createAcc.addRectangle("but_rect", 10, width/2, height - 110, width/8, height/20,  COLOR_LOGIN , true);
-		createAcc.addText("but_text",      11, width/2, height - 110, width, height/20 - 10, "Create my account!", FONT_ENTRY, true);
-		createAcc.addButton("create_but",  12, width/2, height - 110, width/9, height/20, EVENT_CREATE_ACC_FINALIZE, true);
+		createAcc.addRectangle("but_rect", 10, width/2, height - 130, width/8, height/20,  COLOR_LOGIN , true);
+		createAcc.addText("but_text",      11, width/2, height - 130, width, height/20 - 10, "Create my account!", FONT_ENTRY, true);
+		createAcc.addButton("create_but",  12, width/2, height - 130, width/9, height/20, EVENT_CREATE_ACC_FINALIZE, true);
 		//create a back button
 		createAcc.addRectangle("btn_back_rect", 26, 50, height - 100, 90, 30,  COLOR_ERR , false);
 		createAcc.addText("but_back_text",      27, 80, height - 95,  90, 30, "back", FONT_ENTRY, false);
@@ -294,3 +288,4 @@ public class Display {
 	}
 	
 }
+
