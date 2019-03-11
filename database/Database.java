@@ -1,4 +1,3 @@
-
 package database;
 
 import java.sql.Connection;
@@ -29,49 +28,57 @@ public class Database {
 	private static final String DB_DIRECTORY = System.getProperty("user.dir").replaceAll("\\\\", "/") + "/";  	//get the current directory of the user (ie: where the program is installed)
 	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
+
 	
-//---  Instance Variables   -------------------------------------------------------------------
+//---  static Variables   -------------------------------------------------------------------
 	
 	/** */
-	private String name;
+	private static String name;
 	/** */
-	private Connection connection;
+	private static Connection connection;
+	
+	//keeping track of if the database has been initialized 
+	private static boolean db_is_initialized;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
-	 * Constructor for objects of the Database type; initializes a new database with name db_name.
-	 * 
-	 * @param db_name - String object
+	 * initializes the db
 	 */
 	
-	public Database() {
-		this.name = DB_NAME;
-   	 	this.connection = null;
+	private static void initialize() {
+		if(db_is_initialized) {
+			return;
+		}else {
+			db_is_initialized = true;
+		}
 		
-        this.connect();
+		name = DB_NAME;
+   	 	connection = null;
+		
+        connect();
 
-        if (this.connection != null) {
-            System.out.println("connected to database --> "+ DB_DIRECTORY + this.name + ".db");
+        if (connection != null) {
+            System.out.println("connected to database --> "+ DB_DIRECTORY + name + ".db");
 
         	Statement state = null;
 			try {
-				state = this.connection.createStatement();
+				state = connection.createStatement();
 	        	//create table types as needed
 	        	for(TableType table : TableType.values()) {
 	        		//if a table type isn't already in the database -> create it
-	        		if(this.getTable(table.toString()) == null) {
+	        		if(getTable(table.toString()) == null) {
 							state.execute(table.sqlCreateTable);
 	        		}
 	        	}
-	        	//close connection
         	}
 			catch(Exception e) {
         		System.out.println(e.getMessage());
-        	}   
+        	}
         }
         else {
-        	System.out.println("Connection to database " + DB_DIRECTORY + this.name + ".db" + " could not be established");
+        	System.out.println("Connection to database " + DB_DIRECTORY + name + ".db" + " could not be established");
+        	db_is_initialized = false;
         }
 	}
 	
@@ -83,13 +90,13 @@ public class Database {
 	 * 
 	 */
 	
-	public void connect() {
-		if(this.connection == null) {
+	private static void connect() {
+		if(connection == null) {
 	        try {
 	            // db parameters
-	            String url = "jdbc:sqlite:"+ DB_DIRECTORY + this.name + ".db";
+	            String url = "jdbc:sqlite:"+ DB_DIRECTORY + name + ".db";
 	            // create a connection to the database
-	            this.connection = DriverManager.getConnection(url);
+	            connection = DriverManager.getConnection(url);
 	        } catch (SQLException e) {
 	            System.out.println(e.getMessage());
 	        }
@@ -105,16 +112,19 @@ public class Database {
 	 * @return
 	 */
 	
-	public ResultSet getTable(String table_name) {
-		this.connect();
-		if(this.connection == null) {
+	private static ResultSet getTable(String table_name) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
 			System.out.println("no connection can be established to the database");
 			return null;
 		}
 		Statement state=null;
 		ResultSet result=null;
 		try {
-			state=this.connection.createStatement();
+			state=connection.createStatement();
 		}catch(SQLException sqlE1) {
 			return null;
 		}
@@ -132,8 +142,11 @@ public class Database {
 	 * @return
 	 */
 	
-	public boolean checkUserExists(String username) {
-		this.connect();
+	public static boolean checkUserExists(String username) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
 		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
 		if(users == null)
 			return false;
@@ -147,8 +160,11 @@ public class Database {
 	 * @return
 	 */
 	
-	public boolean checkValidPassword(String username, String password) {
-		this.connect();
+	public static boolean checkValidPassword(String username, String password) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
 		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
 		if(users.size() != 0) {
 			String salt = users.get(0)[7];
@@ -169,9 +185,12 @@ public class Database {
 	 * @return - Returns a boolean value representing whether or not the insertion was successful
 	 */
 	
-	public boolean addEntry(TableType table, String ... values) {
-		this.connect();
-		if(this.connection == null) {
+	public static boolean addEntry(TableType table, String ... values) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
 		}
@@ -181,7 +200,7 @@ public class Database {
 		}
 		//check if entry exists in database
 		try {
-			PreparedStatement prep = this.connection.prepareStatement(table.sqlInsertTable);
+			PreparedStatement prep = connection.prepareStatement(table.sqlInsertTable);
 			for(int i = 0; i < values.length; i++) {
 				prep.setString(i + 1, values[i]);
 			}
@@ -207,9 +226,12 @@ public class Database {
 	 * @return - Returns a boolean value representing the result of deletion; true if successful, false otherwise
 	 */
 	
-	public boolean deleteEntry(TableType table, String... searchKeys) {
-		this.connect();
-		if(this.connection == null) {
+	public static boolean deleteEntry(TableType table, String... searchKeys) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
 		}
@@ -234,7 +256,7 @@ public class Database {
 			}
 			sqlDelete += ";";
 			if(nullCount != searchKeys.length) {
-				PreparedStatement prep = this.connection.prepareStatement(sqlDelete);
+				PreparedStatement prep = connection.prepareStatement(sqlDelete);
 				prep.executeUpdate();
 			}else {
 				System.out.println("error deleting table: " + table.toString() + " --> no search keys defined");
@@ -257,10 +279,13 @@ public class Database {
 	 * @return - Returns a List<<r>String[]> object containing elements that matched your search
 	 */
 
-	public List<String[]> search(TableType table, String... searchKeys) {
-		this.connect();
+	public static List<String[]> search(TableType table, String... searchKeys) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
 		ResultSet result = null;
-		if(this.connection == null) {
+		if(connection == null) {
 			System.out.println("no connection can be established to the database");
 			return null;
 		}
@@ -287,11 +312,11 @@ public class Database {
 			if(nullCount != searchKeys.length) {
 				Statement state=null;
 				try {
-					state=this.connection.createStatement();
+					state=connection.createStatement();
 					result=state.executeQuery(sqlSearch);
 					return ResultSetToList(result);
 				}catch(SQLException sqlE2) {
-					this.connection.close();
+					connection.close();
 					return null;
 				}
 			}else {
@@ -313,8 +338,11 @@ public class Database {
 	 */
 	
 	public void printTable(TableType type) {
-		this.connect();
-		DBTablePrinter.printTable(this.connection, type.toString());
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		DBTablePrinter.printTable(connection, type.toString());
 	}
 	
 // -- Helper Methods --------------------------------------------------------------------------
@@ -346,3 +374,5 @@ public class Database {
 	} 
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------
+
+
