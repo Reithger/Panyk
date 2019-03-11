@@ -1,3 +1,4 @@
+
 package database;
 
 import java.sql.Connection;
@@ -63,10 +64,11 @@ public class Database {
 							state.execute(table.sqlCreateTable);
 	        		}
 	        	}
+	        	//close connection
         	}
 			catch(Exception e) {
         		System.out.println(e.getMessage());
-        	}             
+        	}   
         }
         else {
         	System.out.println("Connection to database " + DB_DIRECTORY + this.name + ".db" + " could not be established");
@@ -104,6 +106,7 @@ public class Database {
 	 */
 	
 	public ResultSet getTable(String table_name) {
+		this.connect();
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return null;
@@ -130,6 +133,7 @@ public class Database {
 	 */
 	
 	public boolean checkUserExists(String username) {
+		this.connect();
 		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
 		if(users == null)
 			return false;
@@ -144,6 +148,7 @@ public class Database {
 	 */
 	
 	public boolean checkValidPassword(String username, String password) {
+		this.connect();
 		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
 		if(users.size() != 0) {
 			String salt = users.get(0)[7];
@@ -165,6 +170,7 @@ public class Database {
 	 */
 	
 	public boolean addEntry(TableType table, String ... values) {
+		this.connect();
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
@@ -202,6 +208,7 @@ public class Database {
 	 */
 	
 	public boolean deleteEntry(TableType table, String... searchKeys) {
+		this.connect();
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
@@ -251,6 +258,7 @@ public class Database {
 	 */
 
 	public List<String[]> search(TableType table, String... searchKeys) {
+		this.connect();
 		ResultSet result = null;
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
@@ -283,6 +291,7 @@ public class Database {
 					result=state.executeQuery(sqlSearch);
 					return ResultSetToList(result);
 				}catch(SQLException sqlE2) {
+					this.connection.close();
 					return null;
 				}
 			}else {
@@ -304,6 +313,7 @@ public class Database {
 	 */
 	
 	public void printTable(TableType type) {
+		this.connect();
 		DBTablePrinter.printTable(this.connection, type.toString());
 	}
 	
