@@ -59,8 +59,6 @@ public class Intermediary {
 	private Display display;
 	/** The User object is the contact point this Intermediary object has to the Model for data access/manipulation*/
 	private User user;
-	/** Database object containing user data regarding their username/account and Trip info*/
-	private Database database;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -74,7 +72,6 @@ public class Intermediary {
 		display = new Display(1000, 600);
 		timer = new Timer();
 		timer.schedule(new TimerRepeat(this), 0, REFRESH_RATE);
-		database = new Database();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -124,12 +121,12 @@ public class Intermediary {
 	public void attemptLogin() {
 		String username = Communication.get(LOGIN_USERNAME);
 		String password = Communication.get(LOGIN_PASSWORD);
-		boolean validUsername = database.checkUserExists(username);
+		boolean validUsername = Database.checkUserExists(username);
 		if(!validUsername) {
 			errorReport("Invalid Username");
 			return;
 		}
-		boolean validPassword = database.checkValidPassword(username, password);
+		boolean validPassword = Database.checkValidPassword(username, password);
 		if(!validPassword) {
 			errorReport("Invalid Password");
 			return;
@@ -185,7 +182,7 @@ public class Intermediary {
 			return;
 		}
 			
-		boolean checkExists = database.checkUserExists(username);
+		boolean checkExists = Database.checkUserExists(username);
 		if(!checkExists) {
 			user = new User(firstname, lastname, username, password, dob);
 			if(user.validate()) {
