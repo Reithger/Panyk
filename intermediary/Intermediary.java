@@ -17,6 +17,9 @@ import view.Display;
  * As little work as possible should be done here, this is the fulcrum point where info is
  * moved and instructions are given, not where computation is done. Abstract it away.
  * 
+ * Which is to say, let the Model do Model things and the View do View things, and let this
+ * class do the communication between the two.
+ * 
  * @author Mac Clevinger
  *
  */
@@ -56,12 +59,14 @@ public class Intermediary {
 	private Display display;
 	/** The User object is the contact point this Intermediary object has to the Model for data access/manipulation*/
 	private User user;
-	/** */
+	/** Database object containing user data regarding their username/account and Trip info*/
 	private Database database;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
+	 * Constructor for objects of the Intermediary type: sets the size of the Display and
+	 * starts the Timer for having the clock() method be called repeatedly.
 	 * 
 	 */
 	
@@ -75,7 +80,14 @@ public class Intermediary {
 //---  Operations   ---------------------------------------------------------------------------
 	
 	/**
+	 * This method represents the control structure of the program, constantly querying the Communication
+	 * singleton object for updates as to what behaviors should occur in the Display and Model objects. 
 	 * 
+	 * Based on the values assigned to the CONTROL key in the Communication object's HashMap<<r>String, String>,
+	 * different methods in the Intermediary class are called to perform certain actions (ideally queries and
+	 * commands are sent along to the Display and Model, but some things are convenient to do here.)
+	 * 
+	 * Uses the TimerRepeat class to have a Timer repeatedly order this class to call clock().
 	 * 
 	 */
 	
@@ -85,20 +97,28 @@ public class Intermediary {
 		if(happen == null)
 			return;
 		switch(happen) {
-			case CONTROL_LOGIN_SCREEN: goToLogin(); break;
-			case CONTROL_ATTEMPT_LOGIN: attemptLogin(); break;
-			case CONTROL_USER_CREATE: goToCreateAccount(); break;
-			case CONTROL_TRIP_SELECT: goToTripSelect(); break;
-			case CONTROL_ATTEMPT_USER_CREATE: createNewUser(); break;
+			case CONTROL_ATTEMPT_LOGIN:			//Attempts to log-in with the provided information 
+				attemptLogin(); break;
+			case CONTROL_ATTEMPT_USER_CREATE: 	//Attempts to create a new user with the provided information
+				createNewUser(); break;
+			case CONTROL_LOGIN_SCREEN: 			//Orders display to show the log-in screen
+				goToLogin(); break;
+			case CONTROL_USER_CREATE: 			//Orders display to show the create account screen
+				goToCreateAccount(); break;
+			case CONTROL_TRIP_SELECT: 			//Orders display to show the trip select screen
+				goToTripSelect(); break;
 			default: break;
 		}
 	}
 	
 	/**
+	 * This method requests the information stored by the Display in Communication's LOGIN_USERNAME
+	 * and LOGIN_PASSWORD key-values, passing that information to the Database to ensure that
+	 * the username already exists and that the password is valid.
 	 * 
+	 * Errors are shown to the user if either input is invalid, otherwise the User object is initialized
+	 * and CONTROL is set to CONTROL_TRIP_SELECT.
 	 * 
-	 * @param username
-	 * @param password
 	 */
 	
 	public void attemptLogin() {
@@ -106,16 +126,31 @@ public class Intermediary {
 		String password = Communication.get(LOGIN_PASSWORD);
 		boolean validUsername = database.checkUserExists(username);
 		if(!validUsername) {
-			//error one
+			errorReport("Invalid Username");
 			return;
 		}
 		boolean validPassword = database.checkValidPassword(username, password);
 		if(!validPassword) {
-			//error two
+			errorReport("Invalid Password");
 			return;
 		}
 		user = new User(username, password);
+		Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 	}
+	
+	/**
+	 * This method requests the information stored by Display in Communication's CREATE_USER_{USERNAME,
+	 * PASSWORD, DOB, FIRSTNAME, LASTNAME} for use in creating a new database entry for a new user
+	 * with that information.
+	 * 
+	 * Errors in data provision are reported to the user, otherwise the database checks if a user already
+	 * exists by that name. If no such name is used, a User object is created with that information,
+	 * its constructor communicating with the database for creating an entry.
+	 * 
+	 * The new User is then validated to ensure a username and password are present; if so, CONTROL is
+	 * set to CONTROL_TRIP_SELECT.
+	 * 
+	 */
 	
 	public void createNewUser() {
 		String username = Communication.get(CREATE_USER_USERNAME);
@@ -156,30 +191,56 @@ public class Intermediary {
 			if(user.validate()) {
 				Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 			}
+			else {
+				errorReport("Failure to validate user");
+			}
+		}
+		else {
+			errorReport("Username already in use");
 		}
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
+	
+	/**
+	 * This method navigates the Display to the logIn screen by hiding the current
+	 * panels in the WindowFrame and calling display.logInScreen().
+	 * 
+	 */
 	
 	private void goToLogin() {
 		display.resetView();
 		display.logInScreen();
 	}
 	
+	/**
+	 * This method navigates the Display to the createAccount screen by hiding the current
+	 * panels in the WindowFrame and calling display.createAccountScreen().
+	 * 
+	 */
+	
 	private void goToCreateAccount() {
 		display.resetView();
 		display.createAccountScreen();
 	}
+	
+	/**
+	 * This method navigates the Display to the tripSelect screen by hiding the current
+	 * panels in the WindowFrame and calling display.tripSelectScreen().
+	 * 
+	 */
 
 	private void goToTripSelect() {
 		display.resetView();
-		display.createAccountScreen();
+		display.tripSelectScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
 	
 	/** 
 	 * This method determines if a string (dob) is in the format YYYY-MM-DD
+	 * 
+	 * TODO: It doesn't check if the first String is 4 characters long; is that desired? 
 	 * 
 	 * @param dob
 	 * @return
@@ -203,6 +264,13 @@ public class Intermediary {
 		}
 		return true;
 	}
+	
+	/**
+	 * This method redirects the given String to the Display to create an error report box to 
+	 * display an error to the user; the design of the box is to close on being clicked.
+	 * 
+	 * @param displayError - String object representing the error message to display to the User.
+	 */
 
 	private void errorReport(String displayError) {
 		display.errorBox(displayError);

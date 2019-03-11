@@ -240,7 +240,7 @@ public class Display {
 	public void tripSelectScreen() {
 		ElementPanel tS = new ElementPanel(0, 0, width, height);
 		tS.addRectangle("back1", 0, 0, 0, width, height, COLOR_ONE, false);
-		tS.addText("tex1", 5, width/2, height/2, width/10, height/10, "Select Trip", FONT_TWO, true);
+		tS.addText("tex1", 5, width/2, height/2, width, height/10, "Select Trip", FONT_TWO, true);
 		display.add(tS);
 	}
 	

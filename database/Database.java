@@ -51,7 +51,6 @@ public class Database {
         this.connect();
 
         if (this.connection != null) {
-
             System.out.println("connected to database --> "+ DB_DIRECTORY + this.name + ".db");
 
         	Statement state = null;
@@ -59,16 +58,18 @@ public class Database {
 				state = this.connection.createStatement();
 	        	//create table types as needed
 	        	for(TableType table : TableType.values()) {
-	        		//if a table type isnt already in the database -> create it
+	        		//if a table type isn't already in the database -> create it
 	        		if(this.getTable(table.toString()) == null) {
 							state.execute(table.sqlCreateTable);
 	        		}
 	        	}
-        	}catch(Exception e) {
+        	}
+			catch(Exception e) {
         		System.out.println(e.getMessage());
         	}             
-        }else {
-        	System.out.println("connecttion to database " + DB_DIRECTORY + this.name + ".db" + " could not be established");
+        }
+        else {
+        	System.out.println("Connection to database " + DB_DIRECTORY + this.name + ".db" + " could not be established");
         }
 	}
 	
@@ -77,7 +78,7 @@ public class Database {
 	/**
 	 * Gets connection to database 
 	 * 
-	 * @return	connecttion to database
+	 * 
 	 */
 	
 	public void connect() {

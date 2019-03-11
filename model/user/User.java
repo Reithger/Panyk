@@ -12,6 +12,8 @@ import model.trip.Trip;
  * Model (only one User is logged in at a time, and their info is necessary to access the
  * information, so it seemed a good focal point.)
  * 
+ * TODO: Need some way that the User retrieves/stores data from/to the Database
+ * 
  * @author Mac Clevinger
  * @author Regan Lynch
  */
@@ -29,16 +31,17 @@ public class User {
 	
 //---  Constructors   -------------------------------------------------------------------------
 		
-	/**	creates a user object, also creates an entry in the database for this user
+	/**	
+	 * Constructor for objects of the User type that creates an entry in the database for this User using
+	 * the provided input to the constructor; input is assumed to be perfect.
 	 * 
-	 * - values ARE NOT CHECKED before entering them into the db 
-	 * 				-> make sure values are in proper format prior to creating a user object
+	 * TODO: Handle bad input
 	 * 
-	 * @param fname
-	 * @param lname
-	 * @param username
-	 * @param password
-	 * @param DOB
+	 * @param fname - String object representing the First Name of this user
+	 * @param lname - String object representing the Last Name of this user
+	 * @param usernameIn - String object representing the Username of this user
+	 * @param passwordIn - String object representing the Password of this user
+	 * @param DOB - String object representing the Date of Birth of this user
 	 */
 	
 	public User(String fname, String lname, String usernameIn, String passwordIn, String DOB){
@@ -60,38 +63,46 @@ public class User {
 		
 		Database db = new Database();
 		boolean result = db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+		trips = new HashMap<String, Trip>();
 		if(!result) {
 			username = null;
 			password = null;
+			trips = null;
 		}
 	}
+	
+	/**
+	 * Constructor for objects of the User type that assumes an entry is extant for this user
+	 * and initializes the User object to have the provided username and password.
+	 * 
+	 * @param usernameIn - String object representing the Username of this user
+	 * @param passwordIn - String object representing the Password of this user
+	 */
 	
 	public User(String usernameIn, String passwordIn) {
 		username = usernameIn;
 		password = passwordIn;
+		trips = new HashMap<String, Trip>();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	/**
-	 * Attempts to retrieve data corresponding to the username associated to this User object and
-	 * decrypt it using the provided password. To check that the provided password correctly decoded
-	 * the data (and, thus, should permit access to that data), a term derived from the username and
-	 * password will be encrypted and embedded in the data to permit checking that the decrypted form
-	 * matches that which can be generated from the information provided by the user.
+	 * This method accesses the database entries associated to this User and constructs Trip
+	 * objects from that data for display/manipulation. 
 	 * 
-	 * TODO: encryption algorithm and data storage formatting
+	 * TODO: this!
 	 * 
-	 * @return
+	 * @return - Returns a boolean value describing the success of retrieving and using data from the database. 
 	 */
 	
 	private boolean retrieveData() {
-		
 		return false;
 	}
 	
 	/**
-	 * 
+	 * This method should create a new Trip object for the User to design/have access to.
+	 * TODO: Do this
 	 */
 	
 	private void makeTrip() {
@@ -101,7 +112,8 @@ public class User {
 	}
 	
 	/**
-	 * 
+	 * This method should delete the defined Trip object from the list stored by this User.
+	 * TODO: Do this, make sure we have confirmation messages before deletion
 	 */
 	
 	private void deleteTrip() {
@@ -109,20 +121,25 @@ public class User {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method converts the Trip data stored by this User to a format that can be put
+	 * into the Database.
+	 * TODO: Do this
+	 * @return - Returns a boolean value representing the success of this operation.
 	 */
 	
 	private boolean saveData() {
-		
 		return false;
 	}
 	
-	/* - generate a user ID based on the username
-	 * - we base the ID off the user name as we want each ID to be distinct from the others (just like username)
+	/* 
+	 * This method generates a user ID based on their username.
 	 * 
-	 * -technically this algorithm doesnt produce unique user IDs (if two usernames have the same letters in them then the userIDS will be the same ) //TODO: fix this!
-	 * */
+	 * TODO: if we want unique ID, it should in some way be separate from username otherwise it's
+	 * two identifiers that are effectively the same (if I can derive one from the other, security wise
+	 * it doesn't do anything.)
+	 * 
+	 */
+	
 	private int generateUserID() {
 		int sum = 0;
 		for(int i = 0; i < this.username.length(); i++) {
@@ -133,13 +150,32 @@ public class User {
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
+	/**
+	 * Getter method that queries whether or not the data stored by this User object
+	 * is valid; i.e, that it is not null and has been assigned properly.
+	 * 
+	 * @return - Returns a boolean value describing the state of this User; true if 'valid', false otherwise.
+	 */
+	
 	public boolean validate() {
 		return username != null && password != null;
 	}
 	
+	/**
+	 * Getter method that requests the user's username.
+	 * 
+	 * @return - Returns a String object representing the User object's username.
+	 */
+	
 	public String getUsername() {
 		return username;
 	}
+	
+	/**
+	 * Getter method that requests the user's password.
+	 * 
+	 * @return - Returns a String object representing the User object's password.
+	 */
 	
 	public String getPassword() {
 		return password;
