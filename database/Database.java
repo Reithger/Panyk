@@ -147,7 +147,7 @@ public class Database {
 			initialize();
 		}
 		connect();
-		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
+		List<String[]> users = search(TableType.users, username, null, null, null, null, null);
 		if(users == null)
 			return false;
 		return(users.size() != 0);
@@ -165,10 +165,10 @@ public class Database {
 			initialize();
 		}
 		connect();
-		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
+		List<String[]> users = search(TableType.users, username, null, null, null, null, null);
 		if(users.size() != 0) {
-			String salt = users.get(0)[7];
-			String real_salted_pass = users.get(0)[6];
+			String salt = users.get(0)[5];
+			String real_salted_pass = users.get(0)[4];
 			String calc_salted_pass = Encryptor.createSaltedHash(password, salt);
 			return real_salted_pass.equals(calc_salted_pass);
 		}
@@ -208,8 +208,8 @@ public class Database {
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("-----");
-			System.out.println("ERROR inserting id: " + values[0] + "  into " + table.toString() + " database");
-			System.out.println("primary key " + values[0] + " already exists in table");
+			System.out.println("ERROR inserting into table -> " + table.toString() + " ...");
+			System.out.println("primary key: " + values[0] + " already exists in "+ table.toString() +" table");
 			System.out.println("-----");
 			return false;
 		}
@@ -337,7 +337,7 @@ public class Database {
 	 * @param type - TableType object representing the table you want to print
 	 */
 	
-	public void printTable(TableType type) {
+	public static void printTable(TableType type) {
 		if(!db_is_initialized) {
 			initialize();
 		}
@@ -374,5 +374,4 @@ public class Database {
 	} 
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------
-
 
