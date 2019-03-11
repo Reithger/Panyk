@@ -61,8 +61,7 @@ public class User {
 		
 		String[] hash = Encryptor.createSaltedHash(password);
 		
-		Database db = new Database();
-		boolean result = db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+		boolean result = Database.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
 		trips = new HashMap<String, Trip>();
 		if(!result) {
 			username = null;
