@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Timer;
 
 import database.Database;
+import database.TableType;
 import input.Communication;
 import model.user.User;
 import view.Display;
@@ -47,7 +48,6 @@ public class Intermediary {
 	public final static String LOGIN_PASSWORD = "password";
 	public final static String CREATE_USER_USERNAME = "create_username";
 	public final static String CREATE_USER_PASSWORD = "create_password";
-	public final static String CREATE_USER_DOB = "create_dob";
 	public final static String CREATE_USER_FIRSTNAME = "create_firstname";
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
 
@@ -152,7 +152,6 @@ public class Intermediary {
 	public void createNewUser() {
 		String username = Communication.get(CREATE_USER_USERNAME);
 		String password = Communication.get(CREATE_USER_PASSWORD);
-		String dob = Communication.get(CREATE_USER_DOB);
 		String firstname = Communication.get(CREATE_USER_FIRSTNAME);
 		String lastname = Communication.get(CREATE_USER_LASTNAME);
 		
@@ -164,11 +163,6 @@ public class Intermediary {
 		if(password == null || password.equals("")) {
 			System.out.println("Password invalid during User Account Creation: Intermediary > createNewUser");
 			errorReport("Invalid Password");
-			return;
-		}
-		if(dob == null || dob.equals("") || !validDOB(dob)) {
-			System.out.println("D.O.B. invalid during User Account Creation: Intermediary > createNewUser");
-			errorReport("Invalid Date of Birth");
 			return;
 		}
 		if(firstname == null || firstname.equals("")) {
@@ -184,7 +178,7 @@ public class Intermediary {
 			
 		boolean checkExists = Database.checkUserExists(username);
 		if(!checkExists) {
-			user = new User(firstname, lastname, username, password, dob);
+			user = new User(firstname, lastname, username, password);
 			if(user.validate()) {
 				Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 			}
@@ -233,34 +227,6 @@ public class Intermediary {
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
-	
-	/** 
-	 * This method determines if a string (dob) is in the format YYYY-MM-DD
-	 * 
-	 * TODO: It doesn't check if the first String is 4 characters long; is that desired? 
-	 * 
-	 * @param dob
-	 * @return
-	 */
-	
-	private boolean validDOB(String dob) {
-		String[] split = dob.split("-");
-		if(split.length != 3) {
-			return false;
-		}
-		try {
-			int year = Integer.parseInt(split[0]);
-			int month = Integer.parseInt(split[1]);
-			int day = Integer.parseInt(split[2]);
-			if(month > 12 || day > 31 || year > Calendar.getInstance().get(Calendar.YEAR)) {		//if the year is greater than the current year
-				return false;
-			}
-		}
-		catch(Exception e) {
-			return false;
-		}
-		return true;
-	}
 	
 	/**
 	 * This method redirects the given String to the Display to create an error report box to 
