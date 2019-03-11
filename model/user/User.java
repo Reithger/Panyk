@@ -44,10 +44,9 @@ public class User {
 	 * @param DOB - String object representing the Date of Birth of this user
 	 */
 	
-	public User(String fname, String lname, String usernameIn, String passwordIn, String DOB){
+	public User(String fname, String lname, String usernameIn, String passwordIn){
 		username = usernameIn;
 		password = passwordIn;
-		int ID = this.generateUserID();
 		String day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 		String month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
 		String year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
@@ -61,7 +60,7 @@ public class User {
 		
 		String[] hash = Encryptor.createSaltedHash(password);
 		
-		boolean result = Database.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+		boolean result = Database.addEntry(TableType.users, username, fname, lname, createdOn, hash[0], hash[1]);
 		trips = new HashMap<String, Trip>();
 		if(!result) {
 			username = null;
@@ -127,26 +126,9 @@ public class User {
 	 */
 	
 	private boolean saveData() {
-		db.addEntry(TableType.trips, t.getTitle(), t.getStartDate().toString(), t.getEndDate().toString(), t.getDescription());
-		return true;//to be changed with try/catch
+		return true;
 	}
 	
-	/* 
-	 * This method generates a user ID based on their username.
-	 * 
-	 * TODO: if we want unique ID, it should in some way be separate from username otherwise it's
-	 * two identifiers that are effectively the same (if I can derive one from the other, security wise
-	 * it doesn't do anything.)
-	 * 
-	 */
-	
-	private int generateUserID() {
-		int sum = 0;
-		for(int i = 0; i < this.username.length(); i++) {
-			sum += (int) this.username.charAt(i);
-		}
-		return sum;
-	}
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -182,3 +164,4 @@ public class User {
 	}
 	
 }
+
