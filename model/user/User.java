@@ -127,7 +127,8 @@ public class User {
 	 */
 	
 	private boolean saveData() {
-		return false;
+		db.addEntry(TableType.trips, t.getTitle(), t.getStartDate().toString(), t.getEndDate().toString(), t.getDescription());
+		return true;//to be changed with try/catch
 	}
 	
 	/* 
