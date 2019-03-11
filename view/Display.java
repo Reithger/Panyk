@@ -252,8 +252,6 @@ public class Display {
 		display.hidePanels();
 	}
 
-//------------------------------------------------------------------------------------------------------------------------------
-
 //---  Composite Methods   --------------------------------------------------------------------
 		
 	/**
@@ -275,6 +273,24 @@ public class Display {
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle("rect_" + name, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
 		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
+	}
+	
+	public void errorBox(String in) {
+		int wid = 300;
+		int hei = 250;
+		WindowFrame error = new WindowFrame(wid, hei);
+		error.setExitOnClose(false);
+		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
+			public void clickBehaviour(int event) {
+				if(event == 1) {
+					getParentFrame().remove();
+				}
+			}
+		};
+		pan.addText("tex_1", 5, wid/2, hei*2/5, wid*9/10, hei*2/5, in, FONT_ONE, true);
+		pan.addText("tex_2", 5, wid/2, hei*4/5, wid, hei/5, "Click Anywhere to Remove", FONT_ONE, true);
+		pan.addButton("but1", 10, 0, 0, pan.getWidth(), pan.getHeight(), 1, false);
+		error.add(pan);
 	}
 	
 }

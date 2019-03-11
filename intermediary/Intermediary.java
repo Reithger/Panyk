@@ -27,6 +27,9 @@ public class Intermediary {
 	
 	/** Constant value representing the speed at which the program responds to user input (call rate of clock())*/
 	private final static int REFRESH_RATE = 1000/60;
+	
+	//-- Control  -------------------------------------------
+	
 	public final static String CONTROL = "Control";
 	public final static String CONTROL_NULL = null;
 	public final static String CONTROL_LOGIN_SCREEN = "next";
@@ -34,6 +37,9 @@ public class Intermediary {
 	public final static String CONTROL_TRIP_SELECT = "trip_select";
 	public final static String CONTROL_ATTEMPT_LOGIN = "login_fn";
 	public final static String CONTROL_ATTEMPT_USER_CREATE = "user_create_fn";
+	
+	//-- Value Storage  ---------------------------------------
+	
 	public final static String LOGIN_USERNAME = "username";
 	public final static String LOGIN_PASSWORD = "password";
 	public final static String CREATE_USER_USERNAME = "create_username";
@@ -120,22 +126,27 @@ public class Intermediary {
 		
 		if(username == null || username.equals("")) {
 			System.out.println("Username invalid during User Account Creation: Intermediary > createNewUser");
+			errorReport("Invalid Username");
 			return;
 		}
 		if(password == null || password.equals("")) {
 			System.out.println("Password invalid during User Account Creation: Intermediary > createNewUser");
+			errorReport("Invalid Password");
 			return;
 		}
 		if(dob == null || dob.equals("") || !validDOB(dob)) {
 			System.out.println("D.O.B. invalid during User Account Creation: Intermediary > createNewUser");
+			errorReport("Invalid Date of Birth");
 			return;
 		}
 		if(firstname == null || firstname.equals("")) {
 			System.out.println("Firstname invalid during User Account Creation: Intermediary > createNewUser");
+			errorReport("Invalid Firstname");
 			return;
 		}
 		if(lastname == null || lastname.equals("")) {
 			System.out.println("Lastname invalid during User Account Creation: Intermediary > createNewUser");
+			errorReport("Invalid Lastname");
 			return;
 		}
 			
@@ -174,7 +185,7 @@ public class Intermediary {
 	 * @return
 	 */
 	
-	private static boolean validDOB(String dob) {
+	private boolean validDOB(String dob) {
 		String[] split = dob.split("-");
 		if(split.length != 3) {
 			return false;
@@ -192,4 +203,9 @@ public class Intermediary {
 		}
 		return true;
 	}
+
+	private void errorReport(String displayError) {
+		display.errorBox(displayError);
+	}
+	
 }
