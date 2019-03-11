@@ -1,4 +1,3 @@
-
 package database;
 
 import java.sql.Connection;
@@ -10,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import controller.Encryptor;
 
 /**
  * This class serves as the facilitator for accessing a database of information.
@@ -26,11 +26,9 @@ public class Database {
 	
 	/** */
 	private static final String DB_DIRECTORY = System.getProperty("user.dir").replaceAll("\\\\", "/") + "/";  	//get the current directory of the user (ie: where the program is installed)
-	
-	/** 
-	 * static final database name -> so that other classes can access the database
-	 * */
+	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
@@ -124,16 +122,46 @@ public class Database {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
+	
+	public boolean checkUserExists(String username) {
+		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
+		return(users.size() != 0);
+	}
+	
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	
+	public boolean checkValidPassword(String username, String password) {
+		List<String[]> users = search(TableType.users, null, username, null, null, null, null, null, null);
+		if(users.size() != 0) {
+			String salt = users.get(0)[7];
+			String real_salted_pass = users.get(0)[6];
+			String calc_salted_pass = Encryptor.createSaltedHash(password, salt);
+			return real_salted_pass.equals(calc_salted_pass);
+		}
+		return false;
+	}
+	
 //---  Adder Method   ------------------------------------------------------------------------
 	
-	
-	/**	adds an entry into a desired table
+	/**	
+	 * This method adds an entry into the defined table
 	 * 
-	 * @param table		table you wish to insert into
-	 * @param values	values of fields you wish to insert into table
-	 * @return	if insertion was successful
+	 * @param table	- TableType object you wish to insert the String ... values into
+	 * @param values - String ... (var args) values of fields you wish to insert into table
+	 * @return - Returns a boolean value representing whether or not the insertion was successful
 	 */
-	public boolean addEntry(TableType table, String... values) {
+	
+	public boolean addEntry(TableType table, String ... values) {
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
 			return false;
@@ -143,15 +171,13 @@ public class Database {
 			return false;
 		}
 		//check if entry exists in database
-		
-		
 		try {
 			PreparedStatement prep = this.connection.prepareStatement(table.sqlInsertTable);
 			for(int i = 0; i < values.length; i++) {
 				prep.setString(i + 1, values[i]);
 			}
 			prep.executeUpdate();
-		}catch(Exception e) {
+		} catch(Exception e) {
 			System.out.println("-----");
 			System.out.println("ERROR inserting id: " + values[0] + "  into " + table.toString() + " database");
 			System.out.println("primary key " + values[0] + " already exists in table");
@@ -162,14 +188,15 @@ public class Database {
 	}
 	
 // --- deleter method --------------------------------------------------------------------------------
-	
-	
-	/**	deletes entries from tables
+		
+	/**	
+	 * This method deletes entries from the defined table
 	 * 
-	 * @param table		table you wish to delete from
-	 * @param searchKeys	search parameters for deletion
-	 * @return	if deletion was successful
+	 * @param table	- TableType object you wish to delete from
+	 * @param searchKeys - String ... (var args) values representing the search parameters for deletion
+	 * @return - Returns a boolean value representing the result of deletion; true if successful, false otherwise
 	 */
+	
 	public boolean deleteEntry(TableType table, String... searchKeys) {
 		if(this.connection == null) {
 			System.out.println("no connection can be established to the database");
@@ -209,15 +236,16 @@ public class Database {
 		return true;
 	}
 	
-//--- search method  ------------------------------------------------------------------------
+//--- Search Methods  -------------------------------------------------------------------------
 	
-	
-	/**	searches tables based on search parameters
+	/**	
+	 * This method searches the defined table based on search parameters
 	 * 
-	 * @param table		table you wish to query
-	 * @param searchKeys	fields you wish to search by 
-	 * @return	list of string array containing elements that matched your search
+	 * @param table	- TableType object you wish to query
+	 * @param searchKeys - String ... (var args) values representing the fields you wish to search by 
+	 * @return - Returns a List<<r>String[]> object containing elements that matched your search
 	 */
+
 	public List<String[]> search(TableType table, String... searchKeys) {
 		ResultSet result = null;
 		if(this.connection == null) {
@@ -263,26 +291,27 @@ public class Database {
 		}
 	}
 	
+//---  Print Methods   ------------------------------------------------------------------------
 	
-//---  Print Method   ------------------------------------------------------------------------
-	
-	
-	/**	prints table to console
+	/**	
+	 * This method prints the defined table to console
 	 * 
-	 * @param type	table you wish to print
+	 * @param type - TableType object representing the table you want to print
 	 */
+	
 	public void printTable(TableType type) {
 		DBTablePrinter.printTable(this.connection, type.toString());
 	}
 	
-// -- helper methods -------------------------------------------------------------------------
+// -- Helper Methods --------------------------------------------------------------------------
 	
-	
-	/**	returns list off string arrays based on input ResultSet
+	/**	
+	 * Helper method that returns a list of String[] object based on the input ResultSet object
 	 * 
-	 * @param set	
-	 * @return	list of string arrays containing values from a table entry
+	 * @param set - ResultSet object
+	 * @return - Returns a List<<r>String[]> object containing values from a table entry
 	 */
+	
 	private static List<String[]> ResultSetToList(ResultSet set){
 		try {
 			int nCol = set.getMetaData().getColumnCount();

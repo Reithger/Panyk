@@ -8,7 +8,7 @@ public class DBTester {
 
 	public static void main(String[] args) {
 		
-		Database db = new Database("test_db");
+		Database db = new Database();
 		
 		//test insertion
 		db.addEntry(TableType.users, "2", "reganlynch", "pass", "regan", "lynch", "1996", "1996");		

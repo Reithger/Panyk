@@ -2,11 +2,10 @@ package controller;
 
 import model.user.User;
 
-
-
-/**	-class used to create entries in the database, from the view.
+/**	
+ * This class is used to create entries in the database, from the view.
  * 
- * 	-whenever possible, will use methods in the model to accomplish this
+ * Note: whenever possible, will use methods in the model to accomplish this
  * 
  * @author Regan
  *

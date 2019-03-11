@@ -4,11 +4,13 @@ import java.util.List;
 
 import database.*;
 
-/**	class for the view to query the Database for logins
+/**	
+ * Class for the view to query the Database for logins
  * 
  * @author Regan Lynch
  *
  */
+
 public class ViewLoginQuery {
 
 	public static boolean usernameExists(String username) {
@@ -26,10 +28,10 @@ public class ViewLoginQuery {
 			String real_salted_pass = users.get(0)[6];
 			String calc_salted_pass = Encryptor.createSaltedHash(password, salt);
 			return real_salted_pass.equals(calc_salted_pass);
-		}else {
+		}
+		else {
 			return false;
 		}
 	}
 	
 }
-

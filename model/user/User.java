@@ -29,7 +29,6 @@ public class User {
 	
 //---  Constructors   -------------------------------------------------------------------------
 		
-	
 	/**	creates a user object, also creates an entry in the database for this user
 	 * 
 	 * - values ARE NOT CHECKED before entering them into the db 
@@ -41,10 +40,10 @@ public class User {
 	 * @param password
 	 * @param DOB
 	 */
-	public User(String fname, String lname, String username, String password, String DOB) 
-	{
-		this.username = username;
-		this.password = password;
+	
+	public User(String fname, String lname, String usernameIn, String passwordIn, String DOB){
+		username = usernameIn;
+		password = passwordIn;
 		int ID = this.generateUserID();
 		String day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 		String month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
@@ -61,6 +60,11 @@ public class User {
 		
 		Database db = new Database();
 		db.addEntry(TableType.users, Integer.toString(ID), username, fname, lname, DOB, createdOn, hash[0], hash[1]);
+	}
+	
+	public User(String usernameIn, String passwordIn) {
+		username = usernameIn;
+		password = passwordIn;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
