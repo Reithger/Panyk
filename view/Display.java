@@ -5,22 +5,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import input.Communication;
 import intermediary.Intermediary;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.Stage;
-import model.user.User;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
-import visual.panel.element.*;
-
-import controller.*;
-
-
 
 /**
  * This class is the core of the View; Intermediary (the Controller) communicates with this
@@ -83,9 +73,9 @@ public class Display {
 	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
 	/** */
 	private final static int EVENT_GO_TO_TRIP = 7;
-	
+	/** */
 	private final static int EVENT_TRIP_SELECTION = 8;
-	
+	/** */
 	private static final int EVENT_TRIP_CREATED = 9;
 	
 
@@ -262,9 +252,12 @@ public class Display {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_BACK_TO_LOGIN) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_LOGIN_SCREEN);
-				}else if(event == EVENT_GO_TO_TRIP_CREATION) {
+				}
+				else if(event == EVENT_GO_TO_TRIP_CREATION) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_CREATION);
-				}else if(event >= EVENT_GO_TO_TRIP) {
+				}
+				else if(event >= EVENT_GO_TO_TRIP) {
+					//TODO: This bit
 					int tripNum = event - EVENT_GO_TO_TRIP;
 					System.out.println("go to trip " + tripNum);
 				}
@@ -293,7 +286,7 @@ public class Display {
 		int tileGap = 10;
 		int tileHeight = 60;
 		List<String[]> trips = Intermediary.getUsersTrips();
-		for(int i = 0; i < trips.size(); i++) {
+		for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) {
 			//display the trips on screen
 			tS.addRectangle("trip_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
 			tS.addText("trip_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, trips.get(i)[1], FONT_ONE, true);
@@ -330,7 +323,7 @@ public class Display {
 					Communication.set(Intermediary.CREATE_TRIP_NOTES, comments);
 					Communication.set(Intermediary.CREATE_TRIP_DEST, dest);
 					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CREATE_TRIP);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_CREATE_TRIP);
 					
 					
 				    //The entire clickBehaviour section below can be commented out if need be and things will work fine
@@ -427,6 +420,15 @@ public class Display {
 		pan.addRectangle("rect_" + name, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
 		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	/**
+	 * This method generates a small window frame that alerts the user to an error in their
+	 * interaction with the program; is easily dismissed.
+	 * 
+	 * @param in - String object representing the message to be displayed to the user regarding the error.
+	 */
 	
 	public void errorBox(String in) {
 		int wid = 300;

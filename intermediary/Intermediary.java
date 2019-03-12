@@ -46,22 +46,28 @@ public class Intermediary {
 	public final static String CONTROL_TRIP_CREATION = "trip_creation";
 	public final static String CONTROL_ATTEMPT_LOGIN = "login_fn";
 	public final static String CONTROL_ATTEMPT_USER_CREATE = "user_create_fn";
-	public final static String CONTROL_CREATE_TRIP = "create_trip";
+	public final static String CONTROL_ATTEMPT_CREATE_TRIP = "create_trip";
 	
 	//-- Value Storage  ---------------------------------------
 	
-	public final static String LOGIN_USERNAME = "username";
-	public final static String LOGIN_PASSWORD = "password";
+	/*
+	 * These are labels for storage, not the actual values that will be retrieved
+	 * from using them; make sure they're unique from one another.
+	 * 
+	 */
+	
+	public final static String LOGIN_USERNAME = "login_username";
+	public final static String LOGIN_PASSWORD = "login_password";
 	public final static String CREATE_USER_USERNAME = "create_username";
 	public final static String CREATE_USER_PASSWORD = "create_password";
 	public final static String CREATE_USER_FIRSTNAME = "create_firstname";
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
 	
-	public final static String CREATE_TRIP_TITLE = "untitled";
-	public final static String CREATE_TRIP_DEST = "";
-	public final static String CREATE_TRIP_START = "nonsense date";
-	public final static String CREATE_TRIP_END = "nonsense date";
-	public final static String CREATE_TRIP_NOTES = "";
+	public final static String CREATE_TRIP_TITLE = "trip_title";
+	public final static String CREATE_TRIP_DEST = "trip_dest";
+	public final static String CREATE_TRIP_START = "trip_start_date";
+	public final static String CREATE_TRIP_END = "trip_end_date";
+	public final static String CREATE_TRIP_NOTES = "trip_notes";
 	
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -117,9 +123,9 @@ public class Intermediary {
 				goToCreateAccount(); break;
 			case CONTROL_TRIP_SELECT: 			//Orders display to show the trip select screen
 				goToTripSelect(); break;
-			case CONTROL_TRIP_CREATION:
+			case CONTROL_TRIP_CREATION:			//Orders display to show the trip creation screen
 				goToTripCreation(); break;
-			case CONTROL_CREATE_TRIP:
+			case CONTROL_ATTEMPT_CREATE_TRIP:	//Attempts to create a new Trip with the provided information
 				addTrip(); break;
 			default: break;
 		}
@@ -208,13 +214,13 @@ public class Intermediary {
 		}
 	}
 	
-	
 	/**
+	 * This method requests the information stored by Display in Communication's CREATE_TRIP_{START, END}
+	 * to create a new Trip object associated to the current user.
 	 * 
-	 * @return
 	 */
-	public void addTrip()
-	{
+	
+	public void addTrip() {
 		Date begin;
 		Date end;
 		
@@ -227,22 +233,28 @@ public class Intermediary {
 			
 			//Trip t = new Trip(CREATE_TRIP_TITLE, begin, end, CREATE_TRIP_NOTES);
 			String dest = Communication.get(CREATE_TRIP_DEST);
-			if(dest.equals(""))
-			{
+			if(dest.equals("")){
 				errorReport("Must have a destination");
 			}
-			else
-			{
+			else {
 				Database.addEntry(TableType.trips, Communication.get(LOGIN_USERNAME), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
 				//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
 			}
 			
-		}catch (Exception e)
-		{
+		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
+		//TODO: Set CONTROL to whatever we do next
 	}
-//--- getters --------------------------------------------------------------------------------
+	
+//--- Getter Methods --------------------------------------------------------------------------
+
+	/**
+	 * Getter method to query the database for all entries associated to the current user.
+	 * 
+	 * @return - Returns a List<<r>String[]> object containing the Trips associated to the current User.
+	 */
+	
 	public static List<String[]> getUsersTrips() {
 		return Database.search(TableType.trips, user.getUsername(), null, null, null, null);
 	}
@@ -281,6 +293,12 @@ public class Intermediary {
 		display.resetView();
 		display.tripSelectScreen();
 	}
+	
+	/**
+	 * This method navigates the Display to the tripCreation screen by hiding the current
+	 * panels in the WindowFrame and calling display.tripCreationScreen().
+	 * 
+	 */
 	
 	private void goToTripCreation() {
 		display.resetView();

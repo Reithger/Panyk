@@ -41,7 +41,6 @@ public class User {
 	 * @param lname - String object representing the Last Name of this user
 	 * @param usernameIn - String object representing the Username of this user
 	 * @param passwordIn - String object representing the Password of this user
-	 * @param DOB - String object representing the Date of Birth of this user
 	 */
 	
 	public User(String fname, String lname, String usernameIn, String passwordIn){
