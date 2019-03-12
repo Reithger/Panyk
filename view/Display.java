@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.util.Arrays;
 import java.util.List;
 
 import input.Communication;
@@ -290,7 +291,8 @@ public class Display {
 			//display the trips on screen
 			tS.addRectangle("trip_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
 			tS.addText("trip_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, trips.get(i)[1], FONT_ONE, true);
-			tS.addText("trip_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 20, trips.get(i)[2] + ", " + trips.get(i)[3] + "-" + trips.get(i)[4], FONT_ENTRY, false);
+			tS.addText("trip_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 50, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, trips.get(i)[2], FONT_ENTRY, false);
+			tS.addText("trip_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, trips.get(i)[3] + " - " + trips.get(i)[4], FONT_ENTRY, false);
 			tS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_TRIP+i, false);
 		}
 
@@ -325,23 +327,6 @@ public class Display {
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_CREATE_TRIP);
 					
-					
-				    //The entire clickBehaviour section below can be commented out if need be and things will work fine
-					
-					//Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT); \
-					//TODO: without this line new trips will appear, but only after hitting the exit button; with it, 
-					//new trips won't appear and you can go directly back to the trip view
-					
-					Robot r;
-					try {
-						r = new Robot();
-						r.mouseMove(width-100, height-50);//magic numbers to move the cursor onto the exit button and click it - TODO clean this up
-					    r.mousePress(InputEvent.BUTTON1_MASK);
-					    try { Thread.sleep(1); } catch (Exception e) {}
-					    r.mouseRelease(InputEvent.BUTTON1_MASK);
-					} catch (AWTException e1) {
-						e1.printStackTrace();
-					}
 				}
 				
 			}
