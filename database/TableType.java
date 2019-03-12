@@ -18,26 +18,26 @@ public enum TableType {
 	
 //---  Enumerations   -------------------------------------------------------------------------
 	
-	/** username, fname, lname, createdAt, salted_password, salt */
+	/** username, fname, lname, createdAt, salted_password, salt */			//KEY = username	(index 0)
 	users("username","varchar(60)", "fname","varchar(60)", "lname","varchar(60)", "createdAt", "varchar(60)", "salted_password","varchar(60)","salt", "varchar(60)", "username"),
 	
-	/** id, userID, tripTitle, destination, startDate, endDate */
-	trips("id", "varchar(60)", "userID", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "id" ),
+	/** username, tripTitle, destination, startDate, endDate */				
+	trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
 	
-	/** id, tripID, type */
-	scheduleItem("id", "varchar(60)", "tripID", "varchar(60)", "type", "varchar(60)", "id"),
+	/** username, tripTitle, item, type */									
+	scheduleItem("username", "varchar(60)","tripTitle", "varchar(60)", "item", "varchar(60)", "type", "varchar(60)"),
 	
-	/** id, scheduleItemID, fname, lname, company, jobTitle, displayAs, email, webpage, PhoneNumber, Address */
-	contacts("id", "varchar(60)", "scheduleItemID", "varchar(60)", "fname", "varchar(60)", "lname", "varchar(60)", "company", "varchar(60)", "jobTitle", "varchar(60)", "displayAS", "varchar(60)", "email", "varchar(60)", "webpage", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)", "id"),
+	/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */				
+	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "fname", "varchar(60)", "lname", "varchar(60)", "company", "varchar(60)", "jobTitle", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
 	
-	/** id, scheduleItemID, startTime, endTime */
-	transportation("id", "varchar(60)", "scheduleItemID", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "id"),
+	/** username, tripTitle, item, startTime, endTime */			
+	transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)"),
 	
-	/** id, tripID, scheduleItemID, name, checkIn, checkOut, paid, address, contact */
-	accommodations("id", "varchar(60)", "tripID", "varchar(60)", "scheduleItemID", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)", "contact", "varchar(60)", "id"),
+	/** username, tripTitle, item, name, checkIn, checkOut, paid, address*/
+	accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
 	
-	/** id, scheduleItemID, tripID, contact, participants, startDate, endDate, address, type */
-	reservations("id", "varchar(60)", "scheduleItemID", "varchar(60)", "contact", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)", "type", "varchar(60)", "id");
+	/** username, tripTitle, item, name, startDate, endDate, address*/
+	reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
