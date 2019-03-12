@@ -155,6 +155,7 @@ public class Intermediary {
 			return;
 		}
 		user = new User(username, password);
+		System.out.println("IN ATTEMPT LOGIN..." + username);
 		Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 	}
 	
@@ -237,10 +238,18 @@ public class Intermediary {
 				errorReport("Must have a destination");
 			}
 			else {
-				Database.addEntry(TableType.trips, Communication.get(LOGIN_USERNAME), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
-				//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
+				//check if a trip with that name already exists with the user
+				List<String[]> trips = Database.search(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
+				if(trips.size() == 0) {
+					Database.addEntry(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
+					//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
+				
+					//after insertion, go back to trip select
+					goToTripSelect();
+				}else {
+					errorReport("you have already created a trip with this title");
+				}
 			}
-			
 		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
@@ -256,7 +265,7 @@ public class Intermediary {
 	 */
 	
 	public static List<String[]> getUsersTrips() {
-		return Database.search(TableType.trips, user.getUsername(), null, null, null, null);
+		return Database.search(TableType.trips, user.getUsername() , null, null, null, null);
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
