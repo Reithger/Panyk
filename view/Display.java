@@ -1,19 +1,26 @@
 package view;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import input.Communication;
 import intermediary.Intermediary;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.Stage;
 import model.user.User;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 import visual.panel.element.*;
 
 import controller.*;
+
+
 
 /**
  * This class is the core of the View; Intermediary (the Controller) communicates with this
@@ -77,6 +84,10 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_TRIP = 7;
 	
+	private final static int EVENT_TRIP_SELECTION = 8;
+	
+	private static final int EVENT_TRIP_CREATED = 9;
+	
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -97,11 +108,19 @@ public class Display {
 	 * @param inHeight - int value representing the height of the WindowFrame that displays the program.
 	 */
 	
-	public Display(int inWidth, int inHeight) {
+	/*@Override
+	public void start(Stage stage) throws Exception 
+	{
+	
+	}*/
+	
+	public Display(int inWidth, int inHeight) 
+	{
 		width = inWidth;
 		height = inHeight;
 		display = new WindowFrame(width, height);
 		initialScreen();
+		
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -244,7 +263,7 @@ public class Display {
 				if(event == EVENT_BACK_TO_LOGIN) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_LOGIN_SCREEN);
 				}else if(event == EVENT_GO_TO_TRIP_CREATION) {
-					System.out.println("go to trip creation screen");
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_CREATION);
 				}else if(event >= EVENT_GO_TO_TRIP) {
 					int tripNum = event - EVENT_GO_TO_TRIP;
 					System.out.println("go to trip " + tripNum);
@@ -283,6 +302,98 @@ public class Display {
 		}
 
 		display.addPanel("Trip Select", tS);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void tripCreationScreen()
+	{
+		ElementPanel tC = new ElementPanel(0, 0, width, height) {
+			public void clickBehaviour(int event) {
+				if(event == EVENT_TRIP_SELECTION) 
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+				}
+				else if(event == EVENT_TRIP_CREATED) 
+				{
+					String title = this.getElementStoredText("text_tripTitle");//actual titles here have to be prefaced with text_ for some reason
+					String date1 = this.getElementStoredText("text_tripStart");
+					String date2 = this.getElementStoredText("text_tripEnd");
+					String comments = this.getElementStoredText("text_tripNotes");
+					String dest = this.getElementStoredText("text_tripDest");
+					
+					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
+					Communication.set(Intermediary.CREATE_TRIP_START, date1);
+					Communication.set(Intermediary.CREATE_TRIP_END, date2);
+					Communication.set(Intermediary.CREATE_TRIP_NOTES, comments);
+					Communication.set(Intermediary.CREATE_TRIP_DEST, dest);
+					
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CREATE_TRIP);
+					
+					
+				    //The entire clickBehaviour section below can be commented out if need be and things will work fine
+					
+					//Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT); \
+					//TODO: without this line new trips will appear, but only after hitting the exit button; with it, 
+					//new trips won't appear and you can go directly back to the trip view
+					
+					Robot r;
+					try {
+						r = new Robot();
+						r.mouseMove(width-100, height-50);//magic numbers to move the cursor onto the exit button and click it - TODO clean this up
+					    r.mousePress(InputEvent.BUTTON1_MASK);
+					    try { Thread.sleep(1); } catch (Exception e) {}
+					    r.mouseRelease(InputEvent.BUTTON1_MASK);
+					} catch (AWTException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
+			}
+		};
+		
+		
+		//background
+		tC.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
+		
+		//title of page
+		tC.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
+		tC.addText("title", 120, width/2, 50, width, height/10, "Enter Trip Details", FONT_TWO, true);
+		
+		//cancel button
+		tC.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+		tC.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
+		tC.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+		
+		//create trip button
+		tC.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
+		tC.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
+		tC.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_TRIP_CREATED , false);
+		int sideOffset = 200;
+		int topOffset = height/3 - 30;
+		int bottomOffset = 140;
+		
+		//adding trip info fields
+		designTextField(tC, "tripTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
+		tC.addText("name", 78,          width/4, height/4 + 10, width/6, height/12, "Trip Name:", FONT_ONE, true);
+		
+		designTextField(tC, "tripDest", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
+		tC.addText("Destination", 79,          width/2+50, height/4 + 10, width/6, height/12, "Destination:", FONT_ONE, true);
+		
+		designTextField(tC, "tripStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
+		tC.addText("begin", 77,          width/4, height/2 + 10, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
+		
+		designTextField(tC, "tripEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
+		tC.addText("cease", 76,          width/2+50, height/2 + 10, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
+		
+		designTextField(tC, "tripNotes", width/3, 3*(height/4) + 40, width/2, height/12, 10, 10004, true);
+		tC.addText("comments", 75,          width/3, 3*(height/4) + 10, width/6, height/12, "Notes:", FONT_ONE, true);
+
+		display.addPanel("Trip Creation", tC);
+		
+		
 	}
 	
 	/**
