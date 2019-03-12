@@ -1,12 +1,15 @@
 package intermediary;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
 import database.Database;
 import database.TableType;
 import input.Communication;
+import model.trip.Trip;
 import model.user.User;
 import view.Display;
 
@@ -40,8 +43,10 @@ public class Intermediary {
 	public final static String CONTROL_LOGIN_SCREEN = "next";
 	public final static String CONTROL_USER_CREATE = "createUser";
 	public final static String CONTROL_TRIP_SELECT = "trip_select";
+	public final static String CONTROL_TRIP_CREATION = "trip_creation";
 	public final static String CONTROL_ATTEMPT_LOGIN = "login_fn";
 	public final static String CONTROL_ATTEMPT_USER_CREATE = "user_create_fn";
+	public final static String CONTROL_CREATE_TRIP = "create_trip";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -51,6 +56,13 @@ public class Intermediary {
 	public final static String CREATE_USER_PASSWORD = "create_password";
 	public final static String CREATE_USER_FIRSTNAME = "create_firstname";
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
+	
+	public final static String CREATE_TRIP_TITLE = "untitled";
+	public final static String CREATE_TRIP_DEST = "";
+	public final static String CREATE_TRIP_START = "nonsense date";
+	public final static String CREATE_TRIP_END = "nonsense date";
+	public final static String CREATE_TRIP_NOTES = "";
+	
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -105,6 +117,10 @@ public class Intermediary {
 				goToCreateAccount(); break;
 			case CONTROL_TRIP_SELECT: 			//Orders display to show the trip select screen
 				goToTripSelect(); break;
+			case CONTROL_TRIP_CREATION:
+				goToTripCreation(); break;
+			case CONTROL_CREATE_TRIP:
+				addTrip(); break;
 			default: break;
 		}
 	}
@@ -192,6 +208,40 @@ public class Intermediary {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void addTrip()
+	{
+		Date begin;
+		Date end;
+		
+		String beginStr = Communication.get(CREATE_TRIP_START);
+		String endStr = Communication.get(CREATE_TRIP_END);
+		
+		try{
+			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
+			
+			//Trip t = new Trip(CREATE_TRIP_TITLE, begin, end, CREATE_TRIP_NOTES);
+			String dest = Communication.get(CREATE_TRIP_DEST);
+			if(dest.equals(""))
+			{
+				errorReport("Must have a destination");
+			}
+			else
+			{
+				Database.addEntry(TableType.trips, Communication.get(LOGIN_USERNAME), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
+				//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
+			}
+			
+		}catch (Exception e)
+		{
+			errorReport("Invalid Dates");
+		}
+	}
 //--- getters --------------------------------------------------------------------------------
 	public static List<String[]> getUsersTrips() {
 		return Database.search(TableType.trips, user.getUsername(), null, null, null, null);
@@ -230,6 +280,11 @@ public class Intermediary {
 	private void goToTripSelect() {
 		display.resetView();
 		display.tripSelectScreen();
+	}
+	
+	private void goToTripCreation() {
+		display.resetView();
+		display.tripCreationScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
