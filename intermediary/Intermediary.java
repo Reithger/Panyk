@@ -1,6 +1,7 @@
 package intermediary;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 
 import database.Database;
@@ -58,7 +59,7 @@ public class Intermediary {
 	/** The Display object is the contact point this Intermediary object has to the View for Input/Output*/
 	private Display display;
 	/** The User object is the contact point this Intermediary object has to the Model for data access/manipulation*/
-	private User user;
+	private static User user;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -189,6 +190,11 @@ public class Intermediary {
 		else {
 			errorReport("Username already in use");
 		}
+	}
+	
+//--- getters --------------------------------------------------------------------------------
+	public static List<String[]> getUsersTrips() {
+		return Database.search(TableType.trips, user.getUsername(), null, null, null, null);
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
