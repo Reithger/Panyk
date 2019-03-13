@@ -47,6 +47,9 @@ public class Intermediary {
 	public final static String CONTROL_ATTEMPT_LOGIN = "login_fn";
 	public final static String CONTROL_ATTEMPT_USER_CREATE = "user_create_fn";
 	public final static String CONTROL_ATTEMPT_CREATE_TRIP = "create_trip";
+	public final static String CONTROL_RESERVATIONS = "reservations";
+	public final static String CONTROL_RES_CREATION = "newRes";
+	public final static String CONTROL_SAVE_RES = "save me save me";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -67,7 +70,15 @@ public class Intermediary {
 	public final static String CREATE_TRIP_DEST = "trip_dest";
 	public final static String CREATE_TRIP_START = "trip_start_date";
 	public final static String CREATE_TRIP_END = "trip_end_date";
-	public final static String CREATE_TRIP_NOTES = "trip_notes";
+	
+	public final static String CREATE_RES_TITLE = "res_title";
+	public final static String CREATE_RES_LOC = "res_loc";
+	public final static String CREATE_RES_START = "res_start_date";
+	public final static String CREATE_RES_END = "res_end_date";
+	
+	public final static String CURR_TRIP = "current_trip";
+	
+	
 	
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -127,6 +138,12 @@ public class Intermediary {
 				goToTripCreation(); break;
 			case CONTROL_ATTEMPT_CREATE_TRIP:	//Attempts to create a new Trip with the provided information
 				addTrip(); break;
+			case CONTROL_RESERVATIONS:
+				showRes(); break;
+			case CONTROL_RES_CREATION:
+				goToMakeRes(); break;
+			case CONTROL_SAVE_RES:
+				saveRes(); break;
 			default: break;
 		}
 	}
@@ -232,7 +249,6 @@ public class Intermediary {
 			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
 			
-			//Trip t = new Trip(CREATE_TRIP_TITLE, begin, end, CREATE_TRIP_NOTES);
 			String dest = Communication.get(CREATE_TRIP_DEST);
 			if(dest.equals("")){
 				errorReport("Must have a destination");
@@ -256,6 +272,50 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	/**
+	 * Basically the method above but for reservations
+	 */
+	public void saveRes() {
+		Date begin;
+		Date end;
+		
+		String beginStr = Communication.get(CREATE_RES_START);
+		String endStr = Communication.get(CREATE_RES_END);
+		
+		try{
+			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
+		
+			//check if a reservation with that name already exists with the user
+			List<String[]> resList = Database.search(TableType.reservations, user.getUsername(), CURR_TRIP, Communication.get(CREATE_RES_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
+			if(resList.size() == 0)
+			{
+				Database.addEntry(TableType.trips, user.getUsername(), CURR_TRIP, Communication.get(CREATE_TRIP_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
+				//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
+					//after insertion, go back to trip select
+					goToRes();
+			}else 
+			{
+				errorReport("you have already created a resercation with this title");
+			}
+		} catch (Exception e) {
+			errorReport("Invalid Dates");
+		}
+		//TODO: Set CONTROL to whatever we do next
+	}
+	
+	public void showRes()
+	{
+		goToRes();
+	}
+	
+	public void makeRes()
+	{
+		
+	}
+	
+	
+	
 //--- Getter Methods --------------------------------------------------------------------------
 
 	/**
@@ -266,6 +326,13 @@ public class Intermediary {
 	
 	public static List<String[]> getUsersTrips() {
 		return Database.search(TableType.trips, user.getUsername() , null, null, null, null);
+	}
+	
+	public static List<String[]> getTripsRes() 
+	{
+		return Database.search(TableType.reservations, user.getUsername() , CURR_TRIP, null, null, null, null);
+		
+		//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
@@ -312,6 +379,21 @@ public class Intermediary {
 	private void goToTripCreation() {
 		display.resetView();
 		display.tripCreationScreen();
+	}
+	/**
+	 * This method navigates the Display to the tripCreation screen by hiding the current
+	 * panels in the WindowFrame and calling display.reservationScreen().
+	 */
+	public void goToRes()
+	{
+		display.resetView();
+		display.reservationScreen(Communication.get(CURR_TRIP));
+	}
+	
+	public void goToMakeRes()
+	{
+		display.resetView();
+		display.makeResScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
