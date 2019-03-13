@@ -34,9 +34,9 @@ public class Display {
 	/** */
 	private final static Font FONT_TWO = new Font("SansSerif", Font.BOLD, 40);
 	/** */
-	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 12);
+	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 14);
 	
-	private final static Font FONT_TITLE = new Font("Verdana", Font.BOLD, 40);
+	private final static Font FONT_TITLE = new Font("Baskerville Old Face", Font.BOLD, 80);	//Vivaldi
 	
 	//------------------------------------------
 	/** */
@@ -45,6 +45,8 @@ public class Display {
 	private final static Color COLOR_LOGIN = new Color(102, 255, 102);
 	/** */
 	private final static Color COLOR_TWO = new Color(90, 80, 175);
+	
+	private final static Color COLOR_THREE = new Color(200,150,170);
 	/** */
 	private final static Color COLOR_WHITE = new Color(255, 255, 255);
 	/** */
@@ -133,13 +135,16 @@ public class Display {
 				}
 			}	
 		};
+		
+		//Make a composite for headers with consistent color usage; decide on a color scheme.
 		titlePanel.addRectangle("rect1", 0, 0, 0, titlePanel.getWidth(), titlePanel.getHeight(), COLOR_ONE, false);
-		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, new Color(200,150,170), false);
-		titlePanel.addText("tex1", 15, width/2, height / 3, width/4, height/5, "Plein Air", FONT_TITLE, true);
-		titlePanel.addRectangle("rect3", 14, width/2, 3*height/5, width/10, height/20, COLOR_WHITE, true);
-		titlePanel.addButton("but1",     15, width/2, 3*height/5, width/20, height/20, EVENT_GO_TO_LOGIN, true);
-		titlePanel.addText("text_but1",  16, width/2, 3*height/5 + 5,  width/20, height/20, "Start", FONT_ENTRY, true);
-
+		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, COLOR_THREE, false);
+		
+		titlePanel.addRectangle("rect3", 8, width/4 - width/6,  height / 4 - height/10, 3*width/4, height/5, COLOR_TWO, false);
+		titlePanel.addText("tex1", 15, width/4, height / 4, width, height/2, "Plein Air", FONT_TITLE, true);
+		
+		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 3*height/5, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
+		
 		display.addPanel("Title", titlePanel);
 	}
 
@@ -175,9 +180,9 @@ public class Display {
 		designTextField(login, "password", width/3, height/2 + 130, width/6, height/12, 10, 10000, true);
 		login.addText("tex3", 79,          width/3, height/2 + 100, width/6, height/12, "Password", FONT_ONE, true);
 		//add button to login
-		login.addRectangle("but1_rect", 14, width/3, height - 100, width/8, height/20,  COLOR_LOGIN , true);
-		login.addText("but1_text", 15, width/3, height - 100, width/9, height/20 - 10, "Log In", FONT_ENTRY, true);
-		login.addButton("but1", 15, width/3, height - 100, width/9, height/20, EVENT_LOGIN, true);
+		
+		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 10, EVENT_LOGIN, true);
+
 		//add create a user on the side
 		login.addRectangle("ver_bar", 24, 2*width/3, 0, 5, height, COLOR_SEPARATOR, false);
 		login.addRectangle("no_acc_rect", 25, 2*width/3 + 65, 150, 200, 50, COLOR_CREATE_ACC_BOX, false);
@@ -548,6 +553,12 @@ public class Display {
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle("rect_" + name, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
 		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
+	}
+	
+	private void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
+		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, col, true);
+		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, true);
+		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, true);
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
