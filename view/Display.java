@@ -1,10 +1,18 @@
 package view;
 
+
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.util.Arrays;
 import java.util.List;
+
 import input.Communication;
 import intermediary.Intermediary;
+import javafx.stage.Stage;
+import view2.ApplicationWindow;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
@@ -34,9 +42,7 @@ public class Display {
 	/** */
 	private final static Font FONT_TWO = new Font("SansSerif", Font.BOLD, 40);
 	/** */
-	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 14);
-	
-	private final static Font FONT_TITLE = new Font("Baskerville Old Face", Font.BOLD, 80);	//Vivaldi
+	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 12);
 	
 	//------------------------------------------
 	/** */
@@ -45,8 +51,6 @@ public class Display {
 	private final static Color COLOR_LOGIN = new Color(102, 255, 102);
 	/** */
 	private final static Color COLOR_TWO = new Color(90, 80, 175);
-	
-	private final static Color COLOR_THREE = new Color(200,150,170);
 	/** */
 	private final static Color COLOR_WHITE = new Color(255, 255, 255);
 	/** */
@@ -72,7 +76,7 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
 	/** */
-	private final static int EVENT_GO_TO_TRIP = 11;//I think this has to be the maximum value, so arranging accordingly
+	private final static int EVENT_GO_TO_TRIP = 12;//I think this has to be the maximum value, so arranging accordingly
 	/** */
 	private final static int EVENT_TRIP_SELECTION = 7;
 	/** */
@@ -81,6 +85,9 @@ public class Display {
 	private static final int EVENT_GO_TO_RES_CREATION = 9;
 	/** */
 	private static final int EVENT_SAVE_RES = 10;
+	/** */
+	private static final int EVENT_RES_LIST = 11;
+	
 	
 	
 
@@ -135,16 +142,13 @@ public class Display {
 				}
 			}	
 		};
-		
-		//Make a composite for headers with consistent color usage; decide on a color scheme.
 		titlePanel.addRectangle("rect1", 0, 0, 0, titlePanel.getWidth(), titlePanel.getHeight(), COLOR_ONE, false);
-		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, COLOR_THREE, false);
-		
-		titlePanel.addRectangle("rect3", 8, width/4 - width/6,  height / 4 - height/10, 3*width/4, height/5, COLOR_TWO, false);
-		titlePanel.addText("tex1", 15, width/4, height / 4, width, height/2, "Plein Air", FONT_TITLE, true);
-		
-		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 3*height/5, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
-		
+		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, new Color(200,150,170), false);
+		titlePanel.addText("tex1", 15, width/2, height / 3, width/4, height/5, "Plein Air", FONT_TWO, true);
+		titlePanel.addRectangle("rect3", 14, width/2, 3*height/5, width/10, height/20, COLOR_WHITE, true);
+		titlePanel.addButton("but1",     15, width/2, 3*height/5, width/20, height/20, EVENT_GO_TO_LOGIN, true);
+		titlePanel.addText("text_but1",  16, width/2, 3*height/5 + 5,  width/20, height/20, "Start", FONT_ENTRY, true);
+
 		display.addPanel("Title", titlePanel);
 	}
 
@@ -180,9 +184,9 @@ public class Display {
 		designTextField(login, "password", width/3, height/2 + 130, width/6, height/12, 10, 10000, true);
 		login.addText("tex3", 79,          width/3, height/2 + 100, width/6, height/12, "Password", FONT_ONE, true);
 		//add button to login
-		
-		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 10, EVENT_LOGIN, true);
-
+		login.addRectangle("but1_rect", 14, width/3, height - 100, width/8, height/20,  COLOR_LOGIN , true);
+		login.addText("but1_text", 15, width/3, height - 100, width/9, height/20 - 10, "Log In", FONT_ENTRY, true);
+		login.addButton("but1", 15, width/3, height - 100, width/9, height/20, EVENT_LOGIN, true);
 		//add create a user on the side
 		login.addRectangle("ver_bar", 24, 2*width/3, 0, 5, height, COLOR_SEPARATOR, false);
 		login.addRectangle("no_acc_rect", 25, 2*width/3 + 65, 150, 200, 50, COLOR_CREATE_ACC_BOX, false);
@@ -323,13 +327,16 @@ public class Display {
 		
 		List<String[]> res = Intermediary.getTripsRes();
 		
-		ElementPanel rS = new ElementPanel(0, 0, width, height){
+		ElementPanel rS = new ElementPanel(0, 0, width, height) 
+		{
+			
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
 				else if(event == EVENT_GO_TO_RES_CREATION) {
+					System.out.println("go to res creation");
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
 				}
 			}
@@ -339,20 +346,21 @@ public class Display {
 		//title of page
 		rS.addRectangle("title_backround", 1, width/2, 60, width/3, 60, COLOR_WHITE, true);
 		rS.addText("title",                100, width/2, 50, width, height/10, "Reservations:", FONT_TWO, true);
-		//logout button
+		//exit button
 		rS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		rS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
 		rS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
-		//create trip button
+		//create res button
 		rS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-		rS.addText(     "create_res_text", 6, width - 135, 125, 120, 50, "Create a new reservation!", FONT_ENTRY, false);
+		rS.addText(     "create_res_text", 6, width - 135, 125, 150, 50, "Create a new reservation!", FONT_ENTRY, false);
 		rS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_RES_CREATION , false);
 		int sideOffset = 200;
 		int topOffset = height/3 - 30;
 		int bottomOffset = 140;
 		//background of main screen
 		rS.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
-		//adding trip buttons
+		
+		//adding res buttons
 		int tileInset = 10;
 		int tileGap = 10;
 		int tileHeight = 60;
@@ -360,12 +368,12 @@ public class Display {
 		
 		
 		for(int i = 0; i < (res == null ? 0 : res.size()); i++) {
-			//display the trips on screen
-			rS.addRectangle("trip_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
-			rS.addText("trip_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, res.get(i)[1], FONT_ONE, true);
-			rS.addText("trip_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 50, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[2], FONT_ENTRY, false);
-			rS.addText("trip_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[3] + " - " + res.get(i)[4], FONT_ENTRY, false);
-			rS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_TRIP+i, false);
+			//display the reservations on screen
+			rS.addRectangle("res_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
+			rS.addText("res_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, res.get(i)[2], FONT_ONE, true);
+			rS.addText("res_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[5], FONT_ENTRY, false);
+			rS.addText("res_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[3] + " - " + res.get(i)[4], FONT_ENTRY, false);
+			rS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_RES_CREATION, false);
 		}
 
 		display.addPanel("Reservations", rS);
@@ -375,7 +383,6 @@ public class Display {
 	/**
 	 * 
 	 */
-	
 	public void tripCreationScreen()
 	{
 		ElementPanel tC = new ElementPanel(0, 0, width, height) {
@@ -389,7 +396,7 @@ public class Display {
 					String title = this.getElementStoredText("text_tripTitle");//actual titles here have to be prefaced with text_ for some reason
 					String date1 = this.getElementStoredText("text_tripStart");
 					String date2 = this.getElementStoredText("text_tripEnd");
-					//String comments = this.getElementStoredText("text_tripNotes");
+					String comments = this.getElementStoredText("text_tripNotes");
 					String dest = this.getElementStoredText("text_tripDest");
 					
 					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
@@ -444,21 +451,17 @@ public class Display {
 		
 	}
 	
-	/**
-	 * 
-	 */
-	
 	public void makeResScreen()
 	{
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_GO_TO_TRIP)
+				if(event == EVENT_RES_LIST)
 				{
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 				else if(event == EVENT_SAVE_RES) 
 				{
-					String title = this.getElementStoredText("text_resTitle");//actual titles here have to be prefaced with text_ for some reason
+					String title = this.getElementStoredText("text_resTitle");
 					String date1 = this.getElementStoredText("text_resStart");
 					String date2 = this.getElementStoredText("text_resEnd");
 					String loc = this.getElementStoredText("text_resLoc");
@@ -478,11 +481,11 @@ public class Display {
 			}
 		};
 		
-		System.out.println("hecko");
 		//background
 		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
 		
 		//title of page
+		
 		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
 		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Reservation Details", FONT_TWO, true);
 		
@@ -490,7 +493,7 @@ public class Display {
 		//cancel button
 		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_GO_TO_TRIP , false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_RES_LIST , false);
 		
 		
 		//create trip button
@@ -501,7 +504,9 @@ public class Display {
 		
 		//adding trip info fields
 		designTextField(mR, "resTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 + 10, width/6, height/12, "Reservation Name:", FONT_ONE, true);
+		mR.addText("name", 78,          width/4, height/4 + 10, width/4, height/12, "Reservation Name:", FONT_ONE, true);
+		
+		//here be glitch
 		
 		designTextField(mR, "resLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
 		mR.addText("Location", 79,          width/2+50, height/4 + 10, width/6, height/12, "Address:", FONT_ONE, true);
@@ -518,7 +523,7 @@ public class Display {
 		
 		
 
-		display.addPanel("Trip Creation", mR);
+		display.addPanel("Res Creation", mR);
 		
 		
 	}
@@ -553,12 +558,6 @@ public class Display {
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle("rect_" + name, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
 		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
-	}
-	
-	private void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
-		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, col, true);
-		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, true);
-		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, true);
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
