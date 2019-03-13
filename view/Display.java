@@ -1,8 +1,14 @@
 package view;
 
+
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.util.Arrays;
 import java.util.List;
+
 import input.Communication;
 import intermediary.Intermediary;
 import visual.frame.WindowFrame;
@@ -74,7 +80,7 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
 	/** */
-	private final static int EVENT_GO_TO_TRIP = 11;//I think this has to be the maximum value, so arranging accordingly
+	private final static int EVENT_GO_TO_TRIP = 12;//I think this has to be the maximum value, so arranging accordingly
 	/** */
 	private final static int EVENT_TRIP_SELECTION = 7;
 	/** */
@@ -85,6 +91,8 @@ public class Display {
 	private static final int EVENT_SAVE_RES = 10;
 	/** */
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
+	/** */
+	private static final int EVENT_RES_LIST = 11;
 	
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -144,7 +152,7 @@ public class Display {
 		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
 		
 		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
-		
+
 		display.addPanel("Title", titlePanel);
 	}
 
@@ -182,7 +190,6 @@ public class Display {
 		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
 		//Create Account Button
 		designReactiveButton(login,"acc_create", COLOR_LOGIN, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 12, width/12, height/20, 2, EVENT_CREATE_ACC_BTN, true);		
-
 		//add create a user on the side
 		designTwoColorBorder(login, "border_2", COLOR_ONE, COLOR_THREE, width*2/3, 0, width/3, height, 30, 30, 0, false);
 		
@@ -321,13 +328,16 @@ public class Display {
 		
 		List<String[]> res = Intermediary.getTripsRes();
 		
-		ElementPanel rS = new ElementPanel(0, 0, width, height){
+		ElementPanel rS = new ElementPanel(0, 0, width, height) 
+		{
+			
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
 				else if(event == EVENT_GO_TO_RES_CREATION) {
+					System.out.println("go to res creation");
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
 				}
 			}
@@ -337,20 +347,21 @@ public class Display {
 		//title of page
 		rS.addRectangle("title_backround", 1, width/2, 60, width/3, 60, COLOR_WHITE, true);
 		rS.addText("title",                100, width/2, 50, width, height/10, "Reservations:", FONT_TWO, true);
-		//logout button
+		//exit button
 		rS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		rS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
 		rS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
-		//create trip button
+		//create res button
 		rS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-		rS.addText(     "create_res_text", 6, width - 135, 125, 120, 50, "Create a new reservation!", FONT_ENTRY, false);
+		rS.addText(     "create_res_text", 6, width - 135, 125, 150, 50, "Create a new reservation!", FONT_ENTRY, false);
 		rS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_RES_CREATION , false);
 		int sideOffset = 200;
 		int topOffset = height/3 - 30;
 		int bottomOffset = 140;
 		//background of main screen
 		rS.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
-		//adding trip buttons
+		
+		//adding res buttons
 		int tileInset = 10;
 		int tileGap = 10;
 		int tileHeight = 60;
@@ -358,12 +369,12 @@ public class Display {
 		
 		
 		for(int i = 0; i < (res == null ? 0 : res.size()); i++) {
-			//display the trips on screen
-			rS.addRectangle("trip_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
-			rS.addText("trip_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, res.get(i)[1], FONT_ONE, true);
-			rS.addText("trip_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 50, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[2], FONT_ENTRY, false);
-			rS.addText("trip_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[3] + " - " + res.get(i)[4], FONT_ENTRY, false);
-			rS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_TRIP+i, false);
+			//display the reservations on screen
+			rS.addRectangle("res_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
+			rS.addText("res_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, res.get(i)[2], FONT_ONE, true);
+			rS.addText("res_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[5], FONT_ENTRY, false);
+			rS.addText("res_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, res.get(i)[3] + " - " + res.get(i)[4], FONT_ENTRY, false);
+			rS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_RES_CREATION, false);
 		}
 
 		display.addPanel("Reservations", rS);
@@ -373,8 +384,9 @@ public class Display {
 	/**
 	 * 
 	 */
-	
-	public void tripCreationScreen(){
+
+	public void tripCreationScreen()
+	{
 		ElementPanel tC = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
@@ -386,7 +398,7 @@ public class Display {
 					String title = this.getElementStoredText("text_tripTitle");//actual titles here have to be prefaced with text_ for some reason
 					String date1 = this.getElementStoredText("text_tripStart");
 					String date2 = this.getElementStoredText("text_tripEnd");
-					//String comments = this.getElementStoredText("text_tripNotes");
+					String comments = this.getElementStoredText("text_tripNotes");
 					String dest = this.getElementStoredText("text_tripDest");
 					
 					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
@@ -441,20 +453,17 @@ public class Display {
 		
 	}
 	
-	/**
-	 * 
-	 */
-	
-	public void makeResScreen()	{
+
+	public void makeResScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_GO_TO_TRIP)
+				if(event == EVENT_RES_LIST)
 				{
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 				else if(event == EVENT_SAVE_RES) 
 				{
-					String title = this.getElementStoredText("text_resTitle");//actual titles here have to be prefaced with text_ for some reason
+					String title = this.getElementStoredText("text_resTitle");
 					String date1 = this.getElementStoredText("text_resStart");
 					String date2 = this.getElementStoredText("text_resEnd");
 					String loc = this.getElementStoredText("text_resLoc");
@@ -474,11 +483,11 @@ public class Display {
 			}
 		};
 		
-		System.out.println("hecko");
 		//background
 		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
 		
 		//title of page
+		
 		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
 		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Reservation Details", FONT_TWO, true);
 		
@@ -486,7 +495,7 @@ public class Display {
 		//cancel button
 		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_GO_TO_TRIP , false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_RES_LIST , false);
 		
 		
 		//create trip button
@@ -497,7 +506,9 @@ public class Display {
 		
 		//adding trip info fields
 		designTextField(mR, "resTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 + 10, width/6, height/12, "Reservation Name:", FONT_ONE, true);
+		mR.addText("name", 78,          width/4, height/4 + 10, width/4, height/12, "Reservation Name:", FONT_ONE, true);
+		
+		//here be glitch
 		
 		designTextField(mR, "resLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
 		mR.addText("Location", 79,          width/2+50, height/4 + 10, width/6, height/12, "Address:", FONT_ONE, true);
@@ -514,7 +525,7 @@ public class Display {
 		
 		
 
-		display.addPanel("Trip Creation", mR);
+		display.addPanel("Res Creation", mR);
 		
 		
 	}
