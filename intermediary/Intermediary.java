@@ -256,7 +256,7 @@ public class Intermediary {
 			else {
 				//check if a trip with that name already exists with the user
 				List<String[]> trips = Database.search(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
-				if(trips == null || trips.size() == 0) {
+				if(trips.size() == 0) {
 					Database.addEntry(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
 					//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
 				
@@ -267,7 +267,6 @@ public class Intermediary {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			errorReport("Invalid Dates");
 		}
 		//TODO: Set CONTROL to whatever we do next
@@ -276,7 +275,6 @@ public class Intermediary {
 	/**
 	 * Basically the method above but for reservations
 	 */
-
 	public void saveRes() {
 		Date begin;
 		Date end;
@@ -292,7 +290,7 @@ public class Intermediary {
 			List<String[]> resList = Database.search(TableType.reservations, user.getUsername(), CURR_TRIP, Communication.get(CREATE_RES_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
 			if(resList.size() == 0)
 			{
-				Database.addEntry(TableType.trips, user.getUsername(), CURR_TRIP, Communication.get(CREATE_TRIP_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
+				Database.addEntry(TableType.reservations, user.getUsername(), CURR_TRIP, Communication.get(CREATE_RES_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
 				//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 					//after insertion, go back to trip select
 					goToRes();
@@ -315,6 +313,8 @@ public class Intermediary {
 	{
 		
 	}
+	
+	
 	
 //--- Getter Methods --------------------------------------------------------------------------
 
@@ -380,21 +380,15 @@ public class Intermediary {
 		display.resetView();
 		display.tripCreationScreen();
 	}
-
 	/**
 	 * This method navigates the Display to the tripCreation screen by hiding the current
 	 * panels in the WindowFrame and calling display.reservationScreen().
 	 */
-
 	public void goToRes()
 	{
 		display.resetView();
 		display.reservationScreen(Communication.get(CURR_TRIP));
 	}
-
-	/**
-	 * 
-	 */
 	
 	public void goToMakeRes()
 	{
