@@ -1,5 +1,7 @@
 package test;
 
+import java.awt.GraphicsEnvironment;
+
 import intermediary.Intermediary;
 
 /**
@@ -12,6 +14,14 @@ import intermediary.Intermediary;
 public class test {
 
 	public static void main(String[] args) {
+		String fonts[] = 
+			      GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+
+			    for ( int i = 0; i < fonts.length; i++ )
+			    {
+			      System.out.println(fonts[i]);
+			    }
+		
 		Intermediary inter = new Intermediary();
 	}
 	

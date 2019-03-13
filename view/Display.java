@@ -1,18 +1,10 @@
 package view;
 
-
-import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.util.Arrays;
 import java.util.List;
-
 import input.Communication;
 import intermediary.Intermediary;
-import javafx.stage.Stage;
-import view2.ApplicationWindow;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
@@ -43,6 +35,8 @@ public class Display {
 	private final static Font FONT_TWO = new Font("SansSerif", Font.BOLD, 40);
 	/** */
 	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 12);
+	
+	private final static Font FONT_TITLE = new Font("Verdana", Font.BOLD, 40);
 	
 	//------------------------------------------
 	/** */
@@ -141,7 +135,7 @@ public class Display {
 		};
 		titlePanel.addRectangle("rect1", 0, 0, 0, titlePanel.getWidth(), titlePanel.getHeight(), COLOR_ONE, false);
 		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, new Color(200,150,170), false);
-		titlePanel.addText("tex1", 15, width/2, height / 3, width/4, height/5, "Plein Air", FONT_TWO, true);
+		titlePanel.addText("tex1", 15, width/2, height / 3, width/4, height/5, "Plein Air", FONT_TITLE, true);
 		titlePanel.addRectangle("rect3", 14, width/2, 3*height/5, width/10, height/20, COLOR_WHITE, true);
 		titlePanel.addButton("but1",     15, width/2, 3*height/5, width/20, height/20, EVENT_GO_TO_LOGIN, true);
 		titlePanel.addText("text_but1",  16, width/2, 3*height/5 + 5,  width/20, height/20, "Start", FONT_ENTRY, true);
@@ -324,9 +318,7 @@ public class Display {
 		
 		List<String[]> res = Intermediary.getTripsRes();
 		
-		ElementPanel rS = new ElementPanel(0, 0, width, height) 
-		{
-			
+		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
 				{
@@ -378,6 +370,7 @@ public class Display {
 	/**
 	 * 
 	 */
+	
 	public void tripCreationScreen()
 	{
 		ElementPanel tC = new ElementPanel(0, 0, width, height) {
@@ -391,7 +384,7 @@ public class Display {
 					String title = this.getElementStoredText("text_tripTitle");//actual titles here have to be prefaced with text_ for some reason
 					String date1 = this.getElementStoredText("text_tripStart");
 					String date2 = this.getElementStoredText("text_tripEnd");
-					String comments = this.getElementStoredText("text_tripNotes");
+					//String comments = this.getElementStoredText("text_tripNotes");
 					String dest = this.getElementStoredText("text_tripDest");
 					
 					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
@@ -445,6 +438,10 @@ public class Display {
 		
 		
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void makeResScreen()
 	{

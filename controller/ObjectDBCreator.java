@@ -13,8 +13,8 @@ import model.user.User;
 public class ObjectDBCreator {
 	
 	//username, password, fname, lname, DOB
-	public static void createUser(String fname, String lname, String username, String password, String DOB) {
-		User newUser = new User(fname, lname, username, password, DOB);	
+	public static void createUser(String fname, String lname, String username, String password) {
+		User newUser = new User(fname, lname, username, password);	
 	}
 
 }
