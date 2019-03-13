@@ -36,6 +36,8 @@ public class Display {
 	/** */
 	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 14);
 	
+	private final static Font FONT_HEADER = new Font("Arial Bold", Font.BOLD, 28);
+	
 	private final static Font FONT_TITLE = new Font("Baskerville Old Face", Font.BOLD, 80);	//Vivaldi
 	
 	//------------------------------------------
@@ -81,7 +83,8 @@ public class Display {
 	private static final int EVENT_GO_TO_RES_CREATION = 9;
 	/** */
 	private static final int EVENT_SAVE_RES = 10;
-	
+	/** */
+	private static final int MAX_COMPOSITE_ELEMENTS = 10;
 	
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -109,11 +112,10 @@ public class Display {
 	
 	}*/
 	
-	public Display(int inWidth, int inHeight) 
-	{
+	public Display(int inWidth, int inHeight){
 		width = inWidth;
 		height = inHeight;
-		display = new WindowFrame(width, height);
+		display = new WindowFrame(width + 15, height + 38);	//offset because java windows aren't quite accurate
 		initialScreen();
 		
 	}
@@ -137,13 +139,11 @@ public class Display {
 		};
 		
 		//Make a composite for headers with consistent color usage; decide on a color scheme.
-		titlePanel.addRectangle("rect1", 0, 0, 0, titlePanel.getWidth(), titlePanel.getHeight(), COLOR_ONE, false);
-		titlePanel.addRectangle("rect2", 5, width/20, height/12, width*18/20, 9*height/12, COLOR_THREE, false);
+		designTwoColorBorder(titlePanel, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
-		titlePanel.addRectangle("rect3", 8, width/4 - width/6,  height / 4 - height/10, 3*width/4, height/5, COLOR_TWO, false);
-		titlePanel.addText("tex1", 15, width/4, height / 4, width, height/2, "Plein Air", FONT_TITLE, true);
+		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
 		
-		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 3*height/5, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
+		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
 		
 		display.addPanel("Title", titlePanel);
 	}
@@ -169,27 +169,25 @@ public class Display {
 				}
 			}
 		};
-		login.addRectangle("rect1", 0, 0, 0, width, height, COLOR_ONE, false);
-		login.addRectangle("rect2", 3, width/3, height/3, width/2, height/4, COLOR_WHITE, COLOR_BLACK, true);
-		login.addText("tex1", 5, width/3, height/3 + 40, width/2, height/3, "Log In", FONT_TWO, true);
-		//add username and password entries
-		//username
-		designTextField(login, "username", width/3, height/2 + 40, width/6, height/12, 10, 10001, true);
-		login.addText("tex2", 78,          width/3, height/2 + 10, width/6, height/12, "Username", FONT_ONE, true);
-		//password
-		designTextField(login, "password", width/3, height/2 + 130, width/6, height/12, 10, 10000, true);
-		login.addText("tex3", 79,          width/3, height/2 + 100, width/6, height/12, "Password", FONT_ONE, true);
-		//add button to login
+
+		designTwoColorBorder(login, "border_1", COLOR_ONE, COLOR_THREE, 0, 0, width*2/3, height, 30, 30, 0, false);
 		
-		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 10, EVENT_LOGIN, true);
+		designBackedLabel(login, "login_", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Log In", width/3, height/4, width/2, height/4, 1, true);
+
+		login.addText("tex2", 78,          width/6, height/2 + 40, width/6, height/12, "Username:", FONT_ONE, true);
+		designTextField(login, "username", width/3, height/2 + 40, width/6, height/16, 10, 10001, true);	//username entry
+		login.addText("tex3", 79,          width/6, height/2 + 130, width/6, height/12, "Password:", FONT_ONE, true);		
+		designTextField(login, "password", width/3, height/2 + 130, width/6, height/16, 10, 10000, true);	//password entry
+		//Log In Button
+		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
+		//Create Account Button
+		designReactiveButton(login,"acc_create", COLOR_LOGIN, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 12, width/12, height/20, 2, EVENT_CREATE_ACC_BTN, true);		
 
 		//add create a user on the side
-		login.addRectangle("ver_bar", 24, 2*width/3, 0, 5, height, COLOR_SEPARATOR, false);
-		login.addRectangle("no_acc_rect", 25, 2*width/3 + 65, 150, 200, 50, COLOR_CREATE_ACC_BOX, false);
-		login.addText("no_acc_text", 26, 2*width/3 + 90, 165, 200, 50, "Don't have an account?", FONT_ENTRY, false);
-		login.addRectangle("no_acc_create_rect", 25, 2*width/3 + 115, 250, 100, 30, COLOR_LOGIN, false);
-		login.addText("no_acc_text_btn",         27, 2*width/3 + 130, 255, 100, 30, "Create one!", FONT_ENTRY, false);
-		login.addButton("create_acc_btn", 28, 2*width/3 + 130, 255, 100, 30, EVENT_CREATE_ACC_BTN, false);
+		designTwoColorBorder(login, "border_2", COLOR_ONE, COLOR_THREE, width*2/3, 0, width/3, height, 30, 30, 0, false);
+		
+		designBackedLabel(login, "no_acc", COLOR_CREATE_ACC_BOX, COLOR_BLACK, FONT_ENTRY, "Don't have an account?", 5*width/6, height / 4, width/6, height/12, 1, true);
+		
 		display.addPanel("Login", login);
 	}
 	
@@ -220,9 +218,10 @@ public class Display {
 			}
 		};
 		//background
-		createAcc.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
+		
+		designTwoColorBorder(createAcc, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		//title
-		createAcc.addText("create_acc_title", 1, width/2, 95, width, height/5, "Create your account", FONT_TWO, true);
+		designBackedLabel(createAcc, "acct_title", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Create your account", width/2, height/6, width/3, height/8, 1, true);
 		//first name
 		createAcc.addText("fn",              2, width/2, 180, 200, 100, "First name", FONT_ONE, true);
 		designTextField(createAcc, "firstname", width/2, 180, 200, 30, 3, 10002, true);
@@ -314,12 +313,11 @@ public class Display {
 		display.addPanel("Trip Select", tS);
 	}
 	
-	
 	/**
 	 * A screen to display all reservations
 	 */
-	public void reservationScreen(String tripName) 
-	{
+
+	public void reservationScreen(String tripName) {
 		
 		List<String[]> res = Intermediary.getTripsRes();
 		
@@ -376,8 +374,7 @@ public class Display {
 	 * 
 	 */
 	
-	public void tripCreationScreen()
-	{
+	public void tripCreationScreen(){
 		ElementPanel tC = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
@@ -448,8 +445,7 @@ public class Display {
 	 * 
 	 */
 	
-	public void makeResScreen()
-	{
+	public void makeResScreen()	{
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_TRIP)
@@ -551,14 +547,24 @@ public class Display {
 	 */
 	
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
-		pan.addRectangle("rect_" + name, priority * 10, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
-		pan.addTextEntry("text_" + name , priority * 10 + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
+		pan.addRectangle("rect_" + name, priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
+		pan.addTextEntry("text_" + name , priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
 	
 	private void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
-		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, col, true);
-		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, true);
-		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, true);
+		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, col, centered);
+		pan.addButton(name + "_but",     priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, wid, hei, code, centered);
+		pan.addText(name + "_text_but",  priority * MAX_COMPOSITE_ELEMENTS + 2, x, y,  wid, hei, message, font, centered);
+	}
+	
+	private void designBackedLabel(ElementPanel pan, String name, Color colFill, Color colBorder, Font font, String message, int x, int y, int wid, int hei, int priority, boolean centered) {
+		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, colFill, colBorder, centered);
+		pan.addText(name + "_text_but",  priority * MAX_COMPOSITE_ELEMENTS + 1, x, y,  wid, hei, message, font, centered);
+	}
+	
+	private void designTwoColorBorder(ElementPanel pan, String name, Color colFill, Color colBorder, int x, int y, int wid, int hei, int xRatio, int yRatio, int priority, boolean centered) {
+		pan.addRectangle(name + "_rect1", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, colBorder, centered);
+		pan.addRectangle(name + "_rect2", priority * MAX_COMPOSITE_ELEMENTS + 1, x + wid/xRatio, y + hei/yRatio, wid - 2 * wid / xRatio, hei - 2 * hei/yRatio, colFill, centered);
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
