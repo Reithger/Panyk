@@ -42,7 +42,7 @@ public class Display {
 	/** */
 	private final static Font FONT_ENTRY = new Font("Arial Bold", Font.BOLD, 14);
 	
-	private final static Font FONT_HEADER = new Font("Arial Bold", Font.BOLD, 28);
+	private final static Font FONT_HEADER = new Font("Arial Bold", Font.BOLD, 36);
 	
 	private final static Font FONT_TITLE = new Font("Baskerville Old Face", Font.BOLD, 80);	//Vivaldi
 	
@@ -151,7 +151,7 @@ public class Display {
 		
 		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
 		
-		designReactiveButton(titlePanel, "cont", COLOR_WHITE, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
+		designReactiveButton(titlePanel, "cont", COLOR_WHITE, COLOR_BLACK, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
 
 		display.addPanel("Title", titlePanel);
 	}
@@ -187,13 +187,13 @@ public class Display {
 		login.addText("tex3", 79,          width/6, height/2 + 130, width/6, height/12, "Password:", FONT_ONE, true);		
 		designTextField(login, "password", width/3, height/2 + 130, width/6, height/16, 10, 10000, true);	//password entry
 		//Log In Button
-		designReactiveButton(login, "but1", COLOR_LOGIN, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
+		designReactiveButton(login, "but1", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
 		//Create Account Button
-		designReactiveButton(login,"acc_create", COLOR_LOGIN, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 12, width/12, height/20, 2, EVENT_CREATE_ACC_BTN, true);		
+		designReactiveButton(login,"acc_create", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 6, width/10, height/16, 2, EVENT_CREATE_ACC_BTN, true);		
 		//add create a user on the side
 		designTwoColorBorder(login, "border_2", COLOR_ONE, COLOR_THREE, width*2/3, 0, width/3, height, 30, 30, 0, false);
 		
-		designBackedLabel(login, "no_acc", COLOR_CREATE_ACC_BOX, COLOR_BLACK, FONT_ENTRY, "Don't have an account?", 5*width/6, height / 4, width/6, height/12, 1, true);
+		designBackedLabel(login, "no_acc", COLOR_CREATE_ACC_BOX, COLOR_BLACK, FONT_ENTRY, "Don't have an account?", 5*width/6, height * 2 / 3, width/6, height/12, 1, true);
 		
 		display.addPanel("Login", login);
 	}
@@ -207,10 +207,10 @@ public class Display {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_CREATE_ACC_FINALIZE) {
 					//create the user based on passed in information
-					String fn    = this.getElementStoredText("text_firstname");
-					String ln    = this.getElementStoredText("text_lastname");
-					String uname = this.getElementStoredText("text_username");
-					String pass  = this.getElementStoredText("text_password");
+					String fn    = this.getElementStoredText("fn_text");
+					String ln    = this.getElementStoredText("ln_text");
+					String uname = this.getElementStoredText("uname_text");
+					String pass  = this.getElementStoredText("pass_text");
 					
 					Communication.set(Intermediary.CREATE_USER_FIRSTNAME, fn);
 					Communication.set(Intermediary.CREATE_USER_LASTNAME, ln);
@@ -229,31 +229,20 @@ public class Display {
 		designTwoColorBorder(createAcc, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		//title
 		designBackedLabel(createAcc, "acct_title", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Create your account", width/2, height/6, width/3, height/8, 1, true);
-		//first name
-		createAcc.addText("fn",              2, width/2, 180, 200, 100, "First name", FONT_ONE, true);
-		designTextField(createAcc, "firstname", width/2, 180, 200, 30, 3, 10002, true);
-
-		//last name
-		createAcc.addText("ln",             4, width/2, 250, 200, 100, "Last name", FONT_ONE, true);
-		designTextField(createAcc, "lastname", width/2, 250, 200, 30, 5, 10003, true);
-
-		//username
-		createAcc.addText("uname",          6, width/2, 320, 200, 100, "Username", FONT_ONE, true);
-		designTextField(createAcc, "username", width/2, 320, 200, 30, 7, 10004, true);
-
-		//password
-		createAcc.addText("pass",           8, width/2, 390, 200, 100, "Password", FONT_ONE, true);
-		designTextField(createAcc, "password", width/2, 390, 200, 30, 9, 10005, true);
-
-		//create account button
-		createAcc.addRectangle("but_rect", 10, width/2, height - 130, width/8, height/20,  COLOR_LOGIN , true);
-		createAcc.addText("but_text",      11, width/2, height - 130, width, height/20 - 10, "Create my account!", FONT_ENTRY, true);
-		createAcc.addButton("create_but",  12, width/2, height - 130, width/9, height/20, EVENT_CREATE_ACC_FINALIZE, true);
-		//create a back button
-		createAcc.addRectangle("btn_back_rect", 26, 50, height - 100, 90, 30,  COLOR_ERR , false);
-		createAcc.addText("but_back_text",      27, 80, height - 95,  90, 30, "back", FONT_ENTRY, false);
-		createAcc.addButton("back_btn",         28, 50, height - 100, 90, 30, EVENT_BACK_TO_LOGIN, false);
 		
+		String[] elementName = new String[] {"fn", "ln", "uname", "pass"};
+		String[] displayName = new String[] {"First Name", "Last Name", "Username", "Password"};
+		
+		for(int i = 0; i < elementName.length; i++) {
+			createAcc.addText(elementName[i], 200, width*3/10, height/3 + i * height / 9, width/6, height/6, displayName[i], FONT_ONE, true);
+			designTextField(createAcc, elementName[i], width/2, height/3 + i * height / 9, width/6, height/20, 3, 1000 + i, true);
+		}
+		
+		//create account button
+		designReactiveButton(createAcc, "but", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create my account", width/2, height*5/6, width/8, height/15, 2, EVENT_CREATE_ACC_FINALIZE, true);
+		//create a back button
+		designReactiveButton(createAcc, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width/12, height * 11 / 12, width / 12, height / 20, 2, EVENT_BACK_TO_LOGIN, true);
+
 		display.addPanel("Create Account", createAcc);
 	}
 
@@ -558,12 +547,12 @@ public class Display {
 	 */
 	
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
-		pan.addRectangle("rect_" + name, priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
-		pan.addTextEntry("text_" + name , priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
+		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
+		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
 	
-	private void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
-		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, col, centered);
+	private void designReactiveButton(ElementPanel pan, String name, Color fillCol, Color backColor, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
+		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, fillCol, backColor, centered);
 		pan.addButton(name + "_but",     priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, wid, hei, code, centered);
 		pan.addText(name + "_text_but",  priority * MAX_COMPOSITE_ELEMENTS + 2, x, y,  wid, hei, message, font, centered);
 	}
