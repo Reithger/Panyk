@@ -731,7 +731,7 @@ public class Display {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
 				else if(event == EVENT_RES_LIST) {
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);//fix this later-------------------------------------------------------------------------------------------------
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 				else if(event == EVENT_GO_TO_ACCOM_CREATION)
 				{
@@ -807,7 +807,7 @@ public class Display {
 		//title of page
 		
 		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
-		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Reservation Details", FONT_TWO, true);
+		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Accommodation Details", FONT_TWO, true);
 		
 		
 		//cancel button
@@ -824,7 +824,7 @@ public class Display {
 		
 		//adding trip info fields
 		designTextField(mR, "accomTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 -20, width/4, height/12, "Reservation Name:", FONT_ONE, true);
+		mR.addText("name", 78,          width/4, height/4 -20, width/4, height/12, "Accommodation Name:", FONT_ONE, true);
 		
 		//here be glitch
 		
