@@ -465,10 +465,12 @@ public class Intermediary {
 		display.resetView();
 		display.tripCreationScreen();
 	}
+
 	/**
 	 * This method navigates the Display to the tripCreation screen by hiding the current
 	 * panels in the WindowFrame and calling display.reservationScreen().
 	 */
+	
 	public void goToRes()
 	{
 		display.resetView();

@@ -164,8 +164,8 @@ public class Display {
 		ElementPanel login = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_LOGIN) {
-					String uname = this.getElementStoredText("text_username");
-					String pass = this.getElementStoredText("text_password");
+					String uname = this.getElementStoredText("username_text");
+					String pass = this.getElementStoredText("password_text");
 					Communication.set(Intermediary.LOGIN_USERNAME, uname);
 					Communication.set(Intermediary.LOGIN_PASSWORD, pass);
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_LOGIN);
@@ -541,10 +541,10 @@ public class Display {
 				}
 				else if(event == EVENT_SAVE_RES) 
 				{
-					String title = this.getElementStoredText("text_accomTitle");
-					String date1 = this.getElementStoredText("text_accomStart");
-					String date2 = this.getElementStoredText("text_accomEnd");
-					String loc = this.getElementStoredText("text_accomLoc");
+					String title = this.getElementStoredText("accomTitle_text");
+					String date1 = this.getElementStoredText("accomStart_text");
+					String date2 = this.getElementStoredText("accomEnd_text");
+					String loc = this.getElementStoredText("accomLoc_text");
 					
 					
 					Communication.set(Intermediary.CREATE_ACCOM_TITLE, title);
@@ -618,10 +618,10 @@ public class Display {
 				}
 				else if(event == EVENT_SAVE_TRANSP) 
 				{
-					String title = this.getElementStoredText("text_transpTitle");
-					String date1 = this.getElementStoredText("text_transpStart");
-					String date2 = this.getElementStoredText("text_transpEnd");
-					String mode = this.getElementStoredText("text_transpMode");
+					String title = this.getElementStoredText("transpTitle_text");
+					String date1 = this.getElementStoredText("transpStart_text");
+					String date2 = this.getElementStoredText("transpEnd_text");
+					String mode = this.getElementStoredText("transpMode_text");
 					
 					
 					Communication.set(Intermediary.CREATE_TRANSP_TITLE, title);
@@ -685,7 +685,6 @@ public class Display {
 		
 	}
 	
-	
 	/**
 	 * 
 	 */
@@ -700,11 +699,11 @@ public class Display {
 				}
 				else if(event == EVENT_TRIP_CREATED) 
 				{
-					String title = this.getElementStoredText("text_tripTitle");//actual titles here have to be prefaced with text_ for some reason
-					String date1 = this.getElementStoredText("text_tripStart");
-					String date2 = this.getElementStoredText("text_tripEnd");
-					String comments = this.getElementStoredText("text_tripNotes");
-					String dest = this.getElementStoredText("text_tripDest");
+					String title = this.getElementStoredText("tripTitle_text");//actual titles here have to be prefaced with text_ for some reason
+					String date1 = this.getElementStoredText("tripStart_text");
+					String date2 = this.getElementStoredText("tripEnd_text");
+					String comments = this.getElementStoredText("tripNotes_text");
+					String dest = this.getElementStoredText("tripDest_text");
 					
 					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
 					Communication.set(Intermediary.CREATE_TRIP_START, date1);
@@ -771,10 +770,10 @@ public class Display {
 				}
 				else if(event == EVENT_SAVE_RES) 
 				{
-					String title = this.getElementStoredText("text_resTitle");
-					String date1 = this.getElementStoredText("text_resStart");
-					String date2 = this.getElementStoredText("text_resEnd");
-					String loc = this.getElementStoredText("text_resLoc");
+					String title = this.getElementStoredText("resTitle_text");
+					String date1 = this.getElementStoredText("resStart_text");
+					String date2 = this.getElementStoredText("resEnd_text");
+					String loc = this.getElementStoredText("resLoc_text");
 					
 					
 					Communication.set(Intermediary.CREATE_RES_TITLE, title);
