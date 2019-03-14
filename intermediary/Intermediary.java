@@ -101,11 +101,7 @@ public class Intermediary {
 	public final static String CREATE_CONTACT_ADDRESS = "home";
 	public final static String CREATE_CONTACT_DESCRIP = "description";
 	
-	
 	public final static String CURR_TRIP = "current_trip";
-	
-	
-	
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -320,6 +316,7 @@ public class Intermediary {
 	/**
 	 * Basically the method above but for reservations
 	 */
+
 	public void saveRes() {
 		Date begin;
 		Date end;
@@ -352,6 +349,7 @@ public class Intermediary {
 	/**
 	 * more repeated code, just trying to make it run tonight will definitely refactor hardcore before next milestone
 	 */
+
 	public void saveAccom() {
 		Date begin;
 		Date end;
@@ -374,6 +372,10 @@ public class Intermediary {
 		}
 		//TODO: Set CONTROL to whatever we do next
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void saveTransport() {
 		Date begin;
@@ -398,6 +400,10 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	/**
+	 * 
+	 */
+	
 	public void saveContact() 
 	{
 		
@@ -410,12 +416,14 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	/**
+	 * 
+	 */
+	
 	public void showRes()
 	{
 		goToRes();
 	}
-	
-	
 	
 //--- Getter Methods --------------------------------------------------------------------------
 
@@ -429,12 +437,22 @@ public class Intermediary {
 		return Database.search(TableType.trips, user.getUsername() , null, null, null, null);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	public static List<String[]> getTripsRes() 
 	{
 		return Database.search(TableType.reservations, user.getUsername() , CURR_TRIP, null, null, null, null);
 		
 		//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	
 	public static List<String[]> getTripsAccom() 
 	{
@@ -443,11 +461,21 @@ public class Intermediary {
 		//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	public static List<String[]> getTripsTransp()
 	{
 		return Database.search(TableType.transportation, user.getUsername() , CURR_TRIP, null, null, null, null);
 		//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	
 	public static List<String[]> getTripsContacts()
 	{
@@ -506,23 +534,32 @@ public class Intermediary {
 	 * panels in the WindowFrame and calling display.reservationScreen().
 	 */
 	
-	public void goToRes()
-	{
+	public void goToRes(){
 		display.resetView();
 		display.reservationDisplayScreen(Communication.get(CURR_TRIP));
 	}
 	
-	public void goToMakeRes()
-	{
+	/**
+	 * 
+	 */
+	
+	public void goToMakeRes(){
 		display.resetView();
 		display.makeReservationScreen();
 	}
 	
-	public void goToAccom()
-	{
+	/**
+	 * 
+	 */
+	
+	public void goToAccom()	{
 		display.resetView();
 		display.accomodationDisplayScreen(Communication.get(CURR_TRIP));
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void goToNewAccom()
 	{
@@ -530,11 +567,19 @@ public class Intermediary {
 		display.makeAccomodationScreen();
 	}
 	
+	/**
+	 * 
+	 */
+	
 	public void goToTransport()
 	{
 		display.resetView();
 		display.transportDisplayScreen(Communication.get(CURR_TRIP));
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void goToNewTransport()
 	{
@@ -542,11 +587,19 @@ public class Intermediary {
 		display.makeTransportScreen();
 	}
 	
+	/**
+	 * 
+	 */
+	
 	public void goToContactList()
 	{
 		display.resetView();
 		//display.contactScreen();
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void goToMakeContact()
 	{

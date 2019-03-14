@@ -313,9 +313,7 @@ public class Display {
 	private static final int EVENT_SAVE_RESERVATION = 10;
 	
 	private static final int EVENT_SAVE_ACCOMODATION = 20;
-	
-	private static final int EVENT_SAVE_TRANSPORT = 21;
-	/** */
+		/** */
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
 	/** */
 	private static final int EVENT_RES_LIST = 11;
@@ -680,8 +678,8 @@ public class Display {
 		//create trip button
 		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_RESERVATION, true);
 				
-		String[][] elementName = new String[][] {{"resTitle", "resStart"},{"resMode", "resEnd"}};
-		String[][] displayName = new String[][] {{"Reservation Name", "Start Date"}, {"Address", "End Date"}};
+		String[][] elementName = new String[][] {{"resTitle", "resLoc"},{"resStart", "resEnd"}};
+		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
@@ -780,15 +778,13 @@ public class Display {
 		//title of page
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/10, width*2/3, height/10, 1, true);
 		
-		
-		
 		//cancel button
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_ACCOM_LIST, true);
 		//create trip button
 		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_ACCOMODATION, true);
 				
-		String[][] elementName = new String[][] {{"accomTitle", "accomStart"},{"accomLoc", "accomEnd"}};
-		String[][] displayName = new String[][] {{"Reservation Name", "Start Date"}, {"Address", "End Date"}};
+		String[][] elementName = new String[][] {{"accomTitle", "accomLoc"},{"accomStart", "accomEnd"}};
+		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
@@ -890,7 +886,6 @@ public class Display {
 				
 			}
 		};
-		
 		//background
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
@@ -900,15 +895,14 @@ public class Display {
 		//create trip button
 		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_TRANSP, true);
 
-		String[][] elementName = new String[][] {{"transpTitle", "transpStart"},{"transpMode", "transpEnd"}};
-		String[][] displayName = new String[][] {{"Title", "Start Date"}, {"Mode of Transportation", "End Date"}};
+		String[][] elementName = new String[][] {{"transpTitle", "transpMode"},{"transpStart", "transpEnd"}};
+		String[][] displayName = new String[][] {{"Title", "Mode of Transportation"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
 				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
 				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);			}
 		}
-
 		display.addPanel("transp Creation", mR);
 	}
 			
