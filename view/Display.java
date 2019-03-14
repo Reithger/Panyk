@@ -411,13 +411,17 @@ public class Display {
 
 		designTwoColorBorder(login, "border_1", COLOR_ONE, COLOR_THREE, 0, 0, width*2/3, height, 30, 30, 0, false);
 		
-		designBackedLabel(login, "login_", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Log In", width/3, height/4, width/2, height/4, 1, true);
+		designBackedLabel(login, "login_", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Log In", width/3, height/4, width/3, height/5, 1, true);
 
-		login.addText("tex2", 78,          width/6, height/2 + 40, width/6, height/12, "Username:", FONT_ONE, true);
-		designTextField(login, "username", width/3, height/2 + 40, width/6, height/16, 10, 10001, true);	//username entry
-		login.addText("tex3", 79,          width/6, height/2 + 130, width/6, height/12, "Password:", FONT_ONE, true);		
-		designTextField(login, "password", width/3, height/2 + 130, width/6, height/16, 10, 10000, true);	//password entry
-		//Log In Button
+		String[] elementName = new String[] {"username", "password"};
+		String[] displayName = new String[] {"Username", "Password"};
+		
+		for(int i = 0; i < displayName.length; i++) {
+			designBackedLabel(login, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*2/15, height/2 + i * height/9, width/6, height/20, 3, true);
+			if(!elementName[i].equals("null"))
+				designTextField(login, elementName[i], width/3, height/2 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
+		}
+				
 		designReactiveButton(login, "but1", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
 		//Create Account Button
 		designReactiveButton(login,"acc_create", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 6, width/10, height/16, 2, EVENT_CREATE_ACC_BTN, true);		
@@ -459,14 +463,15 @@ public class Display {
 		
 		designTwoColorBorder(createAcc, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		//title
-		designBackedLabel(createAcc, "acct_title", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Create your account", width*3/4, height/6, width/3, height/8, 1, true);
+		designBackedLabel(createAcc, "acct_title", COLOR_WHITE, COLOR_BLACK, FONT_HEADER, "Create your account", width/2, height/6, width/2, height/8, 1, true);
 		
 		String[] elementName = new String[] {"fn", "ln", "uname", "pass"};
 		String[] displayName = new String[] {"First Name", "Last Name", "Username", "Password"};
 		
-		for(int i = 0; i < elementName.length; i++) {
-			createAcc.addText(elementName[i], 200, width*3/10, height/3 + i * height / 9, width/6, height/6, displayName[i], FONT_ONE, true);
-			designTextField(createAcc, elementName[i], width/2, height/3 + i * height / 9, width/6, height/20, 3, 1000 + i, true);
+		for(int i = 0; i < displayName.length; i++) {
+			designBackedLabel(createAcc, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*3/10, height/3 + i * height/9, width/6, height/20, 3, true);
+			if(!elementName[i].equals("null"))
+				designTextField(createAcc, elementName[i], width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 		
 		//create account button
@@ -560,21 +565,21 @@ public class Display {
 		//background
 		designTwoColorBorder(tC, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		designBackedLabel(tC, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Trip Details", width/2, height/10, width*2/3, height/10, 1, true);
+		designBackedLabel(tC, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Trip Details", width/2, height/8, width/2, height/10, 1, true);
 		
 		//cancel button
-		designReactiveButton(tC, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Exit", width*11/12, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
+		designReactiveButton(tC, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Exit", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
 		
 		//create trip button
-		designReactiveButton(tC, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width*21/24, height/5, width/10, height/15, 2, EVENT_TRIP_CREATED, true);
+		designReactiveButton(tC, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_TRIP_CREATED, true);
 		
 		String[] elementName = new String[] {"tripTitle", "tripDest", "tripStart", "tripEnd", "null"};
 		String[] displayName = new String[] {"Trip Name:", "Destination:", "Start Date", "End Date", "(dd/MM/yyyy)"};
 		
 		for(int i = 0; i < displayName.length; i++) {
-			tC.addText(elementName[i], 200, width*3/10, height/3 + i * height / 9, width/6, height/6, displayName[i], FONT_ONE, true);
+			designBackedLabel(tC, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*3/10, height/3 + i * height/9, width/6, height/20, 3, true);
 			if(!elementName[i].equals("null"))
-				designTextField(tC, elementName[i], width/2, height/3 + i * height / 9, width/6, height/20, 3, 1000 + i, true);
+				designTextField(tC, elementName[i], width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 		
 		display.addPanel("Trip Creation", tC);
