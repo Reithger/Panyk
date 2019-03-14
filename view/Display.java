@@ -679,13 +679,13 @@ public class Display {
 		//cancel button
 		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_CONTACT_LIST , false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_RES_LIST , false);
 		
 		
 		//create trip button
-		mR.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-		mR.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-		mR.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_CONTACT , false);
+		mR.addRectangle("create_res_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
+		mR.addText(     "create_res_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
+		mR.addButton(   "create_res_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RES , false);
 		
 		
 		//adding trip info fields
