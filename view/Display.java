@@ -74,7 +74,7 @@ import visual.panel.ElementPanel;
 	//create trip button
 	mC.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
 	mC.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-	mC.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RES , false);
+	mC.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RESERVATION , false);
 	
 	
 	//adding trip info fields
@@ -310,7 +310,11 @@ public class Display {
 	/** */
 	private static final int EVENT_GO_TO_RES_CREATION = 9;
 	/** */
-	private static final int EVENT_SAVE_RES = 10;
+	private static final int EVENT_SAVE_RESERVATION = 10;
+	
+	private static final int EVENT_SAVE_ACCOMODATION = 20;
+	
+	private static final int EVENT_SAVE_TRANSPORT = 21;
 	/** */
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
 	/** */
@@ -645,7 +649,7 @@ public class Display {
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
-				else if(event == EVENT_SAVE_RES) 
+				else if(event == EVENT_SAVE_RESERVATION) 
 				{
 					String title = this.getElementStoredText("resTitle_text");
 					String date1 = this.getElementStoredText("resStart_text");
@@ -668,50 +672,24 @@ public class Display {
 		};
 		
 		//background
-		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
-		
+		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		
-		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
-		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Reservation Details", FONT_TWO, true);
-		
-		
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Reservation Details", width/2, height/10, width*2/3, height/10, 1, true);
 		//cancel button
-		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_CONTACT_LIST , false);
-		
-		
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_RES_LIST, true);
 		//create trip button
-		mR.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-		mR.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-		mR.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_CONTACT , false);
+		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_RESERVATION, true);
+				
+		String[][] elementName = new String[][] {{"resTitle", "resStart"},{"resMode", "resEnd"}};
+		String[][] displayName = new String[][] {{"Reservation Name", "Start Date"}, {"Address", "End Date"}};
 		
-		
-		//adding trip info fields
-		designTextField(mR, "resTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 , width/4, height/12, "Reservation Name:", FONT_ONE, true);
-		
-		//here be glitch
-		
-		designTextField(mR, "resLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4 , width/6, height/12, "Address:", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "resStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		mR.addText("begin", 77,          width/4, height/2 , width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "resEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		mR.addText("cease", 76,          width/2+50, height/2 , width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
-
+		for(int i = 0; i < elementName.length; i++) {
+			for(int j = 0; j < elementName[i].length; j++) {
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);
+			}
+		}
 		display.addPanel("Res Creation", mR);
-		
-		
 	}
 
 	/**
@@ -779,69 +757,41 @@ public class Display {
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 				}
-				else if(event == EVENT_SAVE_RES) 
+				else if(event == EVENT_SAVE_ACCOMODATION) 
 				{
 					String title = this.getElementStoredText("accomTitle_text");
 					String date1 = this.getElementStoredText("accomStart_text");
 					String date2 = this.getElementStoredText("accomEnd_text");
 					String loc = this.getElementStoredText("accomLoc_text");
 					
-					
 					Communication.set(Intermediary.CREATE_ACCOM_TITLE, title);
 					Communication.set(Intermediary.CREATE_ACCOM_START, date1);
 					Communication.set(Intermediary.CREATE_ACCOM_END, date2);
 					Communication.set(Intermediary.CREATE_ACCOM_LOC, loc);
 					
-					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_ACCOM);
-					
-					
 				}
 				
 			}
 		};
 		
 		//background
-		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
-		
+		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		
-		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
-		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Reservation Details", FONT_TWO, true);
-		
-		
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/10, width*2/3, height/10, 1, true);
 		//cancel button
-		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_ACCOM_LIST , false);
-		
-		
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_ACCOM_LIST, true);
 		//create trip button
-		mR.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-		mR.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-		mR.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RES , false);
+		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_ACCOMODATION, true);
+				
+		String[][] elementName = new String[][] {{"accomTitle", "accomStart"},{"accomLoc", "accomEnd"}};
+		String[][] displayName = new String[][] {{"Reservation Name", "Start Date"}, {"Address", "End Date"}};
 		
-		
-		//adding trip info fields
-		designTextField(mR, "accomTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 -20, width/4, height/12, "Reservation Name:", FONT_ONE, true);
-		
-		//here be glitch
-		
-		designTextField(mR, "accomLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4 -20, width/6, height/12, "Address:", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "accomStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		mR.addText("begin", 77,          width/4, height/2 -20, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "accomEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		mR.addText("cease", 76,          width/2+50, height/2 -20, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
+		for(int i = 0; i < elementName.length; i++) {
+			for(int j = 0; j < elementName[i].length; j++) {
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);			}
+		}
 
 		display.addPanel("Res Creation", mR);
 		
@@ -939,48 +889,24 @@ public class Display {
 		};
 		
 		//background
-		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
-		
+		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		
-		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
-		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Transportation Details", FONT_TWO, true);
-		
-		
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Transportation Details", width/2, height/10, width*2/3, height/10, 1, true);
 		//cancel button
-		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_TRANSPORT_LIST , false);
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRANSPORT_LIST, true);
+		//create trip button
+		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_TRANSP, true);
+
+		String[][] elementName = new String[][] {{"transpTitle", "transpStart"},{"transpMode", "transpEnd"}};
+		String[][] displayName = new String[][] {{"Title", "Start Date"}, {"Mode of Transportation", "End Date"}};
 		
-		
-		//create transport button
-		mR.addRectangle("create_transp_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-		mR.addText(     "create_transp_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-		mR.addButton(   "create_transp_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_TRANSP , false);
-		
-		
-		//adding transport info fields
-		designTextField(mR, "transpTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4, width/4, height/12, "Title:", FONT_ONE, true);
-		
-		designTextField(mR, "transpMode", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4 -10, width/6, height/12, "Mode of Transportation:", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "transpStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		mR.addText("begin", 77,          width/4, height/2, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
-		
-		designTextField(mR, "transpEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		mR.addText("cease", 76,          width/2+50, height/2, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
-		
-		
+		for(int i = 0; i < elementName.length; i++) {
+			for(int j = 0; j < elementName[i].length; j++) {
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);			}
+		}
 
 		display.addPanel("transp Creation", mR);
-		
-		
 	}
 			
 	/**
