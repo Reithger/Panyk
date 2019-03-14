@@ -329,10 +329,10 @@ public class Intermediary {
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
 		
 			//check if a reservation with that name already exists with the user
-			List<String[]> resList = Database.search(TableType.reservations, user.getUsername(), CURR_TRIP, Communication.get(CREATE_RES_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
+			List<String[]> resList = Database.search(TableType.reservations, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_RES_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
 			if(resList.size() == 0)
 			{
-				Database.addEntry(TableType.reservations, user.getUsername(), CURR_TRIP, Communication.get(CREATE_RES_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
+				Database.addEntry(TableType.reservations, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_RES_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
 				//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 					//after insertion, go back to trip select
 					goToRes();
@@ -364,7 +364,7 @@ public class Intermediary {
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
 		
 			//check if a reservation with that name already exists with the user
-				Database.addEntry(TableType.accommodations, user.getUsername(), CURR_TRIP, null, Communication.get(CREATE_ACCOM_TITLE), beginStr, endStr, null, Communication.get(CREATE_ACCOM_LOC));//leave room for notes?
+				Database.addEntry(TableType.accommodations, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_ACCOM_TITLE), beginStr, endStr, null, Communication.get(CREATE_ACCOM_LOC));//leave room for notes?
 											//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
 					goToAccom();
 		} catch (Exception e) {
@@ -391,7 +391,7 @@ public class Intermediary {
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
 		
 			//check if a reservation with that name already exists with the user
-				Database.addEntry(TableType.transportation, user.getUsername(), CURR_TRIP, Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
+				Database.addEntry(TableType.transportation, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
 				//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)")
 				goToTransport();
 		} catch (Exception e) {
@@ -408,7 +408,7 @@ public class Intermediary {
 	{
 		
 			System.out.println("Saving! Should I be doing this?");
-			Database.addEntry(TableType.contacts, user.getUsername(), CURR_TRIP, null, Communication.get(CREATE_CONTACT_NAME), Communication.get(CREATE_CONTACT_DESCRIP), Communication.get(CREATE_CONTACT_PHONE), Communication.get(CREATE_CONTACT_ADDRESS));
+			Database.addEntry(TableType.contacts, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_CONTACT_NAME), Communication.get(CREATE_CONTACT_DESCRIP), Communication.get(CREATE_CONTACT_PHONE), Communication.get(CREATE_CONTACT_ADDRESS));
 			////contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),	
 			
 			goToContactList();
@@ -442,10 +442,8 @@ public class Intermediary {
 	 * @return
 	 */
 	
-	public static List<String[]> getTripsRes() 
-	{
-		return Database.search(TableType.reservations, user.getUsername() , CURR_TRIP, null, null, null, null);
-		
+	public static List<String[]> getTripsRes(){
+		return Database.search(TableType.reservations, user.getUsername(), Communication.get(CURR_TRIP), null, null, null, null);
 		//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
 	}
 	
@@ -456,7 +454,7 @@ public class Intermediary {
 	
 	public static List<String[]> getTripsAccom() 
 	{
-		return Database.search(TableType.accommodations, user.getUsername() , CURR_TRIP, null, null, null, null, null, null);
+		return Database.search(TableType.accommodations, user.getUsername() , Communication.get(CURR_TRIP), null, null, null, null, null, null);
 		
 		//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
 	}
@@ -468,7 +466,7 @@ public class Intermediary {
 	
 	public static List<String[]> getTripsTransp()
 	{
-		return Database.search(TableType.transportation, user.getUsername() , CURR_TRIP, null, null, null, null);
+		return Database.search(TableType.transportation, user.getUsername() ,Communication.get(CURR_TRIP), null, null, null, null);
 		//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
 	}
 	
@@ -479,7 +477,7 @@ public class Intermediary {
 	
 	public static List<String[]> getTripsContacts()
 	{
-		return Database.search(TableType.contacts, user.getUsername() , CURR_TRIP, null, null, null, null, null);
+		return Database.search(TableType.contacts, user.getUsername() , Communication.get(CURR_TRIP), null, null, null, null, null);
 		//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
 	}
 	

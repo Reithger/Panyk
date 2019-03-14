@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import controller.Encryptor;
@@ -304,22 +305,24 @@ public class Database {
 					}
 					sqlSearch += " " + table.fields[i] + "='" + searchKeys[i] + "'";
 					priorSearch = true;
-				}else {
+				}
+				else {
 					nullCount++;
 				}
 			}
 			sqlSearch += ";";
 			if(nullCount != searchKeys.length) {
-				Statement state=null;
+				Statement state = null;
 				try {
-					state=connection.createStatement();
-					result=state.executeQuery(sqlSearch);
+					state = connection.createStatement();
+					result = state.executeQuery(sqlSearch);
 					return ResultSetToList(result);
 				}catch(SQLException sqlE2) {
 					connection.close();
 					return null;
 				}
-			}else {
+			}
+			else {
 				System.out.println("error searching table: " + table.toString() + " --> no search keys defined");
 				return null;
 			}
@@ -361,8 +364,8 @@ public class Database {
 			while( set.next()) {
 			    String[] row = new String[nCol];
 			    for( int iCol = 1; iCol <= nCol; iCol++ ){
-			            String obj = set.getString( iCol );
-			            row[iCol-1] = (obj == null) ?null: obj;
+			    	String obj = set.getString( iCol );
+			        row[iCol-1] = (obj == null) ? null: obj;
 			    }
 			    table.add( row );
 			}

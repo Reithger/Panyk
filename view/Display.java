@@ -48,7 +48,7 @@ public class Display {
 	/** */
 	private final static Color COLOR_LOGIN = new Color(102, 255, 102);
 	/** */
-	private final static Color COLOR_TWO = new Color(90, 80, 175);
+	private final static Color COLOR_TWO = new Color(110, 100, 175);
 	
 	private final static Color COLOR_THREE = new Color(200,150,170);
 	/** */
@@ -276,9 +276,8 @@ public class Display {
 				else if(event >= EVENT_GO_TO_TRIP) {
 					//TODO: change this so it switches to the calendar screen (yet to be created)
 					int tripNum = event - EVENT_GO_TO_TRIP;
-					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum)[1]);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 			}
 		};
@@ -360,9 +359,7 @@ public class Display {
 	 */
 
 	public void reservationDisplayScreen(String tripName) {
-		ElementPanel rS = new ElementPanel(0, 0, width, height) 
-		{
-			
+		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
 				{
@@ -431,8 +428,6 @@ public class Display {
 					
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_RES);
-					
-					
 				}
 				
 			}
@@ -521,12 +516,10 @@ public class Display {
 	public void makeAccomodationScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_ACCOM_LIST)
-				{
+				if(event == EVENT_ACCOM_LIST){
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 				}
-				else if(event == EVENT_SAVE_ACCOMODATION) 
-				{
+				else if(event == EVENT_SAVE_ACCOMODATION){
 					String title = this.getElementStoredText("accomTitle_text");
 					String date1 = this.getElementStoredText("accomStart_text");
 					String date2 = this.getElementStoredText("accomEnd_text");
@@ -542,7 +535,6 @@ public class Display {
 				
 			}
 		};
-		
 		//background
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
@@ -563,8 +555,6 @@ public class Display {
 		}
 		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
 		display.addPanel("Res Creation", mR);
-		
-		
 	}
 
 	/**
