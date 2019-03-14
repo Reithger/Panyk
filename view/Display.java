@@ -216,7 +216,7 @@ public class Display {
 					String ln    = this.getElementStoredText("ln_text");
 					String uname = this.getElementStoredText("uname_text");
 					String pass  = this.getElementStoredText("pass_text");
-					
+						
 					Communication.set(Intermediary.CREATE_USER_FIRSTNAME, fn);
 					Communication.set(Intermediary.CREATE_USER_LASTNAME, ln);
 					Communication.set(Intermediary.CREATE_USER_USERNAME, uname);
@@ -255,8 +255,7 @@ public class Display {
 	 * 
 	 */
 	
-	public void tripSelectScreen() {
-		
+	public void tripSelectScreen() {		
 		List<String[]> trips = Intermediary.getUsersTrips();
 		
 		ElementPanel tS = new ElementPanel(0, 0, width, height) {
@@ -280,35 +279,22 @@ public class Display {
 			}
 		};
 		//background
-		tS.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
-		//title of page
-		tS.addRectangle("title_backround", 1, width/2, 60, width/3, 60, COLOR_WHITE, true);
-		tS.addText("title",                100, width/2, 50, width, height/10, "Select Trip", FONT_TWO, true);
-		//logout button
-		tS.addRectangle("logout_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		tS.addText(     "logout_text", 3, width - 105, height - 95,  90, 30, "logout", FONT_ENTRY, false);
-		tS.addButton(   "logout_btn",  4, width - 130, height - 100, 90, 30, EVENT_BACK_TO_LOGIN , false);
-		//create trip button
-		tS.addRectangle("create_trip_rect", 5, width - 150, 120, 130, 30,  		          COLOR_LOGIN , false);
-		tS.addText(     "create_trip_text", 6, width - 135, 125, 130, 30, "Create a Trip!", FONT_ENTRY, false);
-		tS.addButton(   "create_trip_btn",  7, width - 150, 120, 130, 30,   EVENT_GO_TO_TRIP_CREATION , false);
-		int sideOffset = 200;
-		int topOffset = height/3 - 30;
-		int bottomOffset = 140;
-		//background of main screen
-		tS.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
-		//adding trip buttons
-		int tileInset = 10;
-		int tileGap = 10;
-		int tileHeight = 60;
+		designTwoColorBorder(tS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
+		//title
+		designBackedLabel(tS, "acct_title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Select Trip", width/2, height/8, width/3, height/10, 1, true);
 		
+		//logout button
+		designReactiveButton(tS, "logout", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Logout", width*11/12, height*5/6, width/12, height/14, 2, EVENT_BACK_TO_LOGIN, true);
+		//create trip button
+		designReactiveButton(tS, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Trip", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_TRIP_CREATION, true);
+		//background of main screen
+		designTwoColorBorder(tS, "backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
+		//adding trip buttons
 		for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) {
 			//display the trips on screen
-			tS.addRectangle("trip_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
-			tS.addText("trip_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, trips.get(i)[1], FONT_ONE, true);
-			tS.addText("trip_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 50, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, trips.get(i)[2], FONT_ENTRY, false);
-			tS.addText("trip_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, trips.get(i)[3] + " - " + trips.get(i)[4], FONT_ENTRY, false);
-			tS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_TRIP+i, false);
+			designReactiveButton(tS, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i)[1], width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_TRIP+i, true);
+			tS.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i)[2], FONT_ENTRY, true);
+			tS.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i)[3] + " - " + trips.get(i)[4], FONT_ENTRY, true);
 		}
 
 		display.addPanel("Trip Select", tS);
