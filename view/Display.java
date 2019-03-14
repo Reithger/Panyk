@@ -76,7 +76,7 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
 	/** */
-	private final static int EVENT_GO_TO_TRIP = 12;//I think this has to be the maximum value, so arranging accordingly
+	private final static int EVENT_GO_TO_TRIP = 20;//I think this has to be the maximum value, so arranging accordingly
 	/** */
 	private final static int EVENT_TRIP_SELECTION = 7;
 	/** */
@@ -99,6 +99,13 @@ public class Display {
 	private static final int EVENT_GO_TO_TRANSP_CREATION = 15;
 	/** */
 	private static final int EVENT_SAVE_TRANSP=16;
+	/** */
+	private static final int EVENT_CONTACT_LIST=17;
+	/** */
+	private static final int EVENT_GO_TO_CONTACT_CREATION=18;
+	/** */
+	private static final int EVENT_SAVE_CONTACT = 19;
+	
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -268,7 +275,7 @@ public class Display {
 					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum)[1]);
 					
 					
-					System.out.println("go to trip " + tripNum);
+					//System.out.println("go to trip " + tripNum);
 				}
 			}
 		};
@@ -282,9 +289,9 @@ public class Display {
 		tS.addText(     "logout_text", 3, width - 105, height - 95,  90, 30, "logout", FONT_ENTRY, false);
 		tS.addButton(   "logout_btn",  4, width - 130, height - 100, 90, 30, EVENT_BACK_TO_LOGIN , false);
 		//create trip button
-		tS.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-		tS.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Create a Trip!", FONT_ENTRY, false);
-		tS.addButton(   "create_trip_btn",  7, width - 150, 120, 120, 30,   EVENT_GO_TO_TRIP_CREATION , false);
+		tS.addRectangle("create_trip_rect", 5, width - 150, 120, 130, 30,  		          COLOR_LOGIN , false);
+		tS.addText(     "create_trip_text", 6, width - 135, 125, 130, 30, "Create a Trip!", FONT_ENTRY, false);
+		tS.addButton(   "create_trip_btn",  7, width - 150, 120, 130, 30,   EVENT_GO_TO_TRIP_CREATION , false);
 		int sideOffset = 200;
 		int topOffset = height/3 - 30;
 		int bottomOffset = 140;
@@ -317,23 +324,31 @@ public class Display {
 		e.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
 				
 		//tabs
-		e.addRectangle("tabpane", 10, 0, 0, width, 30, COLOR_WHITE, false);
+		//e.addRectangle("tabpane", 10, 0, 0, width, 30, COLOR_WHITE, false);
 				
-		e.addRectangle("hometab", 11, 0, 0, width/6, 30, COLOR_TWO, false);
-		e.addText("home_label", 12, 10, 5,  90, 30, "Home", FONT_TAB, false);
+		//e.addRectangle("hometab", 11, 0, 0, width/6, 30, COLOR_TWO, false);
+		//e.addText("home_label", 12, 10, 5,  90, 30, "Home", FONT_TAB, false);
 				//add main tab link here when it exists
 				
-		e.addRectangle("restab", 13, width/6, 0, width/6, 30, COLOR_THREE, false);
+		/*e.addRectangle("restab", 13, width/6, 0, width/6, 30, COLOR_THREE, false);
 		e.addText("res_label", 14, width/6 + 10, 5,  90, 30, "Reservations", FONT_TAB, false);
 		e.addButton("res_btn",  15, width/6, 0, width/6, 30, EVENT_RES_LIST , false);
 				
 		e.addRectangle("accomtab", 16, 2*width/6, 0, width/6, 30, COLOR_TWO, false);
 		e.addText("accom_label", 17, 2*width/6 + 10, 5,  120, 30, "Accommodations", FONT_TAB, false);
-		e.addButton("accom_btn",  15, 2*width/6, 0, width/6, 30, EVENT_ACCOM_LIST, false);
+		e.addButton("accom_btn",  18, 2*width/6, 0, width/6, 30, EVENT_ACCOM_LIST, false);
 		
-		e.addRectangle("ttab", 16, 3*width/6, 0, width/6, 30, COLOR_THREE, false);
-		e.addText("t_label", 17, 3*width/6 + 10, 5,  120, 30, "Transportation", FONT_TAB, false);
-		e.addButton("t_btn",  15, 3*width/6, 0, width/6, 30, EVENT_TRANSPORT_LIST, false);
+		e.addRectangle("ttab", 19, 3*width/6, 0, width/6, 30, COLOR_THREE, false);
+		e.addText("t_label", 20, 3*width/6 + 10, 5,  120, 30, "Transportation", FONT_TAB, false);
+		e.addButton("t_btn",  21, 3*width/6, 0, width/6, 30, EVENT_TRANSPORT_LIST, false);*/
+		
+		designReactiveButton(e, "hometab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Home", width/8, 15, width/4, 30, 18, 0, true);
+		designReactiveButton(e, "restab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Reservations", 3*width/8, 15, width/4, 30, 19, EVENT_RES_LIST, true);
+		designReactiveButton(e, "accomtab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Accomodations", 5*width/8, 15, width/4, 30, 20, EVENT_ACCOM_LIST, true);
+		designReactiveButton(e, "ttab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Transportation", 7*width/8, 15, width/4, 30, 21, EVENT_TRANSPORT_LIST, true);
+		
+		//designReactiveButton(e, "contactab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Contacts", 9*width/12, 15, width/6, 30, 22, EVENT_CONTACT_LIST, true); editted out because Java hates our contacts
+		
 	}
 	
 	public void doList(ElementPanel e, List<String[]> sl, int titlePos, int startPos, int endPos, int otherPos)
@@ -387,12 +402,18 @@ public class Display {
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 				}
+				/*else if(event == EVENT_CONTACT_LIST)
+				{
+					System.out.println("on reservation screen");
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
+					System.out.println("done passing to intermediary");
+
+				}*/
 			}
 		};
 		
 		
 		doTabs(rS);
-		
 		
 		//title of page
 		rS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
@@ -424,7 +445,7 @@ public class Display {
 	 * @param tripName
 	 */
 	
-	public void accomScreen(String tripName) {
+	public void accomListScreen(String tripName) {
 		
 		List<String[]> accom = Intermediary.getTripsAccom();
 		
@@ -448,6 +469,10 @@ public class Display {
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 				}
+				/*else if(event == EVENT_CONTACT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
+				}*/
 			}
 		};
 		
@@ -502,6 +527,10 @@ public class Display {
 			{
 				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_CREATE);
 			}
+			/*else if(event == EVENT_CONTACT_LIST)
+			{
+				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
+			}*/
 		}
 	};
 	
@@ -532,12 +561,157 @@ public class Display {
 	display.addPanel("Reservations", tS);
 	
 }
+	
+	//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
+	
+	
+	/*public void contactScreen() {
+		
+		List<String[]> contacts = Intermediary.getTripsContacts();
+		
+		ElementPanel tS = new ElementPanel(0, 0, width, height) 
+		{
+			
+			public void clickBehaviour(int event) {
+				if(event == EVENT_TRIP_SELECTION) 
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+				}
+				else if(event == EVENT_RES_LIST) {
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+				}
+				else if(event == EVENT_ACCOM_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+				}
+				else if(event == EVENT_GO_TO_CONTACT_CREATION)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_CREATE);
+				}
+				else if(event==EVENT_TRANSPORT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
+				}
+			}
+		};
+		
+		
+		doTabs(tS);
+		
+		
+		//title of page
+		tS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
+		tS.addText("title",                100, width/2, 85, width, height/10, "Contacts:", FONT_TWO, true);
+		//exit button
+		tS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+		tS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
+		tS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+		//create res button
+		tS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
+		tS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "new contact!", FONT_ENTRY, false);
+		tS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_TRANSP_CREATION, false);
+		
+		
+		//adding res buttons
+		
+		
+		//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
+		doList(tS, contacts, 3, 5, 6, 4);
+		
+
+		display.addPanel("contacts", tS);
+		
+	}
+	
+	/*public void contactScreen(String tripName) {
+		
+		System.out.println("contact screen");
+		List<String[]> phonebook = Intermediary.getTripsContacts();
+		
+		ElementPanel cS = new ElementPanel(0, 0, width, height) 
+		{
+			
+			public void clickBehaviour(int event) {
+				System.out.println("clicked");
+				if(event == EVENT_TRIP_SELECTION) 
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+				}
+				else if(event == EVENT_RES_LIST) {
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+				}
+				else if(event == EVENT_ACCOM_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+				}
+				else if(event==EVENT_TRANSPORT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
+				}
+				else if(event == EVENT_GO_TO_CONTACT_CREATION)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_CREATE);
+				}
+			}
+		};
+		
+		
+		doTabs(cS);
+		
+		
+		//title of page
+		cS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
+		cS.addText("title",                100, width/2, 85, width, height/10, "Contacts:", FONT_TWO, true);
+		//exit button
+		cS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+		cS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
+		cS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+		//create contact button
+		cS.addRectangle("create_contact_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
+		cS.addText(     "create_contact_text", 6, width - 140, 125, 150, 50, "new contact!", FONT_ENTRY, false);
+		cS.addButton(   "create_contact_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_CONTACT_CREATION, false);
+		
+		
+		int sideOffset = 200;
+		int topOffset = height/3 - 30;
+		int bottomOffset = 140;
+		
+		cS.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
+		
+		int tileInset = 10;
+		int tileGap = 10;
+		int tileHeight = 60;
+		
+		
+		System.out.println("phonebook.size() is "+ phonebook.size());
+		for(int i = 0; i < phonebook.size(); i++) 
+		{
+			System.out.println("in the for");
+			//display the items on screen
+			cS.addRectangle("ls_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
+			cS.addText("ls_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, phonebook.get(i)[3]+" "+phonebook.get(i)[4], FONT_ONE, true);
+			//cS.addText("ls_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, phonebook.get(i)[7], FONT_ENTRY, false);
+			cS.addText("ls_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, phonebook.get(i)[6] +" at "+ phonebook.get(i)[7], FONT_ENTRY, false);
+			//cS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_RES_CREATION, false);
+		}
+		
+		/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */	
+		
+		//System.out.println("passed the for");
+		
+		//display.addPanel("Contacts", cS);
+		
+		//System.out.println("passed display addPanel. Intermediary.CONTROL is "+ Intermediary.CONTROL);
+		
+	//}
+	
+	
 	public void makeAccomScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_RES_LIST)
+				if(event == EVENT_ACCOM_LIST)
 				{
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 				}
 				else if(event == EVENT_SAVE_RES) 
 				{
@@ -573,7 +747,7 @@ public class Display {
 		//cancel button
 		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_RES_LIST , false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_ACCOM_LIST , false);
 		
 		
 		//create trip button
@@ -584,22 +758,22 @@ public class Display {
 		
 		//adding trip info fields
 		designTextField(mR, "accomTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4, width/4, height/12, "Reservation Name:", FONT_ONE, true);
+		mR.addText("name", 78,          width/4, height/4 -20, width/4, height/12, "Reservation Name:", FONT_ONE, true);
 		
 		//here be glitch
 		
 		designTextField(mR, "accomLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4, width/6, height/12, "Address:", FONT_ONE, true);
+		mR.addText("Location", 79,          width/2+50, height/4 -20, width/6, height/12, "Address:", FONT_ONE, true);
 		
 		
 		
 		designTextField(mR, "accomStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		mR.addText("begin", 77,          width/4, height/2, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
+		mR.addText("begin", 77,          width/4, height/2 -20, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 		
 		
 		designTextField(mR, "accomEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		mR.addText("cease", 76,          width/2+50, height/2, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
+		mR.addText("cease", 76,          width/2+50, height/2 -20, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 		
 
@@ -608,7 +782,6 @@ public class Display {
 		
 	}
 	
-	//---------------------------------------------------------------------------------------------------------------------------------------edit here
 	public void makeTransportScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -653,20 +826,18 @@ public class Display {
 		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_TRANSPORT_LIST , false);
 		
 		
-		//create trip button
+		//create transport button
 		mR.addRectangle("create_transp_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
 		mR.addText(     "create_transp_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
 		mR.addButton(   "create_transp_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_TRANSP , false);
 		
 		
-		//adding trip info fields
+		//adding transport info fields
 		designTextField(mR, "transpTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
 		mR.addText("name", 78,          width/4, height/4, width/4, height/12, "Title:", FONT_ONE, true);
 		
-		//here be glitch
-		
 		designTextField(mR, "transpMode", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4, width/6, height/12, "Mode of Transportation:", FONT_ONE, true);
+		mR.addText("Location", 79,          width/2+50, height/4 -10, width/6, height/12, "Mode of Transportation:", FONT_ONE, true);
 		
 		
 		
@@ -740,16 +911,16 @@ public class Display {
 		
 		//adding trip info fields
 		designTextField(tC, "tripTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		tC.addText("name", 78,          width/4, height/4 + 10, width/6, height/12, "Trip Name:", FONT_ONE, true);
+		tC.addText("name", 78,          width/4, height/4, width/6, height/12, "Trip Name:", FONT_ONE, true);
 		
 		designTextField(tC, "tripDest", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		tC.addText("Destination", 79,          width/2+50, height/4 + 10, width/6, height/12, "Destination:", FONT_ONE, true);
+		tC.addText("Destination", 79,          width/2+50, height/4, width/6, height/12, "Destination:", FONT_ONE, true);
 		
 		designTextField(tC, "tripStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		tC.addText("begin", 77,          width/4, height/2 + 10, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
+		tC.addText("begin", 77,          width/4, height/2, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 		designTextField(tC, "tripEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		tC.addText("cease", 76,          width/2+50, height/2 + 10, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
+		tC.addText("cease", 76,          width/2+50, height/2, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 
 		display.addPanel("Trip Creation", tC);
@@ -802,39 +973,116 @@ public class Display {
 		//cancel button
 		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
 		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_RES_LIST , false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_CONTACT_LIST , false);
 		
 		
 		//create trip button
 		mR.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
 		mR.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-		mR.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RES , false);
+		mR.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_CONTACT , false);
 		
 		
 		//adding trip info fields
 		designTextField(mR, "resTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-		mR.addText("name", 78,          width/4, height/4 + 10, width/4, height/12, "Reservation Name:", FONT_ONE, true);
+		mR.addText("name", 78,          width/4, height/4 , width/4, height/12, "Reservation Name:", FONT_ONE, true);
 		
 		//here be glitch
 		
 		designTextField(mR, "resLoc", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-		mR.addText("Location", 79,          width/2+50, height/4 + 10, width/6, height/12, "Address:", FONT_ONE, true);
+		mR.addText("Location", 79,          width/2+50, height/4 , width/6, height/12, "Address:", FONT_ONE, true);
 		
 		
 		
 		designTextField(mR, "resStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-		mR.addText("begin", 77,          width/4, height/2 + 10, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
+		mR.addText("begin", 77,          width/4, height/2 , width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 		
 		
 		designTextField(mR, "resEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-		mR.addText("cease", 76,          width/2+50, height/2 + 10, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
+		mR.addText("cease", 76,          width/2+50, height/2 , width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
 		
 		
 
 		display.addPanel("Res Creation", mR);
 		
 		
+	}
+	
+	/*public void makeContactScreen(){
+		System.out.println("why am I here");
+		ElementPanel mC = new ElementPanel(0, 0, width, height) {
+			public void clickBehaviour(int event) {
+				if(event == EVENT_CONTACT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
+				}
+				else if(event == EVENT_SAVE_CONTACT) 
+				{
+					String name = this.getElementStoredText("con_name_text");
+					String descrip = this.getElementStoredText("con_descrip_text");
+					String address = this.getElementStoredText("con_address_text");
+					String phonum = this.getElementStoredText("con_phone_text");
+					
+					Communication.set(Intermediary.CREATE_CONTACT_NAME, name);
+					Communication.set(Intermediary.CREATE_CONTACT_DESCRIP, descrip);
+					Communication.set(Intermediary.CREATE_CONTACT_PHONE, phonum);
+					Communication.set(Intermediary.CREATE_CONTACT_ADDRESS, address);
+					
+					
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_CONTACT);
+					
+					
+				}
+				
+			}
+		};
+		
+		//background
+		mC.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
+		
+		//title of page
+		
+		mC.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
+		mC.addText("title", 120, width/2, 50, width, height/10, "Enter Contact Details", FONT_TWO, true);
+		
+		
+		//cancel button
+		mC.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+		mC.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
+		mC.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_CONTACT_LIST , false);
+		
+		
+		//create trip button
+		mC.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
+		mC.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
+		mC.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RES , false);
+		
+		
+		//adding trip info fields
+		designTextField(mC, "con_name", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
+		mC.addText("name", 78,          width/4, height/4 , width/4, height/12, "First Name:", FONT_ONE, true);
+		
+		System.out.println("test");
+		
+		designTextField(mC, "con_descrip", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
+		mC.addText("details", 79,          width/2+50, height/4 , width/6, height/12, "Description:", FONT_ONE, true);
+		
+		
+		
+		designTextField(mC, "con_address", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
+		mC.addText("lives_at", 77,          width/4, height/2 , width/3, height/12, "Address:", FONT_ONE, true);
+		
+		
+		
+		designTextField(mC, "con_phone", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
+		mC.addText("employer", 76,          width/2+50, height/2 , width/3, height/12, "Phone:", FONT_ONE, true);
+		
+		
+		System.out.println("test2");
+		
+		display.addPanel("Contact Creation", mC);
+		
+		System.out.println("test3");
 	}
 	
 	/**
