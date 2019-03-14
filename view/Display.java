@@ -83,7 +83,7 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
 	/** */
-	private final static int EVENT_GO_TO_TRIP = 14;//I think this has to be the maximum value, so arranging accordingly
+	private final static int EVENT_GO_TO_TRIP = 17;//I think this has to be the maximum value, so arranging accordingly
 	/** */
 	private final static int EVENT_TRIP_SELECTION = 7;
 	/** */
@@ -100,6 +100,13 @@ public class Display {
 	private static final int EVENT_ACCOM_LIST = 12;
 	/** */
 	private static final int EVENT_GO_TO_ACCOM_CREATION = 13;
+	/** */
+	private static final int EVENT_TRANSPORT_LIST = 14;
+	/** */
+	private static final int EVENT_GO_TO_TRANSP_CREATION = 15;
+	/** */
+	private static final int EVENT_SAVE_TRANSP=16;
+	
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -325,7 +332,10 @@ public class Display {
 
 		display.addPanel("Trip Select", tS);
 	}
-	
+	/**
+	 * create standard tabs in elementpanel e
+	 * @param e
+	 */
 	public void doTabs(ElementPanel e)
 	{
 		//background
@@ -338,13 +348,17 @@ public class Display {
 		e.addText("home_label", 12, 10, 5,  90, 30, "Home", FONT_TAB, false);
 				//add main tab link here when it exists
 				
-		e.addRectangle("restab", 13, width/6, 0, width/6, 30, COLOR_ONE, false);
+		e.addRectangle("restab", 13, width/6, 0, width/6, 30, COLOR_THREE, false);
 		e.addText("res_label", 14, width/6 + 10, 5,  90, 30, "Reservations", FONT_TAB, false);
 		e.addButton("res_btn",  15, width/6, 0, width/6, 30, EVENT_RES_LIST , false);
 				
 		e.addRectangle("accomtab", 16, 2*width/6, 0, width/6, 30, COLOR_TWO, false);
 		e.addText("accom_label", 17, 2*width/6 + 10, 5,  120, 30, "Accommodations", FONT_TAB, false);
 		e.addButton("accom_btn",  15, 2*width/6, 0, width/6, 30, EVENT_ACCOM_LIST, false);
+		
+		e.addRectangle("ttab", 16, 3*width/6, 0, width/6, 30, COLOR_THREE, false);
+		e.addText("t_label", 17, 3*width/6 + 10, 5,  120, 30, "Transportation", FONT_TAB, false);
+		e.addButton("t_btn",  15, 3*width/6, 0, width/6, 30, EVENT_TRANSPORT_LIST, false);
 	}
 	
 	public void doList(ElementPanel e, List<String[]> sl, int titlePos, int startPos, int endPos, int otherPos)
@@ -369,6 +383,8 @@ public class Display {
 		}
 	}
 	
+	//----------------------------------------------------------------------------lists-----------------------------------------------------------------------------------------------------------------------------
+	
 	/**
 	 * A screen to display all reservations
 	 */
@@ -391,6 +407,10 @@ public class Display {
 				else if(event == EVENT_ACCOM_LIST)
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+				}
+				else if(event==EVENT_TRANSPORT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 				}
 			}
 		};
@@ -439,13 +459,17 @@ public void accomScreen(String tripName) {
 				{
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
-				else if(event == EVENT_GO_TO_RES_CREATION) {
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);//fix this later-------------------------------------------------------------------------------------------------
+				else if(event == EVENT_RES_LIST) {
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);//fix this later-------------------------------------------------------------------------------------------------
 				}
 				else if(event == EVENT_GO_TO_ACCOM_CREATION)
 				{
 					//System.out.println("here");
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_CREATE);
+				}
+				else if(event==EVENT_TRANSPORT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 				}
 			}
 		};
@@ -477,6 +501,60 @@ public void accomScreen(String tripName) {
 		display.addPanel("Reservations", aS);
 		
 	}
+
+public void transportScreen(String tripName) {
+	
+	List<String[]> transp = Intermediary.getTripsTransp();
+	
+	ElementPanel tS = new ElementPanel(0, 0, width, height) 
+	{
+		
+		public void clickBehaviour(int event) {
+			if(event == EVENT_TRIP_SELECTION) 
+			{
+				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+			}
+			else if(event == EVENT_RES_LIST) {
+				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+			}
+			else if(event == EVENT_ACCOM_LIST)
+			{
+				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+			}
+			else if(event == EVENT_GO_TO_TRANSP_CREATION)
+			{
+				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_CREATE);
+			}
+		}
+	};
+	
+	
+	doTabs(tS);
+	
+	
+	//title of page
+	tS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
+	tS.addText("title",                100, width/2, 85, width, height/10, "Transportation:", FONT_TWO, true);
+	//exit button
+	tS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+	tS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
+	tS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+	//create res button
+	tS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
+	tS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "new transportation!", FONT_ENTRY, false);
+	tS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_TRANSP_CREATION, false);
+	
+	
+	//adding res buttons
+	
+	
+	//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)")-----------------------confirm later
+	doList(tS, transp, 2, 3, 4, 5);
+	
+
+	display.addPanel("Reservations", tS);
+	
+}
 
 	/**
 	 * 
@@ -622,6 +700,83 @@ public void accomScreen(String tripName) {
 		
 
 		display.addPanel("Res Creation", mR);
+		
+		
+	}
+	
+	//---------------------------------------------------------------------------------------------------------------------------------------edit here
+	public void makeTransportScreen(){
+		ElementPanel mR = new ElementPanel(0, 0, width, height) {
+			public void clickBehaviour(int event) {
+				if(event == EVENT_TRANSPORT_LIST)
+				{
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
+				}
+				else if(event == EVENT_SAVE_TRANSP) 
+				{
+					String title = this.getElementStoredText("text_transpTitle");
+					String date1 = this.getElementStoredText("text_transpStart");
+					String date2 = this.getElementStoredText("text_transpEnd");
+					String mode = this.getElementStoredText("text_transpMode");
+					
+					
+					Communication.set(Intermediary.CREATE_TRANSP_TITLE, title);
+					Communication.set(Intermediary.CREATE_TRANSP_START, date1);
+					Communication.set(Intermediary.CREATE_TRANSP_END, date2);
+					Communication.set(Intermediary.CREATE_TRANSP_MODE, mode);
+					
+					
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_TRANSP);
+					
+					
+				}
+				
+			}
+		};
+		
+		//background
+		mR.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
+		
+		//title of page
+		
+		mR.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
+		mR.addText("title", 120, width/2, 50, width, height/10, "Enter Transportation Details", FONT_TWO, true);
+		
+		
+		//cancel button
+		mR.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
+		mR.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
+		mR.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_TRANSPORT_LIST , false);
+		
+		
+		//create trip button
+		mR.addRectangle("create_transp_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
+		mR.addText(     "create_transp_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
+		mR.addButton(   "create_transp_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_TRANSP , false);
+		
+		
+		//adding trip info fields
+		designTextField(mR, "transpTitle", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
+		mR.addText("name", 78,          width/4, height/4, width/4, height/12, "Title:", FONT_ONE, true);
+		
+		//here be glitch
+		
+		designTextField(mR, "transpMode", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
+		mR.addText("Location", 79,          width/2+50, height/4, width/6, height/12, "Mode of Transportation:", FONT_ONE, true);
+		
+		
+		
+		designTextField(mR, "transpStart", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
+		mR.addText("begin", 77,          width/4, height/2, width/3, height/12, "Start Date (dd/MM/yyyy):", FONT_ONE, true);
+		
+		
+		
+		designTextField(mR, "transpEnd", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
+		mR.addText("cease", 76,          width/2+50, height/2, width/3, height/12, "End Date (dd/MM/yyyy):", FONT_ONE, true);
+		
+		
+
+		display.addPanel("transp Creation", mR);
 		
 		
 	}
