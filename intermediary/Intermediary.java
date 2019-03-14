@@ -56,6 +56,9 @@ public class Intermediary {
 	public final static String CONTROL_TRANSP_LIST = "tlist";
 	public final static String CONTROL_TRANSP_CREATE = "train?";
 	public final static String CONTROL_SAVE_TRANSP = "more saving";
+	public final static String CONTROL_CONTACT_LIST = "something about contacts";
+	public final static String CONTROL_CONTACT_CREATE = "it's alive!";
+	public final static String CONTROL_SAVE_CONTACT = "to the database we go!";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -91,6 +94,13 @@ public class Intermediary {
 	public final static String CREATE_TRANSP_MODE = "transp_mode";
 	public final static String CREATE_TRANSP_START = "transp_start_date";
 	public final static String CREATE_TRANSP_END = "transp_end_date";
+	
+	public final static String CREATE_CONTACT_NAME = "n";
+	public final static String CREATE_CONTACT_LNAME = "lastn";
+	public final static String CREATE_CONTACT_PHONE = "#";
+	public final static String CREATE_CONTACT_ADDRESS = "home";
+	public final static String CREATE_CONTACT_DESCRIP = "description";
+	
 	
 	public final static String CURR_TRIP = "current_trip";
 	
@@ -172,6 +182,13 @@ public class Intermediary {
 				goToNewTransport(); break;
 			case CONTROL_SAVE_TRANSP:
 				saveTransport(); break;
+			case CONTROL_CONTACT_LIST:
+				goToContactList();
+			case CONTROL_CONTACT_CREATE:
+				goToMakeContact();
+			case CONTROL_SAVE_CONTACT:
+				System.out.println("on the case");
+				saveContact();
 			default: break;
 		}
 	}
@@ -381,6 +398,18 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	public void saveContact() 
+	{
+		
+			System.out.println("Saving! Should I be doing this?");
+			Database.addEntry(TableType.contacts, user.getUsername(), CURR_TRIP, null, Communication.get(CREATE_CONTACT_NAME), Communication.get(CREATE_CONTACT_DESCRIP), Communication.get(CREATE_CONTACT_PHONE), Communication.get(CREATE_CONTACT_ADDRESS));
+			////contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),	
+			
+			goToContactList();
+				
+		//TODO: Set CONTROL to whatever we do next
+	}
+	
 	public void showRes()
 	{
 		goToRes();
@@ -418,6 +447,12 @@ public class Intermediary {
 	{
 		return Database.search(TableType.transportation, user.getUsername() , CURR_TRIP, null, null, null, null);
 		//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
+	}
+	
+	public static List<String[]> getTripsContacts()
+	{
+		return Database.search(TableType.contacts, user.getUsername() , CURR_TRIP, null, null, null, null, null);
+		//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
@@ -486,7 +521,7 @@ public class Intermediary {
 	public void goToAccom()
 	{
 		display.resetView();
-		display.accomScreen(Communication.get(CURR_TRIP));
+		display.accomListScreen(Communication.get(CURR_TRIP));
 	}
 	
 	public void goToNewAccom()
@@ -503,9 +538,21 @@ public class Intermediary {
 	
 	public void goToNewTransport()
 	{
-		System.out.println("go to new");
 		display.resetView();
 		display.makeTransportScreen();
+	}
+	
+	public void goToContactList()
+	{
+		display.resetView();
+		//display.contactScreen();
+	}
+	
+	public void goToMakeContact()
+	{
+		System.out.println("surviving");
+		display.resetView();
+		//display.makeContactScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
