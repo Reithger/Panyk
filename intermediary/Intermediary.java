@@ -50,6 +50,12 @@ public class Intermediary {
 	public final static String CONTROL_RESERVATIONS = "reservations";
 	public final static String CONTROL_RES_CREATION = "newRes";
 	public final static String CONTROL_SAVE_RES = "save me save me";
+	public final static String CONTROL_ACCOM_LIST = "a list of accomodations";
+	public final static String CONTROL_ACCOM_CREATE = "the grand act of creation";
+	public final static String CONTROL_SAVE_ACCOM = "save accom";
+	public final static String CONTROL_TRANSP_LIST = "tlist";
+	public final static String CONTROL_TRANSP_CREATE = "train?";
+	public final static String CONTROL_SAVE_TRANSP = "more saving";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -75,6 +81,16 @@ public class Intermediary {
 	public final static String CREATE_RES_LOC = "res_loc";
 	public final static String CREATE_RES_START = "res_start_date";
 	public final static String CREATE_RES_END = "res_end_date";
+	
+	public final static String CREATE_ACCOM_TITLE = "accom_title";
+	public final static String CREATE_ACCOM_LOC = "accom_loc";
+	public final static String CREATE_ACCOM_START = "accoms_start_date";
+	public final static String CREATE_ACCOM_END = "accoms_end_date";
+	
+	public final static String CREATE_TRANSP_TITLE = "transp_title";
+	public final static String CREATE_TRANSP_MODE = "transp_mode";
+	public final static String CREATE_TRANSP_START = "transp_start_date";
+	public final static String CREATE_TRANSP_END = "transp_end_date";
 	
 	public final static String CURR_TRIP = "current_trip";
 	
@@ -144,6 +160,18 @@ public class Intermediary {
 				goToMakeRes(); break;
 			case CONTROL_SAVE_RES:
 				saveRes(); break;
+			case CONTROL_ACCOM_LIST:
+				goToAccom(); break;
+			case CONTROL_ACCOM_CREATE:
+				goToNewAccom(); break;
+			case CONTROL_SAVE_ACCOM:
+				saveAccom(); break;
+			case CONTROL_TRANSP_LIST:
+				goToTransport(); break;
+			case CONTROL_TRANSP_CREATE:
+				goToNewTransport(); break;
+			case CONTROL_SAVE_TRANSP:
+				saveTransport(); break;
 			default: break;
 		}
 	}
@@ -304,14 +332,58 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	/**
+	 * more repeated code, just trying to make it run tonight will definitely refactor hardcore before next milestone
+	 */
+	public void saveAccom() {
+		Date begin;
+		Date end;
+		
+		String beginStr = Communication.get(CREATE_ACCOM_START);
+		String endStr = Communication.get(CREATE_ACCOM_END);
+		System.out.println("begin str is " + beginStr);
+		System.out.println("end str is " + endStr);
+		
+		try{
+			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
+		
+			//check if a reservation with that name already exists with the user
+				Database.addEntry(TableType.accommodations, user.getUsername(), CURR_TRIP, null, Communication.get(CREATE_ACCOM_TITLE), beginStr, endStr, null, Communication.get(CREATE_ACCOM_LOC));//leave room for notes?
+											//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
+					goToAccom();
+		} catch (Exception e) {
+			errorReport("Invalid Dates");
+		}
+		//TODO: Set CONTROL to whatever we do next
+	}
+	
+	public void saveTransport() {
+		Date begin;
+		Date end;
+		
+		String beginStr = Communication.get(CREATE_TRANSP_START);
+		String endStr = Communication.get(CREATE_TRANSP_END);
+		System.out.println("begin str is " + beginStr);
+		System.out.println("end str is " + endStr);
+		
+		try{
+			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
+		
+			//check if a reservation with that name already exists with the user
+				Database.addEntry(TableType.transportation, user.getUsername(), CURR_TRIP, Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
+				//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)")
+				goToTransport();
+		} catch (Exception e) {
+			errorReport("Invalid Dates");
+		}
+		//TODO: Set CONTROL to whatever we do next
+	}
+	
 	public void showRes()
 	{
 		goToRes();
-	}
-	
-	public void makeRes()
-	{
-		
 	}
 	
 	
@@ -333,6 +405,19 @@ public class Intermediary {
 		return Database.search(TableType.reservations, user.getUsername() , CURR_TRIP, null, null, null, null);
 		
 		//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
+	}
+	
+	public static List<String[]> getTripsAccom() 
+	{
+		return Database.search(TableType.accommodations, user.getUsername() , CURR_TRIP, null, null, null, null, null, null);
+		
+		//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
+	}
+	
+	public static List<String[]> getTripsTransp()
+	{
+		return Database.search(TableType.transportation, user.getUsername() , CURR_TRIP, null, null, null, null);
+		//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
@@ -394,6 +479,31 @@ public class Intermediary {
 	{
 		display.resetView();
 		display.makeResScreen();
+	}
+	
+	public void goToAccom()
+	{
+		display.resetView();
+		display.accomScreen(Communication.get(CURR_TRIP));
+	}
+	
+	public void goToNewAccom()
+	{
+		display.resetView();
+		display.makeAccomScreen();
+	}
+	
+	public void goToTransport()
+	{
+		display.resetView();
+		display.transportScreen(Communication.get(CURR_TRIP));
+	}
+	
+	public void goToNewTransport()
+	{
+		System.out.println("go to new");
+		display.resetView();
+		display.makeTransportScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
