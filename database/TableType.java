@@ -28,7 +28,7 @@ public enum TableType {
 	scheduleItem("username", "varchar(60)","tripTitle", "varchar(60)", "item", "varchar(60)", "type", "varchar(60)"),
 	
 	/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */				
-	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "fname", "varchar(60)", "lname", "varchar(60)", "company", "varchar(60)", "jobTitle", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
+	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
 	
 	/** username, tripTitle, item, startTime, endTime, mode */			
 	transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
