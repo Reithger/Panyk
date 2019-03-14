@@ -355,7 +355,7 @@ public class Display {
 	public Display(int inWidth, int inHeight){
 		width = inWidth;
 		height = inHeight;
-		display = new WindowFrame(width + 15, height + 38);	//offset because java windows aren't quite accurate
+		display = new WindowFrame(width + 14, height + 37);	//offset because java windows aren't quite accurate
 		initialScreen();
 		
 	}
@@ -590,9 +590,6 @@ public class Display {
 	 */
 
 	public void reservationDisplayScreen(String tripName) {
-		
-		List<String[]> res = Intermediary.getTripsRes();
-		
 		ElementPanel rS = new ElementPanel(0, 0, width, height) 
 		{
 			
@@ -622,30 +619,19 @@ public class Display {
 			}
 		};
 		
+		List<String[]> res = Intermediary.getTripsRes();
+		designTwoColorBorder(rS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		addHeaderTabs(rS);
-		
 		//title of page
-		rS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
-		rS.addText("title",                100, width/2, 85, width, height/10, "Reservations:", FONT_TWO, true);
+		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Reservations:", width/2, height/6, width/3, height/10, 1, true);
 		//exit button
-		rS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		rS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
-		rS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
 		//create res button
-		rS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-		rS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "Create a new reservation!", FONT_ENTRY, false);
-		rS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_RES_CREATION , false);
-		
-		
+		designReactiveButton(rS, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Reservation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_RES_CREATION, true);
 		//adding res buttons
-		
-		
-		
 		displayItemList(rS, res, 2, 3, 4, 5);
 		
-
 		display.addPanel("Reservations", rS);
-		
 	}
 
 	/**
@@ -738,9 +724,7 @@ public class Display {
 		
 		List<String[]> accom = Intermediary.getTripsAccom();
 		
-		ElementPanel aS = new ElementPanel(0, 0, width, height) 
-		{
-			
+		ElementPanel aS = new ElementPanel(0, 0, width, height){			
 			public void clickBehaviour(int event) {
 				if(event == EVENT_TRIP_SELECTION) 
 				{
@@ -765,26 +749,17 @@ public class Display {
 			}
 		};
 		
-		
 		addHeaderTabs(aS);
 		
-		
+		designTwoColorBorder(aS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
+		addHeaderTabs(aS);
 		//title of page
-		aS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
-		aS.addText("title",                100, width/2, 85, width, height/10, "Accomodations:", FONT_TWO, true);
+		designBackedLabel(aS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Accomodations:", width/2, height/6, width*4/9, height/10, 1, true);
 		//exit button
-		aS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-		aS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
-		aS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+		designReactiveButton(aS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
 		//create res button
-		aS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-		aS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "new accomodation!", FONT_ENTRY, false);
-		aS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_ACCOM_CREATION , false);
-		
-		
+		designReactiveButton(aS, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Accomodation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_RES_CREATION, true);
 		//adding res buttons
-		
-		
 		
 		displayItemList(aS, accom, 3, 4, 5, 7);
 		
@@ -913,22 +888,15 @@ public class Display {
 	addHeaderTabs(tS);
 	
 	
+	designTwoColorBorder(tS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
+	addHeaderTabs(tS);
 	//title of page
-	tS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
-	tS.addText("title",                100, width/2, 85, width, height/10, "Transportation:", FONT_TWO, true);
+	designBackedLabel(tS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Transportation:", width/2, height/6, width/3, height/10, 1, true);
 	//exit button
-	tS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-	tS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
-	tS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
+	designReactiveButton(tS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
 	//create res button
-	tS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-	tS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "new transportation!", FONT_ENTRY, false);
-	tS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_TRANSP_CREATION, false);
-	
-	
+	designReactiveButton(tS, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Transportation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_RES_CREATION, true);
 	//adding res buttons
-	
-	
 	//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)")-----------------------confirm later
 	displayItemList(tS, transp, 2, 3, 4, 5);
 	
@@ -1023,8 +991,6 @@ public class Display {
 	
 	public void addHeaderTabs(ElementPanel e){
 		//background
-		designTwoColorBorder(e, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
-		
 		designReactiveButton(e, "hometab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Home", width/8, 15, width/4, 30, 18, 0, true);
 		designReactiveButton(e, "restab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Reservations", 3*width/8, 15, width/4, 30, 19, EVENT_RES_LIST, true);
 		designReactiveButton(e, "accomtab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Accomodations", 5*width/8, 15, width/4, 30, 20, EVENT_ACCOM_LIST, true);
