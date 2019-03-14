@@ -1,14 +1,8 @@
 package view;
 
-
-import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.util.Arrays;
 import java.util.List;
-
 import input.Communication;
 import intermediary.Intermediary;
 import visual.frame.WindowFrame;
@@ -94,7 +88,6 @@ public class Display {
 	/** */
 	private static final int EVENT_RES_LIST = 11;
 	
-
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
@@ -113,12 +106,6 @@ public class Display {
 	 * @param inWidth - int value representing the width of the WindowFrame that displays the program.
 	 * @param inHeight - int value representing the height of the WindowFrame that displays the program.
 	 */
-	
-	/*@Override
-	public void start(Stage stage) throws Exception 
-	{
-	
-	}*/
 	
 	public Display(int inWidth, int inHeight){
 		width = inWidth;
@@ -146,7 +133,6 @@ public class Display {
 			}	
 		};
 		
-		//Make a composite for headers with consistent color usage; decide on a color scheme.
 		designTwoColorBorder(titlePanel, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
 		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
@@ -442,6 +428,9 @@ public class Display {
 		
 	}
 	
+	/**
+	 * 
+	 */
 
 	public void makeResScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
@@ -529,21 +518,23 @@ public class Display {
 	}
 
 //---  Composite Methods   --------------------------------------------------------------------
-		
+
 	/**
 	 * This method automates the composite of ElementPanel basic elements to create a text-input
 	 * box that corresponds to the provided code for receiving user input and using it for functions.
 	 * 
 	 * Priority intervals are of 10 so that each Composite method can have its own organization of
 	 * basic elements as well as be placed relative to other Composite structures.
-	 * 
+	 *  
 	 * @param pan
+	 * @param name
 	 * @param x
 	 * @param y
-	 * @param width
-	 * @param height
+	 * @param panWid
+	 * @param panHei
 	 * @param priority
 	 * @param code
+	 * @param centered
 	 */
 	
 	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
@@ -551,16 +542,65 @@ public class Display {
 		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
 	
+	/**
+	 * 
+	 * @param pan
+	 * @param name
+	 * @param fillCol
+	 * @param backColor
+	 * @param font
+	 * @param message
+	 * @param x
+	 * @param y
+	 * @param wid
+	 * @param hei
+	 * @param priority
+	 * @param code
+	 * @param centered
+	 */
+	
 	private void designReactiveButton(ElementPanel pan, String name, Color fillCol, Color backColor, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
 		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, fillCol, backColor, centered);
 		pan.addButton(name + "_but",     priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, wid, hei, code, centered);
 		pan.addText(name + "_text_but",  priority * MAX_COMPOSITE_ELEMENTS + 2, x, y,  wid, hei, message, font, centered);
 	}
 	
+	/**
+	 * 
+	 * @param pan
+	 * @param name
+	 * @param colFill
+	 * @param colBorder
+	 * @param font
+	 * @param message
+	 * @param x
+	 * @param y
+	 * @param wid
+	 * @param hei
+	 * @param priority
+	 * @param centered
+	 */
+	
 	private void designBackedLabel(ElementPanel pan, String name, Color colFill, Color colBorder, Font font, String message, int x, int y, int wid, int hei, int priority, boolean centered) {
 		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, colFill, colBorder, centered);
 		pan.addText(name + "_text_but",  priority * MAX_COMPOSITE_ELEMENTS + 1, x, y,  wid, hei, message, font, centered);
 	}
+
+	/**
+	 * 
+	 * @param pan
+	 * @param name
+	 * @param colFill
+	 * @param colBorder
+	 * @param x
+	 * @param y
+	 * @param wid
+	 * @param hei
+	 * @param xRatio
+	 * @param yRatio
+	 * @param priority
+	 * @param centered
+	 */
 	
 	private void designTwoColorBorder(ElementPanel pan, String name, Color colFill, Color colBorder, int x, int y, int wid, int hei, int xRatio, int yRatio, int priority, boolean centered) {
 		pan.addRectangle(name + "_rect1", priority * MAX_COMPOSITE_ELEMENTS, x, y, wid, hei, colBorder, centered);
