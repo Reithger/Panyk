@@ -498,7 +498,7 @@ public class Intermediary {
 	
 	private void goToTripCreation() {
 		display.resetView();
-		display.tripCreationScreen();
+		display.makeTripScreen();
 	}
 
 	/**
@@ -509,31 +509,31 @@ public class Intermediary {
 	public void goToRes()
 	{
 		display.resetView();
-		display.reservationScreen(Communication.get(CURR_TRIP));
+		display.reservationDisplayScreen(Communication.get(CURR_TRIP));
 	}
 	
 	public void goToMakeRes()
 	{
 		display.resetView();
-		display.makeResScreen();
+		display.makeReservationScreen();
 	}
 	
 	public void goToAccom()
 	{
 		display.resetView();
-		display.accomListScreen(Communication.get(CURR_TRIP));
+		display.accomodationDisplayScreen(Communication.get(CURR_TRIP));
 	}
 	
 	public void goToNewAccom()
 	{
 		display.resetView();
-		display.makeAccomScreen();
+		display.makeAccomodationScreen();
 	}
 	
 	public void goToTransport()
 	{
 		display.resetView();
-		display.transportScreen(Communication.get(CURR_TRIP));
+		display.transportDisplayScreen(Communication.get(CURR_TRIP));
 	}
 	
 	public void goToNewTransport()
