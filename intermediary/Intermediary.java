@@ -53,6 +53,9 @@ public class Intermediary {
 	public final static String CONTROL_ACCOM_LIST = "a list of accomodations";
 	public final static String CONTROL_ACCOM_CREATE = "the grand act of creation";
 	public final static String CONTROL_SAVE_ACCOM = "save accom";
+	public final static String CONTROL_TRANSP_LIST = "tlist";
+	public final static String CONTROL_TRANSP_CREATE = "train?";
+	public final static String CONTROL_SAVE_TRANSP = "more saving";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -83,6 +86,11 @@ public class Intermediary {
 	public final static String CREATE_ACCOM_LOC = "accom_loc";
 	public final static String CREATE_ACCOM_START = "accoms_start_date";
 	public final static String CREATE_ACCOM_END = "accoms_end_date";
+	
+	public final static String CREATE_TRANSP_TITLE = "transp_title";
+	public final static String CREATE_TRANSP_MODE = "transp_mode";
+	public final static String CREATE_TRANSP_START = "transp_start_date";
+	public final static String CREATE_TRANSP_END = "transp_end_date";
 	
 	public final static String CURR_TRIP = "current_trip";
 	
@@ -158,6 +166,12 @@ public class Intermediary {
 				goToNewAccom(); break;
 			case CONTROL_SAVE_ACCOM:
 				saveAccom(); break;
+			case CONTROL_TRANSP_LIST:
+				goToTransport(); break;
+			case CONTROL_TRANSP_CREATE:
+				goToNewTransport(); break;
+			case CONTROL_SAVE_TRANSP:
+				saveTransport(); break;
 			default: break;
 		}
 	}
@@ -344,6 +358,29 @@ public class Intermediary {
 		//TODO: Set CONTROL to whatever we do next
 	}
 	
+	public void saveTransport() {
+		Date begin;
+		Date end;
+		
+		String beginStr = Communication.get(CREATE_TRANSP_START);
+		String endStr = Communication.get(CREATE_TRANSP_END);
+		System.out.println("begin str is " + beginStr);
+		System.out.println("end str is " + endStr);
+		
+		try{
+			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
+		
+			//check if a reservation with that name already exists with the user
+				Database.addEntry(TableType.transportation, user.getUsername(), CURR_TRIP, Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
+				//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)")
+				goToTransport();
+		} catch (Exception e) {
+			errorReport("Invalid Dates");
+		}
+		//TODO: Set CONTROL to whatever we do next
+	}
+	
 	public void showRes()
 	{
 		goToRes();
@@ -375,6 +412,12 @@ public class Intermediary {
 		return Database.search(TableType.accommodations, user.getUsername() , CURR_TRIP, null, null, null, null, null, null);
 		
 		//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
+	}
+	
+	public static List<String[]> getTripsTransp()
+	{
+		return Database.search(TableType.transportation, user.getUsername() , CURR_TRIP, null, null, null, null);
+		//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
 	}
 	
 //---  Navigation   ---------------------------------------------------------------------------
@@ -448,6 +491,19 @@ public class Intermediary {
 	{
 		display.resetView();
 		display.makeAccomScreen();
+	}
+	
+	public void goToTransport()
+	{
+		display.resetView();
+		display.transportScreen(Communication.get(CURR_TRIP));
+	}
+	
+	public void goToNewTransport()
+	{
+		System.out.println("go to new");
+		display.resetView();
+		display.makeTransportScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
