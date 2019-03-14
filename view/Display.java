@@ -709,7 +709,7 @@ public class Display {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
 				else if(event == EVENT_RES_LIST) {
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);//fix this later-------------------------------------------------------------------------------------------------
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 				else if(event == EVENT_GO_TO_ACCOM_CREATION)
 				{
@@ -779,6 +779,9 @@ public class Display {
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/10, width*2/3, height/10, 1, true);
+		
+		
+		
 		//cancel button
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_ACCOM_LIST, true);
 		//create trip button
