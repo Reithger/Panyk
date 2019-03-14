@@ -25,232 +25,6 @@ import visual.panel.ElementPanel;
  *
  */
 
-
-
-/*public void makeContactScreen(){
-	System.out.println("why am I here");
-	ElementPanel mC = new ElementPanel(0, 0, width, height) {
-		public void clickBehaviour(int event) {
-			if(event == EVENT_CONTACT_LIST)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
-			}
-			else if(event == EVENT_SAVE_CONTACT) 
-			{
-				String name = this.getElementStoredText("con_name_text");
-				String descrip = this.getElementStoredText("con_descrip_text");
-				String address = this.getElementStoredText("con_address_text");
-				String phonum = this.getElementStoredText("con_phone_text");
-				
-				Communication.set(Intermediary.CREATE_CONTACT_NAME, name);
-				Communication.set(Intermediary.CREATE_CONTACT_DESCRIP, descrip);
-				Communication.set(Intermediary.CREATE_CONTACT_PHONE, phonum);
-				Communication.set(Intermediary.CREATE_CONTACT_ADDRESS, address);
-				
-				
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_CONTACT);
-				
-				
-			}
-			
-		}
-	};
-	
-	//background
-	mC.addRectangle("background", 0, 0, 0, width, height, COLOR_ONE, false);
-	
-	//title of page
-	
-	mC.addRectangle("title_backround", 1, width/2, 60, (2*width)/3, 60, COLOR_WHITE, true);
-	mC.addText("title", 120, width/2, 50, width, height/10, "Enter Contact Details", FONT_TWO, true);
-	
-	
-	//cancel button
-	mC.addRectangle("cancel_rect", 3, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-	mC.addText(     "cancel_text", 4, width - 105, height - 95,  90, 30, "Exit", FONT_ENTRY, false);
-	mC.addButton(   "cancel_btn",  1, width - 130, height - 100, 90, 30, EVENT_CONTACT_LIST , false);
-	
-	
-	//create trip button
-	mC.addRectangle("create_trip_rect", 5, width - 150, 120, 120, 30,  		          COLOR_LOGIN , false);
-	mC.addText(     "create_trip_text", 6, width - 135, 125, 120, 30, "Submit", FONT_ENTRY, false);
-	mC.addButton(   "create_trip_btn",  2, width - 150, 120, 120, 30,   EVENT_SAVE_RESERVATION , false);
-	
-	
-	//adding trip info fields
-	designTextField(mC, "con_name", width/4, height/4 + 40, width/6, height/12, 10, 10001, true);
-	mC.addText("name", 78,          width/4, height/4 , width/4, height/12, "First Name:", FONT_ONE, true);
-	
-	System.out.println("test");
-	
-	designTextField(mC, "con_descrip", width/2+50, height/4 + 40, width/6, height/12, 10, 10000, true);
-	mC.addText("details", 79,          width/2+50, height/4 , width/6, height/12, "Description:", FONT_ONE, true);
-	
-	
-	
-	designTextField(mC, "con_address", width/4, height/2 + 40, width/6, height/12, 10, 10002, true);
-	mC.addText("lives_at", 77,          width/4, height/2 , width/3, height/12, "Address:", FONT_ONE, true);
-	
-	
-	
-	designTextField(mC, "con_phone", width/2+50, height/2 + 40, width/6, height/12, 10, 10003, true);
-	mC.addText("employer", 76,          width/2+50, height/2 , width/3, height/12, "Phone:", FONT_ONE, true);
-	
-	
-	System.out.println("test2");
-	
-	display.addPanel("Contact Creation", mC);
-	
-	System.out.println("test3");
-}
-
-/**
- * 
- */
-
-//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
-
-
-/*public void contactScreen() {
-	
-	List<String[]> contacts = Intermediary.getTripsContacts();
-	
-	ElementPanel tS = new ElementPanel(0, 0, width, height) 
-	{
-		
-		public void clickBehaviour(int event) {
-			if(event == EVENT_TRIP_SELECTION) 
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
-			}
-			else if(event == EVENT_RES_LIST) {
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
-			}
-			else if(event == EVENT_ACCOM_LIST)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
-			}
-			else if(event == EVENT_GO_TO_CONTACT_CREATION)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_CREATE);
-			}
-			else if(event==EVENT_TRANSPORT_LIST)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
-			}
-		}
-	};
-	
-	
-	addHeaderTabs(tS);
-	
-	
-	//title of page
-	tS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
-	tS.addText("title",                100, width/2, 85, width, height/10, "Contacts:", FONT_TWO, true);
-	//exit button
-	tS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-	tS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
-	tS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
-	//create res button
-	tS.addRectangle("create_res_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-	tS.addText(     "create_res_text", 6, width - 140, 125, 150, 50, "new contact!", FONT_ENTRY, false);
-	tS.addButton(   "create_res_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_TRANSP_CREATION, false);
-	
-	
-	//adding res buttons
-	
-	
-	//contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
-	displayItemList(tS, contacts, 3, 5, 6, 4);
-	
-
-	display.addPanel("contacts", tS);
-	
-}
-
-/*public void contactScreen(String tripName) {
-	
-	System.out.println("contact screen");
-	List<String[]> phonebook = Intermediary.getTripsContacts();
-	
-	ElementPanel cS = new ElementPanel(0, 0, width, height) 
-	{
-		
-		public void clickBehaviour(int event) {
-			System.out.println("clicked");
-			if(event == EVENT_TRIP_SELECTION) 
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
-			}
-			else if(event == EVENT_RES_LIST) {
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
-			}
-			else if(event == EVENT_ACCOM_LIST)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
-			}
-			else if(event==EVENT_TRANSPORT_LIST)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
-			}
-			else if(event == EVENT_GO_TO_CONTACT_CREATION)
-			{
-				Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_CREATE);
-			}
-		}
-	};
-	
-	
-	addHeaderTabs(cS);
-	
-	
-	//title of page
-	cS.addRectangle("title_backround", 1, width/2, 90, width/3, 60, COLOR_WHITE, true);
-	cS.addText("title",                100, width/2, 85, width, height/10, "Contacts:", FONT_TWO, true);
-	//exit button
-	cS.addRectangle("exit_rect", 2, width - 130, height - 100, 90, 30,  		   COLOR_ERR , false);
-	cS.addText(     "exit_text", 3, width - 105, height - 95,  90, 30, "back", FONT_ENTRY, false);
-	cS.addButton(   "exit_btn",  4, width - 130, height - 100, 90, 30, EVENT_TRIP_SELECTION , false);
-	//create contact button
-	cS.addRectangle("create_contact_rect", 5, width - 150, 120, 120, 50,  		          COLOR_LOGIN , false);
-	cS.addText(     "create_contact_text", 6, width - 140, 125, 150, 50, "new contact!", FONT_ENTRY, false);
-	cS.addButton(   "create_contact_btn",  7, width - 150, 120, 120, 50,   EVENT_GO_TO_CONTACT_CREATION, false);
-	
-	
-	int sideOffset = 200;
-	int topOffset = height/3 - 30;
-	int bottomOffset = 140;
-	
-	cS.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
-	
-	int tileInset = 10;
-	int tileGap = 10;
-	int tileHeight = 60;
-	
-	
-	System.out.println("phonebook.size() is "+ phonebook.size());
-	for(int i = 0; i < phonebook.size(); i++) 
-	{
-		System.out.println("in the for");
-		//display the items on screen
-		cS.addRectangle("ls_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
-		cS.addText("ls_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, phonebook.get(i)[3]+" "+phonebook.get(i)[4], FONT_ONE, true);
-		//cS.addText("ls_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, phonebook.get(i)[7], FONT_ENTRY, false);
-		cS.addText("ls_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, phonebook.get(i)[6] +" at "+ phonebook.get(i)[7], FONT_ENTRY, false);
-		//cS.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_RES_CREATION, false);
-	}
-	
-	/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */	
-	
-	//System.out.println("passed the for");
-	
-	//display.addPanel("Contacts", cS);
-	
-	//System.out.println("passed display addPanel. Intermediary.CONTROL is "+ Intermediary.CONTROL);
-	
-//}
-
 public class Display {
 	
 //---  Constant Values   ----------------------------------------------------------------------
@@ -384,7 +158,7 @@ public class Display {
 		
 		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
 		
-		designReactiveButton(titlePanel, "cont", COLOR_WHITE, COLOR_BLACK, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
+		designReactiveButton(titlePanel, "cont", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
 
 		display.addPanel("Title", titlePanel);
 	}
@@ -505,9 +279,6 @@ public class Display {
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum)[1]);
-					
-					
-					//System.out.println("go to trip " + tripNum);
 				}
 			}
 		};
@@ -558,7 +329,6 @@ public class Display {
 					Communication.set(Intermediary.CREATE_TRIP_DEST, dest);
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_CREATE_TRIP);
-					
 				}
 				
 			}
@@ -568,10 +338,8 @@ public class Display {
 		designTwoColorBorder(tC, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
 		designBackedLabel(tC, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Trip Details", width/2, height/8, width/2, height/10, 1, true);
-		
 		//cancel button
 		designReactiveButton(tC, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Exit", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
-		
 		//create trip button
 		designReactiveButton(tC, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_TRIP_CREATED, true);
 		
@@ -623,6 +391,7 @@ public class Display {
 		
 		List<String[]> res = Intermediary.getTripsRes();
 		designTwoColorBorder(rS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
+		
 		addHeaderTabs(rS);
 		//title of page
 		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Reservations:", width/2, height/6, width/3, height/10, 1, true);
@@ -672,21 +441,22 @@ public class Display {
 		//background
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Reservation Details", width/2, height/10, width*2/3, height/10, 1, true);
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Reservation Details", width/2, height/8, width*2/3, height/10, 1, true);
 		//cancel button
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_RES_LIST, true);
 		//create trip button
-		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_RESERVATION, true);
+		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_RESERVATION, true);
 				
 		String[][] elementName = new String[][] {{"resTitle", "resLoc"},{"resStart", "resEnd"}};
 		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);
 			}
 		}
+		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
 		display.addPanel("Res Creation", mR);
 	}
 
@@ -776,22 +546,22 @@ public class Display {
 		//background
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/10, width*2/3, height/10, 1, true);
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/8, width*2/3, height/10, 1, true);
 		
 		//cancel button
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_ACCOM_LIST, true);
 		//create trip button
-		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_ACCOMODATION, true);
+		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_ACCOMODATION, true);
 				
 		String[][] elementName = new String[][] {{"accomTitle", "accomLoc"},{"accomStart", "accomEnd"}};
 		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);			}
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);			}
 		}
-
+		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
 		display.addPanel("Res Creation", mR);
 		
 		
@@ -889,20 +659,21 @@ public class Display {
 		//background
 		designTwoColorBorder(mR, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		//title of page
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Transportation Details", width/2, height/10, width*2/3, height/10, 1, true);
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Transportation Details", width/2, height/8, width*2/3, height/10, 1, true);
 		//cancel button
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRANSPORT_LIST, true);
 		//create trip button
-		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_SAVE_TRANSP, true);
+		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_TRANSP, true);
 
 		String[][] elementName = new String[][] {{"transpTitle", "transpMode"},{"transpStart", "transpEnd"}};
 		String[][] displayName = new String[][] {{"Title", "Mode of Transportation"}, {"Start Date", "End Date"}};
 		
 		for(int i = 0; i < elementName.length; i++) {
 			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height/3 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height/3 + height/4 * i - height/10, width/6, height/14, 3, true);			}
+				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
+				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);			}
 		}
+		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
 		display.addPanel("transp Creation", mR);
 	}
 			
@@ -938,7 +709,9 @@ public class Display {
 		int topOffset = height/3 - 30;
 		int bottomOffset = 140;
 		
-		e.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
+		designTwoColorBorder(e, "border_in", COLOR_WHITE, COLOR_BLACK, width/6, height /4, width*2/3, height/2, 50, 30, 1, false);
+		
+		//e.addRectangle("backdrop_sel", 9, sideOffset, topOffset, width - 2*sideOffset, height - bottomOffset - topOffset, COLOR_WHITE, false);
 		
 		int tileInset = 10;
 		int tileGap = 10;
@@ -946,10 +719,10 @@ public class Display {
 		
 		for(int i = 0; i < (sl == null ? 0 : sl.size()); i++) {
 			//display the items on screen
-			e.addRectangle("ls_rect_"+i, tileInset+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
-			e.addText("ls_title"+i,      tileInset+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, sl.get(i)[titlePos], FONT_ONE, true);
-			e.addText("ls_desc"+i, tileInset+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, sl.get(i)[otherPos], FONT_ENTRY, false);
-			e.addText("ls_desc2_"+i, tileInset+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, sl.get(i)[startPos] + " - " + sl.get(i)[endPos], FONT_ENTRY, false);
+			e.addRectangle("ls_rect_"+i, tileInset*2+i, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, COLOR_SEPARATOR, false);
+			e.addText("ls_title"+i,      tileInset*2+i+1, width/2, topOffset+tileInset+i*tileGap+i*tileHeight + 30, width/3, 50, sl.get(i)[titlePos], FONT_ONE, true);
+			e.addText("ls_desc"+i, tileInset*2+i+2, width - sideOffset - tileInset - 150, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, sl.get(i)[otherPos], FONT_ENTRY, false);
+			e.addText("ls_desc2_"+i, tileInset*2+i+4, sideOffset + tileInset + 30, topOffset+tileInset+i*tileGap+i*tileHeight + 40, width/3, 20, sl.get(i)[startPos] + " - " + sl.get(i)[endPos], FONT_ENTRY, false);
 			//e.addButton("go_to_trp_btn"+i, tileInset+i+3, sideOffset+tileInset, topOffset+tileInset+i*tileGap+i*tileHeight, width - 2*sideOffset - 2*tileInset, tileHeight, EVENT_GO_TO_RES_CREATION, false);
 		}
 	}
