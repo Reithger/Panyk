@@ -40,8 +40,9 @@ public class Intermediary {
 	
 	public final static String CONTROL = "Control";
 	public final static String CONTROL_NULL = null;
-	public final static String CONTROL_LOGIN_SCREEN = "next";
-	public final static String CONTROL_USER_CREATE = "createUser";
+	public final static String CONTROL_INITIAL_SCREEN = "start_screen";
+	public final static String CONTROL_LOGIN_SCREEN = "log_in";
+	public final static String CONTROL_USER_CREATE = "create_user";
 	public final static String CONTROL_TRIP_SELECT = "trip_select";
 	public final static String CONTROL_TRIP_CREATION = "trip_creation";
 	public final static String CONTROL_ATTEMPT_LOGIN = "login_fn";
@@ -150,6 +151,8 @@ public class Intermediary {
 				attemptLogin(); break;
 			case CONTROL_ATTEMPT_USER_CREATE: 	//Attempts to create a new user with the provided information
 				createNewUser(); break;
+			case CONTROL_INITIAL_SCREEN:
+				goToInitialScreen(); break;
 			case CONTROL_LOGIN_SCREEN: 			//Orders display to show the log-in screen
 				goToLogin(); break;
 			case CONTROL_USER_CREATE: 			//Orders display to show the create account screen
@@ -179,12 +182,11 @@ public class Intermediary {
 			case CONTROL_SAVE_TRANSP:
 				saveTransport(); break;
 			case CONTROL_CONTACT_LIST:
-				goToContactList();
+				goToContactList(); break;
 			case CONTROL_CONTACT_CREATE:
-				goToMakeContact();
+				goToMakeContact(); break;
 			case CONTROL_SAVE_CONTACT:
-				System.out.println("on the case");
-				saveContact();
+				saveContact(); break;
 			default: break;
 		}
 	}
@@ -483,6 +485,11 @@ public class Intermediary {
 	
 //---  Navigation   ---------------------------------------------------------------------------
 	
+	private void goToInitialScreen() {
+		display.resetView();
+		display.initialScreen();
+	}
+	
 	/**
 	 * This method navigates the Display to the logIn screen by hiding the current
 	 * panels in the WindowFrame and calling display.logInScreen().
@@ -552,7 +559,7 @@ public class Intermediary {
 	
 	public void goToAccom()	{
 		display.resetView();
-		display.accomodationDisplayScreen(Communication.get(CURR_TRIP));
+		display.accomodationDisplayScreen();
 	}
 	
 	/**
@@ -572,7 +579,7 @@ public class Intermediary {
 	public void goToTransport()
 	{
 		display.resetView();
-		display.transportDisplayScreen(Communication.get(CURR_TRIP));
+		display.transportDisplayScreen();
 	}
 	
 	/**

@@ -109,11 +109,11 @@ public class Display {
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** */
+	/** WindowFrame object that is used to visually communicate information to the user and receive their input*/
 	private WindowFrame display;
-	/** */
+	/** int value representing the width of the WindowFrame object created for this program*/
 	private int width;
-	/** */
+	/** int value representing the height of the WindowFrame object created for this program*/
 	private int height;
 	
 //---  Constructors   -------------------------------------------------------------------------
@@ -130,7 +130,7 @@ public class Display {
 		width = inWidth;
 		height = inHeight;
 		display = new WindowFrame(width + 14, height + 37);	//offset because java windows aren't quite accurate
-		initialScreen();
+		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_INITIAL_SCREEN);
 		
 	}
 	
@@ -139,11 +139,11 @@ public class Display {
 	/**
 	 * This method instructs the Display object to present the initial screen as designed
 	 * within this method; effectively a title screen for branding purposes and possible
-	 * settings allocation. Just click the continue button for log-in.
+	 * settings allocation. Just click the continue button to go to the log-in screen.
 	 * 
 	 */
 	
-	private void initialScreen(){
+	public void initialScreen(){
 		ElementPanel titlePanel = new ElementPanel(0, 0, display.getWidth(), display.getHeight()) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_LOGIN) {
@@ -151,6 +151,7 @@ public class Display {
 				}
 			}	
 		};
+		
 		designTwoColorBorder(titlePanel, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		designBackedLabel(titlePanel, "title", COLOR_TWO, COLOR_BLACK, FONT_TITLE, "Plein Air", width/2, height/3, width/2, height/6, 1, true);
 		designReactiveButton(titlePanel, "start", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Start", width/2, 7*height/10, width/10, height/20, 5, EVENT_GO_TO_LOGIN, true);
@@ -161,7 +162,8 @@ public class Display {
 	/**
 	 * This method instructs the Display object to present the log-in screen as designed
 	 * within this method; takes in Username and Password information to attempt to log the
-	 * user in. If successful, moves onward to a Trip select screen.
+	 * user in. If successful, moves onward to a Trip select screen. Can also travel to
+	 * an account creation screen.
 	 */
 	
 	public void logInScreen() {
@@ -202,7 +204,11 @@ public class Display {
 	}
 	
 	/**
-	 * This method
+	 * This method designs the screen that allows the user to create a new account
+	 * in this program with which trips can be created, edited, stored, and retrieved.
+	 * 
+	 * The user provides data for account creation and submits that information which
+	 * can be rejected, or returns to the log in screen.
 	 */
 	
 	public void createAccountScreen() {
@@ -244,7 +250,8 @@ public class Display {
 	}
 
 	/**
-	 * This method
+	 * This method designs the screen to allow the user to choose from pre-existing trips
+	 * for their manipulation or to create a new trip by accessing a new screen.
 	 */
 	
 	public void tripSelectScreen() {		
@@ -285,7 +292,14 @@ public class Display {
 	}
 
 	/**
-	 * This method
+	 * This method designs the screen that lets the user create a new Trip
+	 * that is associated to their account; this process can fail if bad
+	 * input is provided.
+	 * 
+	 * TODO: Describe what makes bad input
+	 * 
+	 * The user can also return to the trip select screen, and upon successful
+	 * creation of a trip the user will also be taken to the trip select screen.
 	 */
 
 	public void makeTripScreen() {
@@ -329,7 +343,11 @@ public class Display {
 	}
 	
 	/**
-	 * A screen to display all reservations
+	 * This method designs the screen that displays the stored reservations of this trip,
+	 * and permits the user to create new reservations as well as TODO edit existing reservations.
+	 * 
+	 * User can return to generic display of trips, or traverse via the header to other types of
+	 * scheduled items in this trip (accommodations, transports, reservations).
 	 */
 
 	public void reservationDisplayScreen(String tripName) {
@@ -354,7 +372,12 @@ public class Display {
 	}
 
 	/**
-	 * This method
+	 * This method designs the screen that permits the user to supply the information
+	 * necessary to create a reservation and submit that for creation (can fail if
+	 * improperly formatted.)
+	 * 
+	 * Upon successful submission, will return to reservation display screen; can also
+	 * exit at any time to return to the reservation display screen.
 	 */
 
 	public void makeReservationScreen(){
@@ -400,12 +423,14 @@ public class Display {
 	}
 
 	/**
-	 * This method
+	 * This method designs the screen that displays the stored accommodations of this trip,
+	 * and permits the user to create new accommodations as well as TODO edit existing reservations.
 	 * 
-	 * @param tripName
+	 * User can return to generic display of trips, or traverse via the header to other types of
+	 * scheduled items in this trip (accommodations, transports, reservations).
 	 */
 	
-	public void accomodationDisplayScreen(String tripName) {
+	public void accomodationDisplayScreen() {
 		List<String[]> accom = Intermediary.getTripsAccom();
 		
 		ElementPanel aS = new ElementPanel(0, 0, width, height){			
@@ -428,7 +453,12 @@ public class Display {
 	}
 	
 	/**
-	 * This method
+	 * This method designs the screen that permits the user to supply the information
+	 * necessary to create a accommodation and submit that for creation (can fail if
+	 * improperly formatted.)
+	 * 
+	 * Upon successful submission, will return to accommodation display screen; can also
+	 * exit at any time to return to the accommodation display screen.
 	 */
 	
 	public void makeAccomodationScreen(){
@@ -472,12 +502,14 @@ public class Display {
 	}
 
 	/**
-	 * This method
+	 * This method designs the screen that displays the stored transportations of this trip,
+	 * and permits the user to create new transportations as well as TODO edit existing transportations.
 	 * 
-	 * @param tripName
+	 * User can return to generic display of trips, or traverse via the header to other types of
+	 * scheduled items in this trip (accommodations, transports, reservations).
 	 */
 	
-	public void transportDisplayScreen(String tripName) {
+	public void transportDisplayScreen() {
 		List<String[]> transp = Intermediary.getTripsTransp();
 		
 		ElementPanel tS = new ElementPanel(0, 0, width, height)	{
@@ -498,7 +530,12 @@ public class Display {
 	}
 	
 	/**
-	 * This method
+	 * This method designs the screen that permits the user to supply the information
+	 * necessary to create a transportation and submit that for creation (can fail if
+	 * improperly formatted.)
+	 * 
+	 * Upon successful submission, will return to transportation display screen; can also
+	 * exit at any time to return to the transportation display screen.
 	 */
 	
 	public void makeTransportScreen(){
@@ -543,9 +580,13 @@ public class Display {
 	}
 			
 	/**
-	 * This method adds a header to the provided ElementPanel providing links to other screens via tabs
+	 * This method adds a header to the provided ElementPanel providing links to other screens via clickable
+	 * buttons at the top border of the screen.
 	 * 
-	 * @param e
+	 * TODO: Make this dynamic so we can open more tabs; make it prettier (buttons should provide feedback when
+	 * clicked)
+	 * 
+	 * @param e - ElementPanel object representing the visual panel to which these header tabs are being added.
 	 */
 	
 	public void addHeaderTabs(ElementPanel e){
@@ -557,14 +598,21 @@ public class Display {
 	}
 	
 	/**
-	 * This method
+	 * This method creates a vertical list of items (reservations, accommodations, transportations) that
+	 * are displayed to the user; the information provided is specified by a provided list object and an
+	 * ordered set of indexes to direct the retrieval of data from.
 	 * 
-	 * @param e
-	 * @param sl
-	 * @param titlePos
-	 * @param startPos
-	 * @param endPos
-	 * @param otherPos
+	 * The consistent design is a rectangular region with the title of the item displayed centrally, with
+	 * the range of dates to the lower left and its description to the lower right.
+	 * 
+	 * TODO: when number of items overloads the given space, need slider for further display (or page switch)
+	 * 
+	 * @param e - ElementPanel object representing the visual panel to which these composite elements are being added. 
+	 * @param sl - List<<r>String[]> object containing the data that is being selectively chosen from 
+	 * @param titlePos - int value representing the index in sl that corresponds to the title data
+	 * @param startPos - int value representing the index in sl that corresponds to the start date data
+	 * @param endPos - int value representing the index in sl that corresponds to the end date data
+	 * @param otherPos - int value representing the index in sl that corresponds to a variable piece of data
 	 */
 	
 	public void displayItemList(ElementPanel e, List<String[]> sl, int titlePos, int startPos, int endPos, int otherPos){
@@ -580,7 +628,9 @@ public class Display {
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	/**
-	 * 
+	 * This method resets the displayed Panel of the WindowFrame object stored by
+	 * this Display object so that a new Panel may be displayed without overlap
+	 * of priority in the displayed elements.
 	 */
 	
 	public void resetView() {
@@ -589,9 +639,17 @@ public class Display {
 	}
 
 	/**
+	 * This method handles the repetitive task of querying the user input for its
+	 * interaction with the header tabs available on some displayed Panels.
 	 * 
-	 * @param event
-	 * @return
+	 * To mesh with other input-interpretations by specific screens, this method
+	 * returns a boolean value informing the calling method whether or not a Control
+	 * value was assigned here.
+	 * 
+	 * TODO If Header tabs are made dynamic, make this respect that
+	 * 
+	 * @param event - int value representing the user's mouse input as a coded value to be interpreted
+	 * @return - Returns a boolean value representing whether the event triggered a Control value to be assigned or not.
 	 */
 	
 	public boolean interpretHeader(int event) {
@@ -627,38 +685,40 @@ public class Display {
 	 * 
 	 * Priority intervals are of 10 so that each Composite method can have its own organization of
 	 * basic elements as well as be placed relative to other Composite structures.
-	 *  
-	 * @param pan
-	 * @param name
-	 * @param x
-	 * @param y
-	 * @param panWid
-	 * @param panHei
-	 * @param priority
-	 * @param code
-	 * @param centered
+	 * 
+	 * @param pan - ElementPanel object to which the composite structure will be added.
+	 * @param name - String object representing the name that these elements should be given to differentiate them to the ElementPanel.
+	 * @param x - int object representing the x coordinate at which this composite structure should be placed
+	 * @param y - int object representing the y coordinate at which this composite structure should be placed
+	 * @param panWid - int value representing the width of this composite structure
+	 * @param panHei - int value representing the height of this composite structure
+	 * @param priority - int value representing the priority level that this composite structure should be placed at (in units of 10)
+	 * @param code - int value representing the internal user input code that should be associated to elements in this Composite Structure
+	 * @param centered - boolean value representing whether or not this composite structure should be drawn with x, y at the center or top-left corner
 	 */
 	
-	private void designTextField(ElementPanel pan,String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
+	private void designTextField(ElementPanel pan, String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
 		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
 	}
 	
 	/**
+	 * This method automates the composition of ElementPanel basic elements to create a reactive
+	 * button that displays text and marks its location on the Panel with defined colors.
 	 * 
-	 * @param pan
-	 * @param name
-	 * @param fillCol
-	 * @param backColor
-	 * @param font
-	 * @param message
-	 * @param x
-	 * @param y
-	 * @param wid
-	 * @param hei
-	 * @param priority
-	 * @param code
-	 * @param centered
+	 * @param pan - ElementPanel object to which the composite structure will be added.
+	 * @param name - String object representing the name that these elements should be given to differentiate them to the ElementPanel.
+	 * @param fillCol - Color object representing the fill color of the rectangle marking its location on the Panel
+	 * @param backColor - Color object representing the border color of the rectangle marking its location on the Panel
+	 * @param font - Font object describing in what font to write the provided String to label this button on the Panel
+	 * @param message - String object representing the phrase used to label this button on the Panel
+	 * @param x - int object representing the x coordinate at which this composite structure should be placed
+	 * @param y - int object representing the y coordinate at which this composite structure should be placed
+	 * @param wid - int value representing the width of this composite structure
+	 * @param hei - int value representing the height of this composite structure
+	 * @param priority - int value representing the priority level that this composite structure should be placed at (in units of 10)
+	 * @param code - int value representing the internal user input code that should be associated to elements in this Composite Structure
+	 * @param centered - boolean value representing whether or not this composite structure should be drawn with x, y at the center or top-left corner
 	 */
 	
 	private void designReactiveButton(ElementPanel pan, String name, Color fillCol, Color backColor, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
@@ -668,19 +728,21 @@ public class Display {
 	}
 	
 	/**
+	 * This method automates the composition of ElementPanel basic elements to create a label on
+	 * the screen that is backed with defined colors to accentuate its placement.
 	 * 
-	 * @param pan
-	 * @param name
-	 * @param colFill
-	 * @param colBorder
-	 * @param font
-	 * @param message
-	 * @param x
-	 * @param y
-	 * @param wid
-	 * @param hei
-	 * @param priority
-	 * @param centered
+	 * @param pan - ElementPanel object to which the composite structure will be added.
+	 * @param name - String object representing the name that these elements should be given to differentiate them to the ElementPanel.
+	 * @param colFill - Color object representing the fill color of the rectangle marking its location on the Panel
+	 * @param colBorder - Color object representing the border color of the rectangle marking its location on the Panel
+	 * @param font - Font object describing in what font to write the provided String to label this button on the Panel
+	 * @param message - String object representing the phrase used to label this button on the Panel
+	 * @param x - int object representing the x coordinate at which this composite structure should be placed
+	 * @param y - int object representing the y coordinate at which this composite structure should be placed
+	 * @param wid - int value representing the width of this composite structure
+	 * @param hei - int value representing the height of this composite structure
+	 * @param priority - int value representing the priority level that this composite structure should be placed at (in units of 10)
+	 * @param centered - boolean value representing whether or not this composite structure should be drawn with x, y at the center or top-left corner
 	 */
 	
 	private void designBackedLabel(ElementPanel pan, String name, Color colFill, Color colBorder, Font font, String message, int x, int y, int wid, int hei, int priority, boolean centered) {
@@ -690,18 +752,20 @@ public class Display {
 
 	/**
 	 * 
-	 * @param pan
-	 * @param name
-	 * @param colFill
-	 * @param colBorder
-	 * @param x
-	 * @param y
-	 * @param wid
-	 * @param hei
-	 * @param xRatio
-	 * @param yRatio
-	 * @param priority
-	 * @param centered
+	 * @param pan - ElementPanel object to which the composite structure will be added.
+	 * @param name - String object representing the name that these elements should be given to differentiate them to the ElementPanel.
+	 * @param colFill - Color object representing the fill color of the rectangle marking its location on the Panel
+	 * @param colBorder - Color object representing the border color of the rectangle marking its location on the Panel
+	 * @param font - Font object describing in what font to write the provided String to label this button on the Panel
+	 * @param message - String object representing the phrase used to label this button on the Panel
+	 * @param x - int object representing the x coordinate at which this composite structure should be placed
+	 * @param y - int object representing the y coordinate at which this composite structure should be placed
+	 * @param wid - int value representing the width of this composite structure
+	 * @param hei - int value representing the height of this composite structure
+	 * @param xRatio - int value representing what margin of the screen's width should be given to the border color region
+	 * @param yRatio - int value representing what margine of the screen's height should be given to the border color region
+	 * @param priority - int value representing the priority level that this composite structure should be placed at (in units of 10)
+	 * @param centered - boolean value representing whether or not this composite structure should be drawn with x, y at the center or top-left corner
 	 */
 	
 	private void designTwoColorBorder(ElementPanel pan, String name, Color colFill, Color colBorder, int x, int y, int wid, int hei, int xRatio, int yRatio, int priority, boolean centered) {
