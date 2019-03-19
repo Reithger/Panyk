@@ -354,7 +354,8 @@ public class Display {
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					
+					if(event == EVENT_GO_TO_RES_CREATION) 
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
 				}
 			}
 		};
@@ -397,7 +398,7 @@ public class Display {
 					Communication.set(Intermediary.CREATE_RES_END, date2);
 					Communication.set(Intermediary.CREATE_RES_LOC, loc);
 					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_RES);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_RESERVATION);
 				}
 				
 			}
@@ -436,7 +437,8 @@ public class Display {
 		ElementPanel aS = new ElementPanel(0, 0, width, height){			
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					
+					if(event == EVENT_GO_TO_ACCOM_CREATION)
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_CREATE);
 				}
 			}
 		};
@@ -478,7 +480,7 @@ public class Display {
 					Communication.set(Intermediary.CREATE_ACCOM_END, date2);
 					Communication.set(Intermediary.CREATE_ACCOM_LOC, loc);
 					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_ACCOM);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_ACCOMMODATION);
 				}
 				
 			}
@@ -515,7 +517,8 @@ public class Display {
 		ElementPanel tS = new ElementPanel(0, 0, width, height)	{
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					
+					if(event == EVENT_GO_TO_TRANSP_CREATION)
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_CREATE);
 				}
 			}
 		};
@@ -555,7 +558,7 @@ public class Display {
 					Communication.set(Intermediary.CREATE_TRANSP_END, date2);
 					Communication.set(Intermediary.CREATE_TRANSP_MODE, mode);
 					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SAVE_TRANSP);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_TRANSPORT);
 				}
 				
 			}
@@ -657,10 +660,6 @@ public class Display {
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 			return true;
 		}
-		else if(event == EVENT_GO_TO_RES_CREATION) {
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
-			return true;
-		}
 		else if(event == EVENT_ACCOM_LIST){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 			return true;
@@ -751,6 +750,8 @@ public class Display {
 	}
 
 	/**
+	 * This method automates the composition of ElementPanel basic elements to create a two-colored
+	 * rectangular region in which one color functions as a margin around the edge of the other.
 	 * 
 	 * @param pan - ElementPanel object to which the composite structure will be added.
 	 * @param name - String object representing the name that these elements should be given to differentiate them to the ElementPanel.

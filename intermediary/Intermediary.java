@@ -50,16 +50,16 @@ public class Intermediary {
 	public final static String CONTROL_ATTEMPT_CREATE_TRIP = "create_trip";
 	public final static String CONTROL_RESERVATIONS = "reservations";
 	public final static String CONTROL_RES_CREATION = "newRes";
-	public final static String CONTROL_SAVE_RES = "save me save me";
+	public final static String CONTROL_ATTEMPT_SAVE_RESERVATION = "save me save me";
 	public final static String CONTROL_ACCOM_LIST = "a list of accomodations";
 	public final static String CONTROL_ACCOM_CREATE = "the grand act of creation";
-	public final static String CONTROL_SAVE_ACCOM = "save accom";
+	public final static String CONTROL_ATTEMPT_SAVE_ACCOMMODATION = "save accom";
 	public final static String CONTROL_TRANSP_LIST = "tlist";
 	public final static String CONTROL_TRANSP_CREATE = "train?";
-	public final static String CONTROL_SAVE_TRANSP = "more saving";
+	public final static String CONTROL_ATTEMPT_SAVE_TRANSPORT = "more saving";
 	public final static String CONTROL_CONTACT_LIST = "something about contacts";
 	public final static String CONTROL_CONTACT_CREATE = "it's alive!";
-	public final static String CONTROL_SAVE_CONTACT = "to the database we go!";
+	public final static String CONTROL_ATTEMPT_SAVE_CONTACT = "to the database we go!";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -147,46 +147,46 @@ public class Intermediary {
 		if(happen == null)
 			return;
 		switch(happen) {
-			case CONTROL_ATTEMPT_LOGIN:			//Attempts to log-in with the provided information 
+			case CONTROL_ATTEMPT_LOGIN:				//Attempts to log-in with the provided information 
 				attemptLogin(); break;
-			case CONTROL_ATTEMPT_USER_CREATE: 	//Attempts to create a new user with the provided information
+			case CONTROL_ATTEMPT_USER_CREATE: 		//Attempts to create a new User with the provided information
 				createNewUser(); break;
-			case CONTROL_INITIAL_SCREEN:
-				goToInitialScreen(); break;
-			case CONTROL_LOGIN_SCREEN: 			//Orders display to show the log-in screen
-				goToLogin(); break;
-			case CONTROL_USER_CREATE: 			//Orders display to show the create account screen
-				goToCreateAccount(); break;
-			case CONTROL_TRIP_SELECT: 			//Orders display to show the trip select screen
-				goToTripSelect(); break;
-			case CONTROL_TRIP_CREATION:			//Orders display to show the trip creation screen
-				goToTripCreation(); break;
-			case CONTROL_ATTEMPT_CREATE_TRIP:	//Attempts to create a new Trip with the provided information
+			case CONTROL_ATTEMPT_CREATE_TRIP:		//Attempts to create a new Trip with the provided information
 				addTrip(); break;
-			case CONTROL_RESERVATIONS:
-				showRes(); break;
-			case CONTROL_RES_CREATION:
-				goToMakeRes(); break;
-			case CONTROL_SAVE_RES:
-				saveRes(); break;
-			case CONTROL_ACCOM_LIST:
-				goToAccom(); break;
-			case CONTROL_ACCOM_CREATE:
-				goToNewAccom(); break;
-			case CONTROL_SAVE_ACCOM:
-				saveAccom(); break;
-			case CONTROL_TRANSP_LIST:
-				goToTransport(); break;
-			case CONTROL_TRANSP_CREATE:
-				goToNewTransport(); break;
-			case CONTROL_SAVE_TRANSP:
-				saveTransport(); break;
-			case CONTROL_CONTACT_LIST:
-				goToContactList(); break;
-			case CONTROL_CONTACT_CREATE:
-				goToMakeContact(); break;
-			case CONTROL_SAVE_CONTACT:
-				saveContact(); break;
+			case CONTROL_ATTEMPT_SAVE_RESERVATION:	//Attempts to create a new Reservation with the provided information
+				addReservation(); break;
+			case CONTROL_ATTEMPT_SAVE_ACCOMMODATION://Attempts to create a new Accommodation with the provided information
+				addAccommodation(); break;
+			case CONTROL_ATTEMPT_SAVE_TRANSPORT:	//Attempts to create a new Transportation with the provided information
+				addTransport(); break;
+			case CONTROL_ATTEMPT_SAVE_CONTACT:		//Attempts to create a new Contact with the provided information
+				addContact(); break;
+			case CONTROL_INITIAL_SCREEN:			//Orders display to show the initial screen
+				goToInitialScreen(); break;
+			case CONTROL_LOGIN_SCREEN: 				//Orders display to show the log-in screen
+				goToLogin(); break;
+			case CONTROL_USER_CREATE: 				//Orders display to show the create account screen
+				goToCreateAccount(); break;
+			case CONTROL_TRIP_SELECT: 				//Orders display to show the trip select screen
+				goToTripSelect(); break;
+			case CONTROL_TRIP_CREATION:				//Orders display to show the trip creation screen
+				goToTripCreation(); break;
+			case CONTROL_RESERVATIONS:				//Orders display to show the reservation display screen
+				goToReservationSelect(); break;
+			case CONTROL_RES_CREATION:				//Orders display to show the reservation creation screen
+				goToReservationCreate(); break;
+			case CONTROL_ACCOM_LIST:				//Orders display to show the accommodation display screen
+				goToAccommodationSelect(); break;
+			case CONTROL_ACCOM_CREATE:				//Orders display to show the accommodation creation screen
+				goToAccommodationCreate(); break;
+			case CONTROL_TRANSP_LIST:				//Orders display to show the transportation display screen
+				goToTransportSelect(); break;
+			case CONTROL_TRANSP_CREATE:				//Orders display to show the transportation creation screen
+				goToTransportCreate(); break;
+			case CONTROL_CONTACT_LIST:				//Orders display to show the contact display screen
+				goToContactSelect(); break;
+			case CONTROL_CONTACT_CREATE:			//Orders display to show the contact creation screen
+				goToContactCreate(); break;
 			default: break;
 		}
 	}
@@ -319,7 +319,7 @@ public class Intermediary {
 	 * Basically the method above but for reservations
 	 */
 
-	public void saveRes() {
+	public void addReservation() {
 		Date begin;
 		Date end;
 		
@@ -336,23 +336,21 @@ public class Intermediary {
 			{
 				Database.addEntry(TableType.reservations, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_RES_TITLE), beginStr, endStr, Communication.get(CREATE_RES_LOC));//leave room for notes?
 				//reservations("username", "varchar(60)", "tripTitle", "varchar(60)", "name", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "address", "varchar(60)");
-					//after insertion, go back to trip select
-					goToRes();
+				Communication.set(CONTROL, CONTROL_RESERVATIONS);
 			}else 
 			{
-				errorReport("you have already created a resercation with this title");
+				errorReport("You have already created a reservation with this title");
 			}
 		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
-		//TODO: Set CONTROL to whatever we do next
 	}
 	
 	/**
 	 * more repeated code, just trying to make it run tonight will definitely refactor hardcore before next milestone
 	 */
 
-	public void saveAccom() {
+	public void addAccommodation() {
 		Date begin;
 		Date end;
 		
@@ -364,22 +362,20 @@ public class Intermediary {
 		try{
 			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
-		
 			//check if a reservation with that name already exists with the user
-				Database.addEntry(TableType.accommodations, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_ACCOM_TITLE), beginStr, endStr, null, Communication.get(CREATE_ACCOM_LOC));//leave room for notes?
-											//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
-					goToAccom();
+			Database.addEntry(TableType.accommodations, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_ACCOM_TITLE), beginStr, endStr, null, Communication.get(CREATE_ACCOM_LOC));//leave room for notes?
+			//accommodations("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "checkIn", "varchar(60)", "checkOut", "varchar(60)", "paid", "boolean", "address", "varchar(60)"),
+			Communication.set(CONTROL, CONTROL_ACCOM_LIST);		
 		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
-		//TODO: Set CONTROL to whatever we do next
 	}
 	
 	/**
 	 * 
 	 */
 	
-	public void saveTransport() {
+	public void addTransport() {
 		Date begin;
 		Date end;
 		
@@ -391,41 +387,26 @@ public class Intermediary {
 		try{
 			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
-		
 			//check if a reservation with that name already exists with the user
-				Database.addEntry(TableType.transportation, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
-				//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)")
-				goToTransport();
+			Database.addEntry(TableType.transportation, user.getUsername(), Communication.get(CURR_TRIP), Communication.get(CREATE_TRANSP_TITLE), beginStr, endStr, Communication.get(CREATE_TRANSP_MODE));//different fields
+			//transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)")
+			Communication.set(CONTROL, CONTROL_TRANSP_LIST);
 		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
-		//TODO: Set CONTROL to whatever we do next
 	}
 	
 	/**
 	 * 
 	 */
 	
-	public void saveContact() 
-	{
-		
-			System.out.println("Saving! Should I be doing this?");
-			Database.addEntry(TableType.contacts, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_CONTACT_NAME), Communication.get(CREATE_CONTACT_DESCRIP), Communication.get(CREATE_CONTACT_PHONE), Communication.get(CREATE_CONTACT_ADDRESS));
-			////contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),	
-			
-			goToContactList();
-				
-		//TODO: Set CONTROL to whatever we do next
+	public void addContact() {
+		System.out.println("Saving! Should I be doing this?");
+		Database.addEntry(TableType.contacts, user.getUsername(), Communication.get(CURR_TRIP), null, Communication.get(CREATE_CONTACT_NAME), Communication.get(CREATE_CONTACT_DESCRIP), Communication.get(CREATE_CONTACT_PHONE), Communication.get(CREATE_CONTACT_ADDRESS));
+		////contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),	
+		Communication.set(CONTROL,  CONTROL_CONTACT_LIST);
 	}
 	
-	/**
-	 * 
-	 */
-	
-	public void showRes()
-	{
-		goToRes();
-	}
 	
 //--- Getter Methods --------------------------------------------------------------------------
 
@@ -539,7 +520,8 @@ public class Intermediary {
 	 * panels in the WindowFrame and calling display.reservationScreen().
 	 */
 	
-	public void goToRes(){
+	
+	public void goToReservationSelect(){
 		display.resetView();
 		display.reservationDisplayScreen(Communication.get(CURR_TRIP));
 	}
@@ -548,7 +530,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToMakeRes(){
+	public void goToReservationCreate(){
 		display.resetView();
 		display.makeReservationScreen();
 	}
@@ -557,7 +539,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToAccom()	{
+	public void goToAccommodationSelect()	{
 		display.resetView();
 		display.accomodationDisplayScreen();
 	}
@@ -566,7 +548,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToNewAccom()
+	public void goToAccommodationCreate()
 	{
 		display.resetView();
 		display.makeAccomodationScreen();
@@ -576,7 +558,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToTransport()
+	public void goToTransportSelect()
 	{
 		display.resetView();
 		display.transportDisplayScreen();
@@ -586,7 +568,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToNewTransport()
+	public void goToTransportCreate()
 	{
 		display.resetView();
 		display.makeTransportScreen();
@@ -596,7 +578,7 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToContactList()
+	public void goToContactSelect()
 	{
 		display.resetView();
 		//display.contactScreen();
@@ -606,15 +588,14 @@ public class Intermediary {
 	 * 
 	 */
 	
-	public void goToMakeContact()
-	{
-		System.out.println("surviving");
+	public void goToContactCreate()	{
 		display.resetView();
 		//display.makeContactScreen();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------	
 	
+
 	/**
 	 * This method redirects the given String to the Display to create an error report box to 
 	 * display an error to the user; the design of the box is to close on being clicked.
