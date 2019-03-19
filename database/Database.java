@@ -222,6 +222,8 @@ public class Database {
 	/**	
 	 * This method deletes entries from the defined table
 	 * 
+	 * BE CAREFULL -> this will delete everything that matches the search keys
+	 * 
 	 * @param table	- TableType object you wish to delete from
 	 * @param searchKeys - String ... (var args) values representing the search parameters for deletion
 	 * @return - Returns a boolean value representing the result of deletion; true if successful, false otherwise
@@ -268,6 +270,50 @@ public class Database {
 			return false;
 		}
 		return true;
+	}
+	
+//--- entryEdit method -----------------------------------------------------------------------
+	
+	
+	/**
+	 * 		edits an entry in the db by finding the entry first based on search keys and table type, 
+	 * 
+	 * @param table				the table you wish to edit
+	 * @param editIndex			the index of the element you wish to edit
+	 * @param newValue			the string which you want to replace the previous value with
+	 * @param searchKeys		the search keys to find the entry you want to edit
+	 * @return
+	 */
+	public static boolean editEntry(TableType table, int editIndex, String newValue, String... searchKeys) {
+		List<String[]> old_entry = search(table, searchKeys);
+		if(old_entry.size() == 0) {
+			System.out.println("error editing entry in table " + table.toString() + ", no entries found with given search keys");
+			return false;
+		}else if(old_entry.size() > 1) {
+			System.out.println("error editing entry in table " + table.toString() + ", more than one entry found with the given search keys");
+			return false;
+		}else if(editIndex >= table.fields.length || editIndex < 0) {
+			System.out.println("error editing entry in table " + table.toString() + ", the index at which you are trying to edit is invalid");
+			return false;
+		}else if(table == TableType.users) {		//you are not allowed to edit a user
+			System.out.println("you are not allowed to edit the user table, only delete from it or add to it");
+			return false;
+		}else if(editIndex == 0) {
+			System.out.println("you are not allowed to edit the the username of any entry");
+			return false;
+		}else {
+			//delete the old entry
+			boolean del_flag = deleteEntry(table, searchKeys);
+			if(!del_flag) {
+				System.out.println("error editing entry in table " + table.toString() + ", error deleting old entry from table");
+				return false;
+			}
+			String[] old_vals = old_entry.get(0);
+			String[] new_vals = old_vals;
+			new_vals[editIndex] = newValue;
+			//return the status of the addEntry
+			return addEntry(table, new_vals);
+		}
 	}
 	
 //--- Search Methods  -------------------------------------------------------------------------
@@ -377,4 +423,6 @@ public class Database {
 	} 
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------
+
+
 
