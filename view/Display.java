@@ -348,7 +348,7 @@ public class Display {
 	 * scheduled items in this trip (accommodations, transports, reservations).
 	 */
 
-	public void reservationDisplayScreen(String tripName) {
+	public void reservationDisplayScreen() {
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
@@ -657,6 +657,9 @@ public class Display {
 		if(event == EVENT_GO_TO_SELECT_TRIP){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 			return true;
+		}
+		else if(event == EVENT_GO_TO_SELECT_RESERVATION) {
+			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 		}
 		else if(event == EVENT_GO_TO_SELECT_ACCOMMODATION){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);

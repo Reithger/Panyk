@@ -523,7 +523,7 @@ public class Intermediary {
 	
 	public void goToReservationSelect(){
 		display.resetView();
-		display.reservationDisplayScreen(Communication.get(CURR_TRIP));
+		display.reservationDisplayScreen();
 	}
 	
 	/**
