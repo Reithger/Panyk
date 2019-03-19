@@ -285,12 +285,12 @@ public class Intermediary {
 		
 		String beginStr = Communication.get(CREATE_TRIP_START);
 		String endStr = Communication.get(CREATE_TRIP_END);
+		String dest = Communication.get(CREATE_TRIP_DEST);
 		
 		try{
 			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
 			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
 			
-			String dest = Communication.get(CREATE_TRIP_DEST);
 			if(dest.equals("")){
 				errorReport("Must have a destination");
 			}
@@ -302,15 +302,15 @@ public class Intermediary {
 					//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
 				
 					//after insertion, go back to trip select
-					goToTripSelect();
-				}else {
-					errorReport("you have already created a trip with this title");
+					Communication.set(CONTROL, CONTROL_TRIP_SELECT);
+				}
+				else {
+					errorReport("You have already created a trip with this title");
 				}
 			}
 		} catch (Exception e) {
 			errorReport("Invalid Dates");
 		}
-		//TODO: Set CONTROL to whatever we do next
 	}
 	
 	/**
