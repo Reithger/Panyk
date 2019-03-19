@@ -64,48 +64,46 @@ public class Display {
 	/** */
 	private final static int EVENT_GO_TO_LOGIN = 1;
 	/** */
-	private final static int EVENT_LOGIN = 2;
+	private final static int EVENT_ATTEMPT_LOGIN = 2;
 	/** */
-	private final static int EVENT_CREATE_ACC_BTN = 3;
+	private final static int EVENT_GO_TO_CREATE_ACCOUNT = 3;
 	/** */
-	private final static int EVENT_CREATE_ACC_FINALIZE = 4;
+	private final static int EVENT_ATTEMPT_CREATE_ACCOUNT = 4;
 	/** */
-	private final static int EVENT_BACK_TO_LOGIN = 5;
+	private final static int EVENT_GO_TO_SELECT_TRIP = 5;
 	/** */
-	private final static int EVENT_GO_TO_TRIP_CREATION = 6;
+	private final static int EVENT_GO_TO_CREATE_TRIP = 6;
 	/** */
-	private final static int EVENT_GO_TO_TRIP = 20;//I think this has to be the maximum value, so arranging accordingly
+	private static final int EVENT_ATTEMPT_CREATE_TRIP = 7;
 	/** */
-	private final static int EVENT_TRIP_SELECTION = 7;
+	private static final int EVENT_GO_TO_SELECT_RESERVATION = 8;
 	/** */
-	private static final int EVENT_TRIP_CREATED = 8;
+	private static final int EVENT_GO_TO_CREATE_RESERVATION = 9;
 	/** */
-	private static final int EVENT_GO_TO_RES_CREATION = 9;
+	private static final int EVENT_ATTEMPT_CREATE_RESERVATION = 10;
 	/** */
-	private static final int EVENT_SAVE_RESERVATION = 10;
+	private static final int EVENT_GO_TO_SELECT_ACCOMMODATION = 11;
 	/** */
-	private static final int EVENT_SAVE_ACCOMODATION = 20;
+	private static final int EVENT_GO_TO_CREATE_ACCOMMODATE = 12;
 	/** */
+	private static final int EVENT_ATTEMPT_CREATE_ACCOMMODATION = 13;
+	/** */
+	private static final int EVENT_GO_TO_SELECT_TRANSPORT = 14;
+	/** */
+	private static final int EVENT_GO_TO_CREATE_TRANSPORT = 15;
+	/** */
+	private static final int EVENT_ATTEMPT_CREATE_TRANSPORTATION = 16;
+	/** */
+	private static final int EVENT_GO_TO_SELECT_CONTACT = 17;
+	/** */
+	private static final int EVENT_GO_TO_CREATE_CONTACT = 18;
+	/** */
+	private static final int EVENT_ATTEMPT_CREATE_CONTACT = 19;
+	/** */
+	private final static int EVENT_GO_TO_TRIP = 20;		//TODO: This a very duct tape and bubble gum solution, should make robust 
+
+	/** This is not a limitation of how many elements can be in a composite, increase if you need more space; handles priority room*/
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
-	/** */
-	private static final int EVENT_RES_LIST = 11;
-	/** */
-	private static final int EVENT_ACCOM_LIST = 12;
-	/** */
-	private static final int EVENT_GO_TO_ACCOM_CREATION = 13;
-	/** */
-	private static final int EVENT_TRANSPORT_LIST = 14;
-	/** */
-	private static final int EVENT_GO_TO_TRANSP_CREATION = 15;
-	/** */
-	private static final int EVENT_SAVE_TRANSP=16;
-	/** */
-	private static final int EVENT_CONTACT_LIST=17;
-	/** */
-	private static final int EVENT_GO_TO_CONTACT_CREATION=18;
-	/** */
-	private static final int EVENT_SAVE_CONTACT = 19;
-	
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -169,7 +167,7 @@ public class Display {
 	public void logInScreen() {
 		ElementPanel login = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_LOGIN) {
+				if(event == EVENT_ATTEMPT_LOGIN) {
 					String uname = getElementStoredText("username_text");
 					String pass = getElementStoredText("password_text");
 					Communication.set(Intermediary.LOGIN_USERNAME, uname);
@@ -177,7 +175,7 @@ public class Display {
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_LOGIN);
 				}
-				else if(event == EVENT_CREATE_ACC_BTN) {
+				else if(event == EVENT_GO_TO_CREATE_ACCOUNT) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_USER_CREATE);
 				}
 			}
@@ -194,8 +192,8 @@ public class Display {
 			designTextField(login, elementName[i], width/3, height/2 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 				
-		designReactiveButton(login, "log_in", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_LOGIN, true);
-		designReactiveButton(login,"account_create", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 6, width/10, height/16, 2, EVENT_CREATE_ACC_BTN, true);		
+		designReactiveButton(login, "log_in", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_ATTEMPT_LOGIN, true);
+		designReactiveButton(login,"account_create", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create Account", 5*width/6, height * 5 / 6, width/10, height/16, 2, EVENT_GO_TO_CREATE_ACCOUNT, true);		
 		designTwoColorBorder(login, "background_2", COLOR_ONE, COLOR_THREE, width*2/3, 0, width/3, height, 30, 30, 0, false);
 		
 		designBackedLabel(login, "text_display", COLOR_CREATE_ACC_BOX, COLOR_BLACK, FONT_ENTRY, "Don't have an account?", 5*width/6, height * 2 / 3, width/6, height/12, 1, true);
@@ -214,7 +212,7 @@ public class Display {
 	public void createAccountScreen() {
 		ElementPanel createAcc = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_CREATE_ACC_FINALIZE) {
+				if(event == EVENT_ATTEMPT_CREATE_ACCOUNT) {
 					String fn    = getElementStoredText("fn_text");
 					String ln    = getElementStoredText("ln_text");
 					String uname = getElementStoredText("uname_text");
@@ -227,7 +225,7 @@ public class Display {
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_USER_CREATE);
 				}
-				else if(event == EVENT_BACK_TO_LOGIN) {
+				else if(event == EVENT_GO_TO_LOGIN) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_LOGIN_SCREEN);
 				}
 			}
@@ -243,8 +241,8 @@ public class Display {
 			designTextField(createAcc, elementName[i], width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 		
-		designReactiveButton(createAcc, "create_account", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create my account", width/2, height*5/6, width/8, height/15, 2, EVENT_CREATE_ACC_FINALIZE, true);
-		designReactiveButton(createAcc, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width/12, height * 11 / 12, width / 12, height / 20, 2, EVENT_BACK_TO_LOGIN, true);
+		designReactiveButton(createAcc, "create_account", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create my account", width/2, height*5/6, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_ACCOUNT, true);
+		designReactiveButton(createAcc, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width/12, height * 11 / 12, width / 12, height / 20, 2, EVENT_GO_TO_LOGIN, true);
 
 		display.addPanel("Create Account", createAcc);
 	}
@@ -259,10 +257,10 @@ public class Display {
 		
 		ElementPanel tripSelect = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_BACK_TO_LOGIN) {
+				if(event == EVENT_GO_TO_LOGIN) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_LOGIN_SCREEN);
 				}
-				else if(event == EVENT_GO_TO_TRIP_CREATION) {
+				else if(event == EVENT_GO_TO_CREATE_TRIP) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_CREATION);
 				}
 				else if(event >= EVENT_GO_TO_TRIP) {
@@ -277,8 +275,8 @@ public class Display {
 		designTwoColorBorder(tripSelect, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		designBackedLabel(tripSelect, "trip_select_title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Select Trip", width/2, height/8, width/3, height/10, 1, true);
 		
-		designReactiveButton(tripSelect, "logout", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Logout", width*11/12, height*5/6, width/12, height/14, 2, EVENT_BACK_TO_LOGIN, true);
-		designReactiveButton(tripSelect, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Trip", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_TRIP_CREATION, true);
+		designReactiveButton(tripSelect, "logout", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Logout", width*11/12, height*5/6, width/12, height/14, 2, EVENT_GO_TO_LOGIN, true);
+		designReactiveButton(tripSelect, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Trip", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_CREATE_TRIP, true);
 		designTwoColorBorder(tripSelect, "background_backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
 
 		//Display list of trips
@@ -305,10 +303,10 @@ public class Display {
 	public void makeTripScreen() {
 		ElementPanel tripCreate = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_TRIP_SELECTION){
+				if(event == EVENT_GO_TO_SELECT_TRIP){
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 				}
-				else if(event == EVENT_TRIP_CREATED){
+				else if(event == EVENT_ATTEMPT_CREATE_TRIP){
 					String title = getElementStoredText("tripTitle_text");
 					String date1 = getElementStoredText("tripStart_text");
 					String date2 = getElementStoredText("tripEnd_text");
@@ -327,8 +325,8 @@ public class Display {
 		
 		designTwoColorBorder(tripCreate, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		designBackedLabel(tripCreate, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Trip Details", width/2, height/8, width/2, height/10, 1, true);
-		designReactiveButton(tripCreate, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Exit", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
-		designReactiveButton(tripCreate, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_TRIP_CREATED, true);
+		designReactiveButton(tripCreate, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Exit", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(tripCreate, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*25/32, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_TRIP, true);
 		
 		String[] elementName = new String[] {"tripTitle", "tripDest", "tripStart", "tripEnd", "null"};
 		String[] displayName = new String[] {"Trip Name:", "Destination:", "Start Date", "End Date", "(dd/MM/yyyy)"};
@@ -354,7 +352,7 @@ public class Display {
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_RES_CREATION) 
+					if(event == EVENT_GO_TO_CREATE_RESERVATION) 
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
 				}
 			}
@@ -365,8 +363,8 @@ public class Display {
 		
 		addHeaderTabs(rS);
 		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Reservations:", width/2, height/6, width/3, height/10, 1, true);
-		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
-		designReactiveButton(rS, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Reservation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_RES_CREATION, true);
+		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(rS, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Reservation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_RESERVATION, true);
 		displayItemList(rS, res, 2, 3, 4, 5);		//Display list of stored reservations
 		
 		display.addPanel("Reservations", rS);
@@ -384,10 +382,10 @@ public class Display {
 	public void makeReservationScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_RES_LIST){
+				if(event == EVENT_GO_TO_SELECT_RESERVATION){
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
-				else if(event == EVENT_SAVE_RESERVATION){
+				else if(event == EVENT_ATTEMPT_CREATE_RESERVATION){
 					String title = getElementStoredText("resTitle_text");
 					String date1 = getElementStoredText("resStart_text");
 					String date2 = getElementStoredText("resEnd_text");
@@ -406,8 +404,8 @@ public class Display {
 		
 		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Reservation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_RES_LIST, true);
-		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_RESERVATION, true);
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_RESERVATION, true);
+		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_RESERVATION, true);
 				
 		String[][] elementName = new String[][] {{"resTitle", "resLoc"},{"resStart", "resEnd"}};
 		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
@@ -437,7 +435,7 @@ public class Display {
 		ElementPanel aS = new ElementPanel(0, 0, width, height){			
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_ACCOM_CREATION)
+					if(event == EVENT_GO_TO_CREATE_ACCOMMODATE)
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_CREATE);
 				}
 			}
@@ -447,8 +445,8 @@ public class Display {
 		designTwoColorBorder(aS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		addHeaderTabs(aS);
 		designBackedLabel(aS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Accomodations:", width/2, height/6, width*4/9, height/10, 1, true);
-		designReactiveButton(aS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
-		designReactiveButton(aS, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Accomodation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_ACCOM_CREATION, true);
+		designReactiveButton(aS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(aS, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Accomodation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_ACCOMMODATE, true);
 		displayItemList(aS, accom, 3, 4, 5, 7);		//Display list of stored accommodations
 
 		display.addPanel("Reservations", aS);
@@ -466,10 +464,10 @@ public class Display {
 	public void makeAccomodationScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_ACCOM_LIST){
+				if(event == EVENT_GO_TO_SELECT_ACCOMMODATION){
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 				}
-				else if(event == EVENT_SAVE_ACCOMODATION){
+				else if(event == EVENT_ATTEMPT_CREATE_ACCOMMODATION){
 					String title = this.getElementStoredText("accomTitle_text");
 					String date1 = this.getElementStoredText("accomStart_text");
 					String date2 = this.getElementStoredText("accomEnd_text");
@@ -487,8 +485,8 @@ public class Display {
 		};
 		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_ACCOM_LIST, true);
-		designReactiveButton(mR, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_ACCOMODATION, true);
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_ACCOMMODATION, true);
+		designReactiveButton(mR, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_ACCOMMODATION, true);
 				
 		String[][] elementName = new String[][] {{"accomTitle", "accomLoc"},{"accomStart", "accomEnd"}};
 		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
@@ -517,7 +515,7 @@ public class Display {
 		ElementPanel tS = new ElementPanel(0, 0, width, height)	{
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_TRANSP_CREATION)
+					if(event == EVENT_GO_TO_CREATE_TRANSPORT)
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_CREATE);
 				}
 			}
@@ -525,8 +523,8 @@ public class Display {
 		designTwoColorBorder(tS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		addHeaderTabs(tS);
 		designBackedLabel(tS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Transportation:", width/2, height/6, width/3, height/10, 1, true);
-		designReactiveButton(tS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRIP_SELECTION, true);
-		designReactiveButton(tS, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Transportation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_TRANSP_CREATION, true);
+		designReactiveButton(tS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(tS, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Transportation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_TRANSPORT, true);
 		displayItemList(tS, transp, 2, 3, 4, 5);		//Display list of stored transports
 	
 		display.addPanel("Reservations", tS);
@@ -544,10 +542,10 @@ public class Display {
 	public void makeTransportScreen(){
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_TRANSPORT_LIST){
+				if(event == EVENT_GO_TO_SELECT_TRANSPORT){
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 				}
-				else if(event == EVENT_SAVE_TRANSP){
+				else if(event == EVENT_ATTEMPT_CREATE_TRANSPORTATION){
 					String title = getElementStoredText("transpTitle_text");
 					String date1 = getElementStoredText("transpStart_text");
 					String date2 = getElementStoredText("transpEnd_text");
@@ -565,8 +563,8 @@ public class Display {
 		};
 		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Transportation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_TRANSPORT_LIST, true);
-		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_SAVE_TRANSP, true);
+		designReactiveButton(mR, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRANSPORT, true);
+		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_TRANSPORTATION, true);
 
 		String[][] elementName = new String[][] {{"transpTitle", "transpMode"},{"transpStart", "transpEnd"}};
 		String[][] displayName = new String[][] {{"Title", "Mode of Transportation"}, {"Start Date", "End Date"}};
@@ -594,10 +592,10 @@ public class Display {
 	
 	public void addHeaderTabs(ElementPanel e){
 		designReactiveButton(e, "home_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Home", width/8, 15, width/4, 30, 18, 0, true);
-		designReactiveButton(e, "reservation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Reservations", 3*width/8, 15, width/4, 30, 19, EVENT_RES_LIST, true);
-		designReactiveButton(e, "accommodation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Accomodations", 5*width/8, 15, width/4, 30, 20, EVENT_ACCOM_LIST, true);
-		designReactiveButton(e, "transport_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Transportation", 7*width/8, 15, width/4, 30, 21, EVENT_TRANSPORT_LIST, true);
-		//designReactiveButton(e, "contact_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Contacts", 9*width/12, 15, width/6, 30, 22, EVENT_CONTACT_LIST, true); editted out because Java hates our contacts
+		designReactiveButton(e, "reservation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Reservations", 3*width/8, 15, width/4, 30, 19, EVENT_GO_TO_SELECT_RESERVATION, true);
+		designReactiveButton(e, "accommodation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Accomodations", 5*width/8, 15, width/4, 30, 20, EVENT_GO_TO_SELECT_ACCOMMODATION, true);
+		designReactiveButton(e, "transport_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Transportation", 7*width/8, 15, width/4, 30, 21, EVENT_GO_TO_SELECT_TRANSPORT, true);
+		//designReactiveButton(e, "contact_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Contacts", 9*width/12, 15, width/6, 30, 22, EVENT_GO_TO_SELECT_CONTACT, true); editted out because Java hates our contacts
 	}
 	
 	/**
@@ -656,19 +654,19 @@ public class Display {
 	 */
 	
 	public boolean interpretHeader(int event) {
-		if(event == EVENT_TRIP_SELECTION){
+		if(event == EVENT_GO_TO_SELECT_TRIP){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 			return true;
 		}
-		else if(event == EVENT_ACCOM_LIST){
+		else if(event == EVENT_GO_TO_SELECT_ACCOMMODATION){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
 			return true;
 		}
-		else if(event==EVENT_TRANSPORT_LIST){
+		else if(event==EVENT_GO_TO_SELECT_TRANSPORT){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
 			return true;
 		}
-		/*else if(event == EVENT_CONTACT_LIST){
+		/*else if(event == EVENT_GO_TO_SELECT_CONTACT){
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
 			return true;
 		}*/
