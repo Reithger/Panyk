@@ -21,14 +21,16 @@ public enum TableType {
 	/** username, fname, lname, createdAt, salted_password, salt */			//KEY = username	(index 0)
 	users("username","varchar(60)", "fname","varchar(60)", "lname","varchar(60)", "createdAt", "varchar(60)", "salted_password","varchar(60)","salt", "varchar(60)", "username"),
 	
-	/** username, tripTitle, destination, startDate, endDate */				
-	trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
+	/** username, tripTitle, destination, startDate, endDate, description */				
+	trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)", "description", "varchar(60)"),
 	
 	/** username, tripTitle, item, type */									
 	scheduleItem("username", "varchar(60)","tripTitle", "varchar(60)", "item", "varchar(60)", "type", "varchar(60)"),
 	
 	/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */				
 	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
+	
+	
 	
 	/** username, tripTitle, item, startTime, endTime, mode */			
 	transportation("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "startTime", "varchar(60)", "endTime", "varchar(60)", "mode", "varchar(60)"),
@@ -93,6 +95,15 @@ public enum TableType {
 		}
 		sql += ");";
 		this.sqlCreateTable = sql;
+		System.out.println(sql);
+	}
+	
+	public static String generateCreateTableSQL(String tableTitle, String[] fieldsDyn, String[] fieldTypesDyn) {
+		String sql = "CREATE TABLE " + tableTitle + "(";
+		for(int i = 0; i < fieldsDyn.length; i++) {
+			sql += fieldsDyn[i] + " " + fieldTypesDyn[i] + (i + 1 < fieldsDyn.length ? "," : ");");
+		}
+		return sql;
 	}
 
 	/**
@@ -113,7 +124,17 @@ public enum TableType {
 		valueStr += ")";
 		sql += ") ";
 		sql = sql + valueStr;
-		this.sqlInsertTable = sql;
+		sqlInsertTable = sql;
+	}
+	
+	public static String generateCreateTableInsertionSQL(String tableTitle, String[] fieldsDyn) {
+		String sql = "INSERT INTO " + tableTitle + "(";
+		String valueStr = "values(";
+		for(int i = 0; i < fieldsDyn.length; i++) {
+			sql += fieldsDyn[i] + (i+1 < fieldsDyn.length ? "," : ")");
+			valueStr += "?" + (i + 1 < fieldsDyn.length ? "," : ")");
+		}
+		return sql + " " + valueStr;
 	}
 	
 }

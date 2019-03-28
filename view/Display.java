@@ -2,9 +2,11 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.List;
 import input.Communication;
 import intermediary.Intermediary;
+import model.trip.Trip;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
@@ -109,6 +111,8 @@ public class Display {
 	
 	/** WindowFrame object that is used to visually communicate information to the user and receive their input*/
 	private WindowFrame display;
+	/** */
+	private Intermediary intermediary;
 	/** int value representing the width of the WindowFrame object created for this program*/
 	private int width;
 	/** int value representing the height of the WindowFrame object created for this program*/
@@ -124,10 +128,11 @@ public class Display {
 	 * @param inHeight - int value representing the height of the WindowFrame that displays the program.
 	 */
 	
-	public Display(int inWidth, int inHeight){
+	public Display(int inWidth, int inHeight, Intermediary relation){
 		width = inWidth;
 		height = inHeight;
 		display = new WindowFrame(width + 14, height + 37);	//offset because java windows aren't quite accurate
+		intermediary = relation;
 		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_INITIAL_SCREEN);
 		
 	}
@@ -253,7 +258,7 @@ public class Display {
 	 */
 	
 	public void tripSelectScreen() {		
-		List<String[]> trips = Intermediary.getUsersTrips();
+		ArrayList<Trip> trips = intermediary.getUsersTrips();
 		
 		ElementPanel tripSelect = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -266,7 +271,7 @@ public class Display {
 				else if(event >= EVENT_GO_TO_TRIP) {
 					//TODO: change this so it switches to the calendar screen (yet to be created)
 					int tripNum = event - EVENT_GO_TO_TRIP;
-					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum)[1]);
+					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum).getTitle());
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
 				}
 			}
@@ -281,9 +286,9 @@ public class Display {
 
 		//Display list of trips
 		for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) {
-			designReactiveButton(tripSelect, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i)[1], width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_TRIP+i, true);
-			tripSelect.addText("trip_description_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i)[2], FONT_ENTRY, true);
-			tripSelect.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i)[3] + " - " + trips.get(i)[4], FONT_ENTRY, true);
+			designReactiveButton(tripSelect, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i).getTitle(), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_TRIP+i, true);
+			tripSelect.addText("trip_description_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDestination(), FONT_ENTRY, true);
+			tripSelect.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDisplayStartDate() + " - " + trips.get(i).getDisplayEndDate(), FONT_ENTRY, true);
 		}
 
 		display.addPanel("Trip Select", tripSelect);
@@ -311,11 +316,13 @@ public class Display {
 					String date1 = getElementStoredText("tripStart_text");
 					String date2 = getElementStoredText("tripEnd_text");
 					String dest = getElementStoredText("tripDest_text");
+					String descr = getElementStoredText("tripDescrip_text");
 					
 					Communication.set(Intermediary.CREATE_TRIP_TITLE, title);
 					Communication.set(Intermediary.CREATE_TRIP_START, date1);
 					Communication.set(Intermediary.CREATE_TRIP_END, date2);
-					Communication.set(Intermediary.CREATE_TRIP_DEST, dest);
+					Communication.set(Intermediary.CREATE_TRIP_DESTINATION, dest);
+					Communication.set(Intermediary.CREATE_TRIP_DESCRIPTION, descr);
 					
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_CREATE_TRIP);
 				}
@@ -332,10 +339,13 @@ public class Display {
 		String[] displayName = new String[] {"Trip Name:", "Destination:", "Start Date", "End Date", "(dd/MM/yyyy)"};
 		
 		for(int i = 0; i < displayName.length; i++) {
-			designBackedLabel(tripCreate, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*3/10, height/3 + i * height/9, width/6, height/20, 3, true);
+			designBackedLabel(tripCreate, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*2/15, height/3 + i * height/9, width/6, height/20, 3, true);
 			if(!elementName[i].equals("null"))
-				designTextField(tripCreate, elementName[i], width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
+				designTextField(tripCreate, elementName[i], width/3, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
+		
+		designBackedLabel(tripCreate, "tripDescrip_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "Description", width*2/3, height/3 , width/6, height/20, 3, true);
+		designTextField(tripCreate, "tripDescrip", width / 2, height * 7 / 18, width/3, height * 2/ 9, 3, 1000 + displayName.length, false);
 		
 		display.addPanel("Trip Creation", tripCreate);
 	}
@@ -699,7 +709,7 @@ public class Display {
 	
 	private void designTextField(ElementPanel pan, String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
-		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid, panHei, code, FONT_ENTRY, centered);	
+		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid - 30, panHei - 5, code, FONT_ENTRY, centered);	
 	}
 	
 	/**

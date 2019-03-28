@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import controller.Encryptor;
 
@@ -29,16 +31,20 @@ public class Database {
 	private static final String DB_DIRECTORY = System.getProperty("user.dir").replaceAll("\\\\", "/") + "/";  	//get the current directory of the user (ie: where the program is installed)
 	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
+	
+	public static final HashMap<String, String> FIELD_TYPE_CONVERT = new HashMap<String, String>(Map.of(
+			"lString", "varChar(300)", "sString", "varChar(60)", "Date", "varChar(10)"
+	));
 
 	
-//---  static Variables   -------------------------------------------------------------------
+//---  Static Variables   -------------------------------------------------------------------
 	
 	/** */
 	private static String name;
 	/** */
 	private static Connection connection;
 	
-	//keeping track of if the database has been initialized 
+	//keeping track of if the database has been d 
 	private static boolean db_is_initialized;
 	
 //---  Constructors   -------------------------------------------------------------------------
@@ -47,10 +53,11 @@ public class Database {
 	 * initializes the db
 	 */
 	
-	private static void initialize() {
+	public static void initialize() {
 		if(db_is_initialized) {
 			return;
-		}else {
+		}
+		else {
 			db_is_initialized = true;
 		}
 		
@@ -83,6 +90,26 @@ public class Database {
         }
 	}
 	
+	public static void includeTableType(String tableType, String[] fields, String[] fieldTypes) {
+		if(getTable(tableType) != null) {
+			return;
+		}
+		String[] convert = new String[fieldTypes.length];
+		for(int i = 0; i < convert.length; i++) {
+			convert[i] = FIELD_TYPE_CONVERT.get(fieldTypes[i]);
+		}
+		String sqp = TableType.generateCreateTableSQL(tableType, fields, convert);
+		System.out.println(sqp);
+		Statement state = null;
+		try {
+			state = connection.createStatement();
+			state.execute(sqp);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	/**
@@ -113,7 +140,7 @@ public class Database {
 	 * @return
 	 */
 	
-	private static ResultSet getTable(String table_name) {
+	public static ResultSet getTable(String table_name) {
 		if(!db_is_initialized) {
 			initialize();
 		}
@@ -217,6 +244,46 @@ public class Database {
 		return true;
 	}
 	
+	public static boolean addEntry(String tableTitle, String[] types, String[] values) {
+
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
+			System.out.println("no connection can be established to the database");
+			return false;
+		}
+		try {
+			if(values.length < types.length) {
+				String[] copy = new String[types.length];
+				for(int i = 0; i < values.length; i++){
+					copy[i] = values[i];
+				}
+				for(int i = values.length; i < types.length; i++) {
+					copy[i] = "null";
+				}
+				values = copy;
+			}
+			if(search(tableTitle, types, values).size() != 0) {
+				return false;
+			}
+			PreparedStatement prep = connection.prepareStatement(TableType.generateCreateTableInsertionSQL(tableTitle, types));
+			for(int i = 0; i < values.length; i++) {
+				prep.setString(i + 1, values[i]);
+			}
+			prep.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("-----");
+			System.out.println("ERROR inserting into table -> " + tableTitle + " ...");
+			System.out.println("primary key: " + values[0] + " already exists in "+ tableTitle +" table");
+			System.out.println("-----");
+			return false;
+		}
+		return true;
+	}
+	
 // --- deleter method --------------------------------------------------------------------------------
 		
 	/**	
@@ -273,7 +340,6 @@ public class Database {
 	}
 	
 //--- entryEdit method -----------------------------------------------------------------------
-	
 	
 	/**
 	 * 		edits an entry in the db by finding the entry first based on search keys and table type, 
@@ -337,7 +403,7 @@ public class Database {
 			return null;
 		}
 		if(searchKeys.length != table.fields.length) {
-			System.out.println("error searching table "+ table.toString() + ": number of search fields provided does not equal number of fields needed");
+			System.out.println("error searching table "+ table.toString() + ": number of search fields provided " + searchKeys.length + " does not equal number of fields needed " + table.fields.length);
 			return null;
 		}
 		try {
@@ -378,6 +444,39 @@ public class Database {
 		}
 	}
 	
+	public static List<String[]> search(String tableType, String[] fields, String[] search){
+		try {
+			String sqlSearch = "SELECT * FROM " + tableType + (fields.length == 0 ? "" : " WHERE");
+			boolean priorSearch = false;
+			ResultSet result = null;
+			for(int i = 0; i < fields.length; i++) {
+				if(fields[i] != null) {
+					if(priorSearch) {
+						sqlSearch += " AND";
+					}
+					sqlSearch += " " + fields[i] + "='" + search[i] + "'";
+					priorSearch = true;
+				}
+			}
+			sqlSearch += ";";
+			Statement state = null;
+			try {
+				state = connection.createStatement();
+				System.out.println("Quer: " + sqlSearch);
+				result = state.executeQuery(sqlSearch);
+				return ResultSetToList(result);
+			}
+			catch(SQLException sqlE2) {
+				connection.close();
+				return null;
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("error searching in table: " + tableType);
+			return null;
+		}
+	}
+	
 //---  Print Methods   ------------------------------------------------------------------------
 	
 	/**	
@@ -403,7 +502,7 @@ public class Database {
 	 * @return - Returns a List<<r>String[]> object containing values from a table entry
 	 */
 	
-	private static List<String[]> ResultSetToList(ResultSet set){
+	public static List<String[]> ResultSetToList(ResultSet set){
 		try {
 			int nCol = set.getMetaData().getColumnCount();
 			List<String[]> table = new ArrayList<>();

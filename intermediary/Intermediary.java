@@ -1,6 +1,8 @@
 package intermediary;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -77,9 +79,10 @@ public class Intermediary {
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
 	
 	public final static String CREATE_TRIP_TITLE = "trip_title";
-	public final static String CREATE_TRIP_DEST = "trip_dest";
+	public final static String CREATE_TRIP_DESTINATION = "trip_dest";
 	public final static String CREATE_TRIP_START = "trip_start_date";
 	public final static String CREATE_TRIP_END = "trip_end_date";
+	public final static String CREATE_TRIP_DESCRIPTION = "trip_description";
 	
 	public final static String CREATE_RES_TITLE = "res_title";
 	public final static String CREATE_RES_LOC = "res_loc";
@@ -103,7 +106,17 @@ public class Intermediary {
 	public final static String CREATE_CONTACT_DESCRIP = "description";
 	
 	public final static String CURR_TRIP = "current_trip";
+	
+	private final static String SCHEDULABLE_META_FIELD_LABEL = "metaField";
+	private final static String[] SCHEDULABLE_META_FIELD_TYPES = new String[] {"sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString"};
+	private final static String[] SCHEDULABLE_META_FIELD_TITLES = new String[] {"fieldTitle","title1","title2","title3","title4","title5","title6","title7","title8"};
 
+	private final static String[] DEFAULT_SCHEDULABLE_ACCOMMODATION_TITLES = new String[] {"Accomm","sString_username", "sString_tripTitle", "sString_Name", "sString_Address", "Date_StartDate", "Date_EndDate"};
+
+	private final static String[] DEFAULT_SCHEDULABLE_RESERVATION_TITLES = new String[] {"Reserva","sString_username", "sString_tripTitle", "sString_Name", "sString_Address", "Date_StartDate", "Date_EndDate"};
+
+	private final static String[] DEFAULT_SCHEDULABLE_TRANSPORTATION_TITLES = new String[] {"Transp","sString_username", "sString_tripTitle", "sString_Name", "sString_Mode", "Date_StartDate", "Date_EndDate"};
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** The Timer object periodically calls the clock() method of this Intermediary object*/
@@ -122,7 +135,8 @@ public class Intermediary {
 	 */
 	
 	public Intermediary() {
-		display = new Display(1000, 600);
+		display = new Display(1000, 600, this);
+		initializeDatabase();
 		timer = new Timer();
 		timer.schedule(new TimerRepeat(this), 0, REFRESH_RATE);
 	}
@@ -188,6 +202,32 @@ public class Intermediary {
 			case CONTROL_CONTACT_CREATE:			//Orders display to show the contact creation screen
 				goToContactCreate(); break;
 			default: break;
+		}
+	}
+	
+	public void initializeDatabase() {
+		Database.initialize();
+		Database.includeTableType(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, SCHEDULABLE_META_FIELD_TYPES);
+		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_ACCOMMODATION_TITLES);
+		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_RESERVATION_TITLES);
+		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_TRANSPORTATION_TITLES);
+		List<String[]> schedTypes = Database.search(SCHEDULABLE_META_FIELD_LABEL, new String[] {}, new String[] {});
+		for(String[] s : schedTypes) {
+			System.out.println(Arrays.toString(s));
+			String head = s[0];
+			String[] titles = new String[s.length-1];
+			String[] types = new String[s.length-1];
+			int count = 0;
+			for(int i = 1; i < s.length; i++) {
+				if(s[i].equals("null")) {
+					count++;
+				}
+				else {
+					types[i-1] = s[i].substring(0, s[i].indexOf("_"));
+					titles[i-1] = s[i].substring(s[i].indexOf("_")+1);
+				}
+			}
+			Database.includeTableType(head, Arrays.copyOfRange(titles, 0, titles.length - count), Arrays.copyOfRange(titles, 0, types.length - count));
 		}
 	}
 	
@@ -282,37 +322,25 @@ public class Intermediary {
 	 */
 	
 	public void addTrip() {
-		Date begin;
-		Date end;
-		
+		String title = Communication.get(CREATE_TRIP_TITLE);
 		String beginStr = Communication.get(CREATE_TRIP_START);
 		String endStr = Communication.get(CREATE_TRIP_END);
-		String dest = Communication.get(CREATE_TRIP_DEST);
+		String dest = Communication.get(CREATE_TRIP_DESTINATION);
+		String descr = Communication.get(CREATE_TRIP_DESCRIPTION);
 		
-		try{
-			begin = new SimpleDateFormat("dd/MM/yyyy").parse(beginStr);
-			end = new SimpleDateFormat("dd/MM/yyyy").parse(endStr);
-			
-			if(dest.equals("")){
-				errorReport("Must have a destination");
+		if(dest.equals("") || descr.equals("")){
+			errorReport("Please provide data to each field.");
+		}
+		else {
+			boolean result = user.makeTrip(title, dest, descr, beginStr, endStr);
+			if(!result) {
+				errorReport("Error during Trip creation; extant Trip name reused or Date format invalid");
 			}
 			else {
-				//check if a trip with that name already exists with the user
-				List<String[]> trips = Database.search(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), null, null, null);					//there where errors where if the user created an account and then a trip without signing out, the value of LOGIN_USERNAME was not being set
-				if(trips.size() == 0) {
-					Database.addEntry(TableType.trips, user.getUsername(), Communication.get(CREATE_TRIP_TITLE), dest, beginStr, endStr);//leave room for notes?
-					//trips("username", "varchar(60)", "tripTitle", "varchar(60)", "destination", "varchar(60)", "startDate", "varchar(60)", "endDate", "varchar(60)"),
-				
-					//after insertion, go back to trip select
-					Communication.set(CONTROL, CONTROL_TRIP_SELECT);
-				}
-				else {
-					errorReport("You have already created a trip with this title");
-				}
+				Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 			}
-		} catch (Exception e) {
-			errorReport("Invalid Dates");
 		}
+		
 	}
 	
 	/**
@@ -416,8 +444,8 @@ public class Intermediary {
 	 * @return - Returns a List<<r>String[]> object containing the Trips associated to the current User.
 	 */
 	
-	public static List<String[]> getUsersTrips() {
-		return Database.search(TableType.trips, user.getUsername() , null, null, null, null);
+	public ArrayList<Trip> getUsersTrips() {
+		return user.getTrips();
 	}
 	
 	/**
@@ -519,7 +547,6 @@ public class Intermediary {
 	 * This method navigates the Display to the tripCreation screen by hiding the current
 	 * panels in the WindowFrame and calling display.reservationScreen().
 	 */
-	
 	
 	public void goToReservationSelect(){
 		display.resetView();
