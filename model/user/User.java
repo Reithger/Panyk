@@ -10,6 +10,8 @@ import controller.Encryptor;
 import database.*;
 import model.trip.Trip;
 import model.trip.schedule.Schedulable;
+import model.trip.schedule.SchedulableType;
+import model.trip.schedule.ScheduledItem;
 
 /**
  * This class is the contact point that the Intermediary can use to access the data in the
@@ -30,6 +32,8 @@ public class User {
 	private String username;
 	/** String object representing the provided password for decrypting data stored under the username heading*/
 	private String password;
+	
+	private HashMap<String, SchedulableType> scheduleTypes;
 	
 //---  Constructors   -------------------------------------------------------------------------
 		
@@ -63,10 +67,12 @@ public class User {
 		
 		boolean result = Database.addEntry(TableType.users, username, fname, lname, createdOn, hash[0], hash[1]);
 		trips = new HashMap<String, Trip>();
+		scheduleTypes = new HashMap<String, SchedulableType>();
 		if(!result) {
 			username = null;
 			password = null;
 			trips = null;
+			scheduleTypes = null;
 		}
 	}
 	
@@ -82,6 +88,7 @@ public class User {
 		username = usernameIn;
 		password = passwordIn;
 		trips = new HashMap<String, Trip>();
+		scheduleTypes = new HashMap<String, SchedulableType>();
 		retrieveData();
 	}
 	
@@ -161,11 +168,14 @@ public class User {
 		return true;
 	}
 	
-	private boolean addSchedulableItem(String tripName, String type, String ... data) {
-		//trips.get(tripName).addScheduledItem(name, null);
+	public boolean addSchedulableItem(String tripName, String type, String ... data) {
+		trips.get(tripName).addScheduledItem(data[0], new ScheduledItem(scheduleTypes.get(type), data, 2));
 		return false;
 	}
 	
+	public void addSchedulableType(String header, String[] titles, String[] types) {
+		scheduleTypes.put(header, new SchedulableType(header, titles, types));
+	}
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -211,6 +221,29 @@ public class User {
 	
 	public ArrayList<Schedulable> getSchedulables(String tripName, String schedulableType){
 		return trips.get(tripName).getSchedulables(schedulableType);
+	}
+	
+	public String[] getSchedulableTypeTitles(String header) {
+		return scheduleTypes.get(header).getTitles();
+	}
+
+	public HashMap<String, HashMap<String, String>> getDisplaySchedulablesData(String tripName, String schedulableType){
+		ArrayList<Schedulable> sched = getSchedulables(tripName, schedulableType);
+		HashMap<String, HashMap<String, String>> out = new HashMap<String, HashMap<String, String>>();
+		for(Schedulable sc : sched) {
+			HashMap<String,String> in = new HashMap<String, String>();
+			out.put(sc.getTitle(), sc.getDisplayData(in));
+		}
+		return out;
+	}
+	
+	public HashMap<String, String> getCreateSchedulablesData(String schedulableType){
+		System.out.println(schedulableType + " " + scheduleTypes.get(schedulableType).getSchedulableFormatted());
+		return scheduleTypes.get(schedulableType).getSchedulableFormatted();
+	}
+	
+	public ArrayList<String> getSchedulableTypes(){
+		return new ArrayList<String>(scheduleTypes.keySet());
 	}
 	
 }

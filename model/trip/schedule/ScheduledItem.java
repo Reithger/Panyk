@@ -12,16 +12,27 @@ public class ScheduledItem implements Schedulable{
 	private int sizeDatum;
 	private int buffer;
 	
-	public ScheduledItem(String compType, int buf, String[] types, String[] components, Object[] datum) {
-		title = "Composite Type";
-		type = (String)compType;
-		next = SchedulableFactory.getScheduleComponent(types, components, datum);
+	/**
+	 * 
+	 * @param compType
+	 * @param buf
+	 * @param types - Strings representing what the next Schedulable should be
+	 * @param components - String representing what the title of the next Schedulable is
+	 * @param datum - String representing what data is stored by the next Schedulable
+	 */
+	
+	public ScheduledItem(SchedulableType typeIn, Object[] datum, int buf) {
+		title = "Composite typeIn";
+		type = typeIn.getType();
+		next = SchedulableFactory.getScheduleComponent(typeIn.getDataTypes(), typeIn.getTitles(), datum);
 		sizeDatum = next.count();
 		buffer = buf;
 	}
 	
 	@Override
 	public HashMap<String, String> getDisplayData(HashMap<String, String> fill) {
+		if(fill == null)
+			fill = new HashMap<String, String>();
 		fill.put(title, type);
 		if(next == null)
 			return fill;

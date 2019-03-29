@@ -3,6 +3,7 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import input.Communication;
 import intermediary.Intermediary;
@@ -64,45 +65,31 @@ public class Display {
 	
 	//---------------------------
 	/** */
-	private final static int EVENT_GO_TO_LOGIN = 1;
+	private final static int EVENT_GO_TO_LOGIN = 51;
 	/** */
-	private final static int EVENT_ATTEMPT_LOGIN = 2;
+	private final static int EVENT_ATTEMPT_LOGIN = 52;
 	/** */
-	private final static int EVENT_GO_TO_CREATE_ACCOUNT = 3;
+	private final static int EVENT_GO_TO_CREATE_ACCOUNT = 53;
 	/** */
-	private final static int EVENT_ATTEMPT_CREATE_ACCOUNT = 4;
+	private final static int EVENT_ATTEMPT_CREATE_ACCOUNT = 54;
 	/** */
-	private final static int EVENT_GO_TO_SELECT_TRIP = 5;
+	private final static int EVENT_GO_TO_SELECT_TRIP = 55;
 	/** */
-	private final static int EVENT_GO_TO_CREATE_TRIP = 6;
+	private final static int EVENT_GO_TO_CREATE_TRIP = 56;
 	/** */
-	private static final int EVENT_ATTEMPT_CREATE_TRIP = 7;
+	private static final int EVENT_ATTEMPT_CREATE_TRIP = 57;
 	/** */
-	private static final int EVENT_GO_TO_SELECT_RESERVATION = 8;
+	private static final int EVENT_GO_TO_SELECT_SCHEDULABLE = 58;
+	
+	private final static int EVENT_GO_TO_CREATE_SCHEDULABLE = 59;
+	
+	private final static int EVENT_ATTEMPT_CREATE_SCHEDULABLE = 60;
+	
+	private static final int EVENT_GO_TO_MAIN = 61;
+	
+	private static final int EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE = 62;
 	/** */
-	private static final int EVENT_GO_TO_CREATE_RESERVATION = 9;
-	/** */
-	private static final int EVENT_ATTEMPT_CREATE_RESERVATION = 10;
-	/** */
-	private static final int EVENT_GO_TO_SELECT_ACCOMMODATION = 11;
-	/** */
-	private static final int EVENT_GO_TO_CREATE_ACCOMMODATE = 12;
-	/** */
-	private static final int EVENT_ATTEMPT_CREATE_ACCOMMODATION = 13;
-	/** */
-	private static final int EVENT_GO_TO_SELECT_TRANSPORT = 14;
-	/** */
-	private static final int EVENT_GO_TO_CREATE_TRANSPORT = 15;
-	/** */
-	private static final int EVENT_ATTEMPT_CREATE_TRANSPORTATION = 16;
-	/** */
-	private static final int EVENT_GO_TO_SELECT_CONTACT = 17;
-	/** */
-	private static final int EVENT_GO_TO_CREATE_CONTACT = 18;
-	/** */
-	private static final int EVENT_ATTEMPT_CREATE_CONTACT = 19;
-	/** */
-	private final static int EVENT_GO_TO_TRIP = 20;		//TODO: This a very duct tape and bubble gum solution, should make robust 
+	private final static int EVENT_GO_TO_ITEM = 20;		//TODO: This a very duct tape and bubble gum solution, should make robust 
 
 	/** This is not a limitation of how many elements can be in a composite, increase if you need more space; handles priority room*/
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
@@ -268,11 +255,10 @@ public class Display {
 				else if(event == EVENT_GO_TO_CREATE_TRIP) {
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_CREATION);
 				}
-				else if(event >= EVENT_GO_TO_TRIP) {
-					//TODO: change this so it switches to the calendar screen (yet to be created)
-					int tripNum = event - EVENT_GO_TO_TRIP;
+				else if(event >= EVENT_GO_TO_ITEM) {
+					int tripNum = event - EVENT_GO_TO_ITEM;
 					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum).getTitle());
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 				}
 			}
 		};
@@ -286,7 +272,7 @@ public class Display {
 
 		//Display list of trips
 		for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) {
-			designReactiveButton(tripSelect, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i).getTitle(), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_TRIP+i, true);
+			designReactiveButton(tripSelect, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i).getTitle(), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
 			tripSelect.addText("trip_description_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDestination(), FONT_ENTRY, true);
 			tripSelect.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDisplayStartDate() + " - " + trips.get(i).getDisplayEndDate(), FONT_ENTRY, true);
 		}
@@ -349,263 +335,154 @@ public class Display {
 		
 		display.addPanel("Trip Creation", tripCreate);
 	}
-	
-	/**
-	 * This method designs the screen that displays the stored reservations of this trip,
-	 * and permits the user to create new reservations as well as TODO edit existing reservations.
-	 * 
-	 * User can return to generic display of trips, or traverse via the header to other types of
-	 * scheduled items in this trip (accommodations, transports, reservations).
-	 */
 
-	public void reservationDisplayScreen() {
+	public void makeMainScreen(ArrayList<String> scheduleTypes) {
+		ElementPanel mainScreen = new ElementPanel(0, 0, width, height) {
+			public void clickBehaviour(int event) {
+				if(!interpretHeader(event)) {
+					if(event == EVENT_GO_TO_SELECT_TRIP) {
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+					}
+					else if(event == EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE) {
+						
+					}
+					else if(event != -1 && event != EVENT_GO_TO_MAIN) {
+						Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, scheduleTypes.get(event - EVENT_GO_TO_ITEM));
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
+					}
+				}
+			}
+		};
+
+		addHeaderTabs(mainScreen);
+		
+		designTwoColorBorder(mainScreen, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
+		designBackedLabel(mainScreen, "main_menu_title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Main Menu", width/2, height/8, width/3, height/10, 1, true);
+		
+		designReactiveButton(mainScreen, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*11/12, height*5/6, width/12, height/14, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(mainScreen, "create_schedule_type", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Schedulable", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE, true);
+		designTwoColorBorder(mainScreen, "background_backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
+
+		//Display list of trips
+		for(int i = 0; i < scheduleTypes.size(); i++) {
+			designReactiveButton(mainScreen, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, scheduleTypes.get(i), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
+		}
+
+		display.addPanel("Trip Select", mainScreen);
+	}
+	
+	public void schedulableSelectScreen(String scheduleType, HashMap<String, HashMap<String, String>> data) {
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_CREATE_RESERVATION) 
-						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RES_CREATION);
+					if(event == EVENT_GO_TO_CREATE_SCHEDULABLE) 
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_CREATION);
+					else if(event == EVENT_GO_TO_SELECT_TRIP) {
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+					}
 				}
 			}
 		};
 		
-		List<String[]> res = Intermediary.getTripsRes();
 		designTwoColorBorder(rS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
 		addHeaderTabs(rS);
-		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Reservations:", width/2, height/6, width/3, height/10, 1, true);
+		
+		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, scheduleType + ":", width/2, height/6, width/3, height/10, 1, true);
 		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
-		designReactiveButton(rS, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Reservation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_RESERVATION, true);
-		displayItemList(rS, res, 2, 3, 4, 5);		//Display list of stored reservations
+		designReactiveButton(rS, "create_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New " + scheduleType + "!", width*4/30, height*3/20, width/7, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE, true);
+		
+		displayItemList(rS, scheduleType, data);		//Display list of stored reservations
 		
 		display.addPanel("Reservations", rS);
 	}
-
-	/**
-	 * This method designs the screen that permits the user to supply the information
-	 * necessary to create a reservation and submit that for creation (can fail if
-	 * improperly formatted.)
-	 * 
-	 * Upon successful submission, will return to reservation display screen; can also
-	 * exit at any time to return to the reservation display screen.
-	 */
-
-	public void makeReservationScreen(){
+	
+	public void makeSchedulableScreen(HashMap<String, String> data) {
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
-				if(event == EVENT_GO_TO_SELECT_RESERVATION){
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
+				if(event == EVENT_GO_TO_SELECT_SCHEDULABLE){
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
 				}
-				else if(event == EVENT_ATTEMPT_CREATE_RESERVATION){
-					String title = getElementStoredText("resTitle_text");
-					String date1 = getElementStoredText("resStart_text");
-					String date2 = getElementStoredText("resEnd_text");
-					String loc = getElementStoredText("resLoc_text");
+				else if(event == EVENT_ATTEMPT_CREATE_SCHEDULABLE){
+					String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
+					String[] titles = Communication.get(Intermediary.CURR_SCHEDULABLE_TITLES).split("   ");
 					
-					Communication.set(Intermediary.CREATE_RES_TITLE, title);
-					Communication.set(Intermediary.CREATE_RES_START, date1);
-					Communication.set(Intermediary.CREATE_RES_END, date2);
-					Communication.set(Intermediary.CREATE_RES_LOC, loc);
-					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_RESERVATION);
+					for(int i = 0; i < titles.length; i++) {
+						Communication.set(header + "_" + titles[i], getElementStoredText(header + "_" + titles[i] + "_text"));
+					}
+					Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, header);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
 				}
 				
 			}
 		};
 		
 		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Reservation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_RESERVATION, true);
-		designReactiveButton(mR, "create_reservation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_RESERVATION, true);
+		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter " + Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE) + " Details", width/2, height/8, width*2/3, height/10, 1, true);
+		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_SCHEDULABLE, true);
+		designReactiveButton(mR, "create_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_SCHEDULABLE, true);
 				
-		String[][] elementName = new String[][] {{"resTitle", "resLoc"},{"resStart", "resEnd"}};
-		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
+		ArrayList<String> titles = new ArrayList<String>(data.keySet());
+		String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
+		int singleSize = 0, doubleSize = 0;
+		boolean date = false;
 		
-		for(int i = 0; i < elementName.length; i++) {
-			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);
+		for(String s : titles) {
+			switch(data.get(s)) {
+				case "sString": singleSize++; break;
+				case "lString": doubleSize++; break;
+				case "Date": singleSize++; date = true; break;
+				default: break;
 			}
 		}
 		
-		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
-		display.addPanel("Res Creation", mR);
-	}
-
-	/**
-	 * This method designs the screen that displays the stored accommodations of this trip,
-	 * and permits the user to create new accommodations as well as TODO edit existing reservations.
-	 * 
-	 * User can return to generic display of trips, or traverse via the header to other types of
-	 * scheduled items in this trip (accommodations, transports, reservations).
-	 */
-	
-	public void accomodationDisplayScreen() {
-		List<String[]> accom = Intermediary.getTripsAccom();
-		
-		ElementPanel aS = new ElementPanel(0, 0, width, height){			
-			public void clickBehaviour(int event) {
-				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_CREATE_ACCOMMODATE)
-						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_CREATE);
+		int columns = (int)(Math.sqrt(singleSize + doubleSize*2) + .5);
+		int count = 0;
+		top:
+		for(int i = 0; i < columns+2; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(count == titles.size()) {
+					break top;
 				}
-			}
-		};
-		addHeaderTabs(aS);
-		
-		designTwoColorBorder(aS, "border", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
-		addHeaderTabs(aS);
-		designBackedLabel(aS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Accomodations:", width/2, height/6, width*4/9, height/10, 1, true);
-		designReactiveButton(aS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
-		designReactiveButton(aS, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Accomodation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_ACCOMMODATE, true);
-		displayItemList(aS, accom, 3, 4, 5, 7);		//Display list of stored accommodations
-
-		display.addPanel("Reservations", aS);
-	}
-	
-	/**
-	 * This method designs the screen that permits the user to supply the information
-	 * necessary to create a accommodation and submit that for creation (can fail if
-	 * improperly formatted.)
-	 * 
-	 * Upon successful submission, will return to accommodation display screen; can also
-	 * exit at any time to return to the accommodation display screen.
-	 */
-	
-	public void makeAccomodationScreen(){
-		ElementPanel mR = new ElementPanel(0, 0, width, height) {
-			public void clickBehaviour(int event) {
-				if(event == EVENT_GO_TO_SELECT_ACCOMMODATION){
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+				String s = titles.get(count);
+				int mult = 1;
+				if(data.get(s).equals("lString")) {
+					if(j + 1 >= columns + 1) {
+						i++;
+						j = -1;
+					}
+					mult++;
 				}
-				else if(event == EVENT_ATTEMPT_CREATE_ACCOMMODATION){
-					String title = this.getElementStoredText("accomTitle_text");
-					String date1 = this.getElementStoredText("accomStart_text");
-					String date2 = this.getElementStoredText("accomEnd_text");
-					String loc = this.getElementStoredText("accomLoc_text");
-					
-					Communication.set(Intermediary.CREATE_ACCOM_TITLE, title);
-					Communication.set(Intermediary.CREATE_ACCOM_START, date1);
-					Communication.set(Intermediary.CREATE_ACCOM_END, date2);
-					Communication.set(Intermediary.CREATE_ACCOM_LOC, loc);
-					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_ACCOMMODATION);
-				}
+				int across = (int)((double)(i + 1) / (double)(columns + 2) * width);
+				int down = height * 11 / 30 + height * j / (columns + 2);
+				int wid = width/(columns + 3);
+				int hei = height/14 * mult;
+				int heiLabel = height/14;
 				
+				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
+				designBackedLabel(mR, s + "_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, s, across, down - height/10, wid, (int)(heiLabel*.9), 3, true);
+				count++;
+				if(data.get(s).equals("lString"))
+					j++;
 			}
-		};
-		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Accomodation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_ACCOMMODATION, true);
-		designReactiveButton(mR, "create_accomodation", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_ACCOMMODATION, true);
-				
-		String[][] elementName = new String[][] {{"accomTitle", "accomLoc"},{"accomStart", "accomEnd"}};
-		String[][] displayName = new String[][] {{"Reservation Name", "Address"}, {"Start Date", "End Date"}};
-		
-		for(int i = 0; i < elementName.length; i++) {
-			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);			}
 		}
-		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
+		
+		if(date) {
+			designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/6, height*13/16, width/8, height/15, 3, true);
+		}
 		
 		display.addPanel("Res Creation", mR);
 	}
-
-	/**
-	 * This method designs the screen that displays the stored transportations of this trip,
-	 * and permits the user to create new transportations as well as TODO edit existing transportations.
-	 * 
-	 * User can return to generic display of trips, or traverse via the header to other types of
-	 * scheduled items in this trip (accommodations, transports, reservations).
-	 */
-	
-	public void transportDisplayScreen() {
-		List<String[]> transp = Intermediary.getTripsTransp();
-		
-		ElementPanel tS = new ElementPanel(0, 0, width, height)	{
-			public void clickBehaviour(int event) {
-				if(!interpretHeader(event)) {
-					if(event == EVENT_GO_TO_CREATE_TRANSPORT)
-						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_CREATE);
-				}
-			}
-		};
-		designTwoColorBorder(tS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
-		addHeaderTabs(tS);
-		designBackedLabel(tS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Transportation:", width/2, height/6, width/3, height/10, 1, true);
-		designReactiveButton(tS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
-		designReactiveButton(tS, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New Transportation!", width/10, height/5, width/8, height/12, 2, EVENT_GO_TO_CREATE_TRANSPORT, true);
-		displayItemList(tS, transp, 2, 3, 4, 5);		//Display list of stored transports
-	
-		display.addPanel("Reservations", tS);
-	}
-	
-	/**
-	 * This method designs the screen that permits the user to supply the information
-	 * necessary to create a transportation and submit that for creation (can fail if
-	 * improperly formatted.)
-	 * 
-	 * Upon successful submission, will return to transportation display screen; can also
-	 * exit at any time to return to the transportation display screen.
-	 */
-	
-	public void makeTransportScreen(){
-		ElementPanel mR = new ElementPanel(0, 0, width, height) {
-			public void clickBehaviour(int event) {
-				if(event == EVENT_GO_TO_SELECT_TRANSPORT){
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
-				}
-				else if(event == EVENT_ATTEMPT_CREATE_TRANSPORTATION){
-					String title = getElementStoredText("transpTitle_text");
-					String date1 = getElementStoredText("transpStart_text");
-					String date2 = getElementStoredText("transpEnd_text");
-					String mode = getElementStoredText("transpMode_text");
-					
-					Communication.set(Intermediary.CREATE_TRANSP_TITLE, title);
-					Communication.set(Intermediary.CREATE_TRANSP_START, date1);
-					Communication.set(Intermediary.CREATE_TRANSP_END, date2);
-					Communication.set(Intermediary.CREATE_TRANSP_MODE, mode);
-					
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SAVE_TRANSPORT);
-				}
-				
-			}
-		};
-		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
-		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter Transportation Details", width/2, height/8, width*2/3, height/10, 1, true);
-		designReactiveButton(mR, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRANSPORT, true);
-		designReactiveButton(mR, "create_transport", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_TRANSPORTATION, true);
-
-		String[][] elementName = new String[][] {{"transpTitle", "transpMode"},{"transpStart", "transpEnd"}};
-		String[][] displayName = new String[][] {{"Title", "Mode of Transportation"}, {"Start Date", "End Date"}};
-		
-		for(int i = 0; i < elementName.length; i++) {
-			for(int j = 0; j < elementName[i].length; j++) {
-				designTextField(mR, elementName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i, width/6, height/12, 2, 1000 + i * elementName.length + j, true);
-				designBackedLabel(mR, elementName[i][j]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i][j], width/3 + j * width/3, height*4/9 + height/4 * i - height/10, width/6, height/14, 3, true);			}
-		}
-		
-		designBackedLabel(mR, "label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "dd/MM/yyyy", width/3 + width/6, height*4/9 + height/4 - height/10, width/7, height/16, 3, true);
-		
-		display.addPanel("transp Creation", mR);
-	}
-			
-	/**
-	 * This method adds a header to the provided ElementPanel providing links to other screens via clickable
-	 * buttons at the top border of the screen.
-	 * 
-	 * TODO: Make this dynamic so we can open more tabs; make it prettier (buttons should provide feedback when
-	 * clicked)
-	 * 
-	 * @param e - ElementPanel object representing the visual panel to which these header tabs are being added.
-	 */
 	
 	public void addHeaderTabs(ElementPanel e){
-		designReactiveButton(e, "home_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Home", width/8, 15, width/4, 30, 18, 0, true);
-		designReactiveButton(e, "reservation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Reservations", 3*width/8, 15, width/4, 30, 19, EVENT_GO_TO_SELECT_RESERVATION, true);
-		designReactiveButton(e, "accommodation_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Accomodations", 5*width/8, 15, width/4, 30, 20, EVENT_GO_TO_SELECT_ACCOMMODATION, true);
-		designReactiveButton(e, "transport_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Transportation", 7*width/8, 15, width/4, 30, 21, EVENT_GO_TO_SELECT_TRANSPORT, true);
-		//designReactiveButton(e, "contact_tab", COLOR_TWO, COLOR_BLACK, FONT_TAB, "  Contacts", 9*width/12, 15, width/6, 30, 22, EVENT_GO_TO_SELECT_CONTACT, true); editted out because Java hates our contacts
+		ArrayList<String> headers = new ArrayList<String>();
+		headers.add(Intermediary.CONTROL_MAIN_SCREEN);
+		headers.addAll(intermediary.getSchedulableTypeHeaders());
+		
+		for(int i = 0; i < headers.size(); i++) {
+			int eve = i == 0 ? EVENT_GO_TO_MAIN : i;
+			designReactiveButton(e, headers.get(i), COLOR_TWO, COLOR_BLACK, FONT_TAB, headers.get(i), i * width/headers.size() + width/headers.size()/2, height/34, width/headers.size(), height/17, 18, eve, true);
+		}
 	}
 	
 	/**
@@ -626,13 +503,15 @@ public class Display {
 	 * @param otherPos - int value representing the index in sl that corresponds to a variable piece of data
 	 */
 	
-	public void displayItemList(ElementPanel e, List<String[]> sl, int titlePos, int startPos, int endPos, int otherPos){
+	public void displayItemList(ElementPanel e, String scheduleType, HashMap<String, HashMap<String, String>> data){
 		designTwoColorBorder(e, "border_in", COLOR_WHITE, COLOR_BLACK, width/6, height /4, width*2/3, height/2, 50, 30, 1, false);
 		
-		for(int i = 0; i < (sl == null ? 0 : sl.size()); i++) {
-			designReactiveButton(e, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, sl.get(i)[titlePos], width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_TRIP+i, true);
-			e.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, sl.get(i)[otherPos], FONT_ENTRY, true);
-			e.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, sl.get(i)[startPos] + " - " + sl.get(i)[endPos], FONT_ENTRY, true);
+		for(int i = 0; i < data.keySet().size(); i++) {
+			ArrayList<String> key = new ArrayList<String>(data.keySet());
+			HashMap<String, String> map = data.get(key.get(i));
+			designReactiveButton(e, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, map.get("Title"), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
+			e.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.get("Description"), FONT_ENTRY, true);
+			e.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.get("Start Date") + " - " + map.get("End Date"), FONT_ENTRY, true);
 		}	
 	}
 
@@ -664,26 +543,15 @@ public class Display {
 	 */
 	
 	public boolean interpretHeader(int event) {
-		if(event == EVENT_GO_TO_SELECT_TRIP){
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
+		if(event == EVENT_GO_TO_MAIN){
+			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 			return true;
 		}
-		else if(event == EVENT_GO_TO_SELECT_RESERVATION) {
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_RESERVATIONS);
-		}
-		else if(event == EVENT_GO_TO_SELECT_ACCOMMODATION){
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ACCOM_LIST);
+		else if(event != -1 && event < intermediary.getSchedulableTypeHeaders().size()){
+			Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, intermediary.getSchedulableTypeHeaders().get(event-1));
+			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
 			return true;
 		}
-		else if(event==EVENT_GO_TO_SELECT_TRANSPORT){
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRANSP_LIST);
-			return true;
-		}
-		/*else if(event == EVENT_GO_TO_SELECT_CONTACT){
-			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_CONTACT_LIST);
-			return true;
-		}*/
-		
 		return false;
 	}
 	

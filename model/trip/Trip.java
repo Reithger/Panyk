@@ -212,7 +212,12 @@ public class Trip {
 	}
 	
 	public ArrayList<Schedulable> getSchedulables(String schedType){
-		return new ArrayList<Schedulable>(schedulables.get(schedType).values());
+		ArrayList<Schedulable> out = new ArrayList<Schedulable>();
+		if(schedulables.get(schedType) == null) {
+			return out;
+		}
+		out.addAll(schedulables.get(schedType).values());
+		return out;
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
