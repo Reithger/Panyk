@@ -91,6 +91,14 @@ public class Database {
 	}
 	
 	public static void includeTableType(String tableType, String[] fields, String[] fieldTypes) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
+			System.out.println("no connection can be established to the database");
+			return;
+		}
 		if(getTable(tableType) != null) {
 			return;
 		}
@@ -119,15 +127,22 @@ public class Database {
 	 */
 	
 	private static void connect() {
-		if(connection == null) {
-	        try {
-	            // db parameters
-	            String url = "jdbc:sqlite:"+ DB_DIRECTORY + name + ".db";
-	            // create a connection to the database
-	            connection = DriverManager.getConnection(url);
-	        } catch (SQLException e) {
-	            System.out.println(e.getMessage());
-	        }
+		try {
+			if(connection == null || connection.isClosed()) {
+		        try {
+		            // db parameters
+		            String url = "jdbc:sqlite:"+ DB_DIRECTORY + name + ".db";
+		            // create a connection to the database
+		            connection = DriverManager.getConnection(url);
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		            System.out.println("Error in Connecting to Database: Getting Connection");
+		        }
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Error in Connecting to Database: Querying if Connection was Closed");
 		}
 	}
 	
@@ -175,6 +190,10 @@ public class Database {
 			initialize();
 		}
 		connect();
+		if(connection == null) {
+			System.out.println("no connection can be established to the database");
+			return false;
+		}
 		List<String[]> users = search(TableType.users, username, null, null, null, null, null);
 		if(users == null)
 			return false;
@@ -245,7 +264,7 @@ public class Database {
 	}
 	
 	public static boolean addEntry(String tableTitle, String[] types, String[] values) {
-
+		System.out.println(tableTitle + "\n" + Arrays.toString(types) + "\n" + Arrays.toString(values));
 		if(!db_is_initialized) {
 			initialize();
 		}
@@ -265,12 +284,14 @@ public class Database {
 				}
 				values = copy;
 			}
-			if(search(tableTitle, types, values).size() != 0) {
+			List<String[]> check = search(tableTitle, types, values);
+			if(check != null && check.size() != 0) {
+				System.out.println("Attempted to Add Duplicate Database Entry of Type " + tableTitle + ".");
 				return false;
 			}
 			PreparedStatement prep = connection.prepareStatement(TableType.generateCreateTableInsertionSQL(tableTitle, types));
 			for(int i = 0; i < values.length; i++) {
-				prep.setString(i + 1, values[i]);
+				prep.setString(i + 1, values[i].replaceAll(" ", "_"));
 			}
 			prep.executeUpdate();
 		} catch(Exception e) {
@@ -423,6 +444,7 @@ public class Database {
 				}
 			}
 			sqlSearch += ";";
+			System.out.println(sqlSearch);
 			if(nullCount != searchKeys.length) {
 				Statement state = null;
 				try {
@@ -454,7 +476,7 @@ public class Database {
 					if(priorSearch) {
 						sqlSearch += " AND";
 					}
-					sqlSearch += " " + fields[i] + "='" + search[i] + "'";
+					sqlSearch += " '" + fields[i].replaceAll(" ", "_") + "'='" + search[i].replaceAll(" ", "_") + "'";
 					priorSearch = true;
 				}
 			}
@@ -467,6 +489,8 @@ public class Database {
 				return ResultSetToList(result);
 			}
 			catch(SQLException sqlE2) {
+				sqlE2.printStackTrace();
+				System.out.println("Error in Search of Table " + tableType);
 				connection.close();
 				return null;
 			}

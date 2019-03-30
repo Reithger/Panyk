@@ -1,7 +1,5 @@
 package model.trip.schedule;
 
-import java.util.HashMap;
-
 public interface Schedulable {
 
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -18,7 +16,7 @@ public interface Schedulable {
 	 * @return
 	 */
 	
-	public HashMap<String, String> getDisplayData(HashMap<String, String> fill);
+	public DisplayData getDisplayData(DisplayData fill);
 	
 	/**
 	 * Getter method to access the type of Schedulable object this is. Typically undesirable in

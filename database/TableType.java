@@ -131,7 +131,7 @@ public enum TableType {
 		String sql = "INSERT INTO " + tableTitle + "(";
 		String valueStr = "values(";
 		for(int i = 0; i < fieldsDyn.length; i++) {
-			sql += fieldsDyn[i] + (i+1 < fieldsDyn.length ? "," : ")");
+			sql += fieldsDyn[i].replaceAll(" ", "_") + (i+1 < fieldsDyn.length ? "," : ")");
 			valueStr += "?" + (i + 1 < fieldsDyn.length ? "," : ")");
 		}
 		return sql + " " + valueStr;

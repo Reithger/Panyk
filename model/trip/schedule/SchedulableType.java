@@ -34,4 +34,9 @@ public class SchedulableType {
 		return out;
 	}
 	
+	@Override
+	public String toString() {
+		return type;
+	}
+	
 }

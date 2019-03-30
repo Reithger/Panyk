@@ -8,6 +8,7 @@ import java.util.List;
 import input.Communication;
 import intermediary.Intermediary;
 import model.trip.Trip;
+import model.trip.schedule.DisplayData;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
@@ -371,7 +372,8 @@ public class Display {
 		display.addPanel("Trip Select", mainScreen);
 	}
 	
-	public void schedulableSelectScreen(String scheduleType, HashMap<String, HashMap<String, String>> data) {
+	public void schedulableSelectScreen(HashMap<String, DisplayData> data) {
+		
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
@@ -383,12 +385,14 @@ public class Display {
 				}
 			}
 		};
+				
+		String scheduleType = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
 		
 		designTwoColorBorder(rS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
 		addHeaderTabs(rS);
 		
-		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, scheduleType + ":", width/2, height/6, width/3, height/10, 1, true);
+		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, scheduleType + ":", width/2, height/6, width*8/21, height/10, 1, true);
 		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
 		designReactiveButton(rS, "create_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New " + scheduleType + "!", width*4/30, height*3/20, width/7, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE, true);
 		
@@ -405,13 +409,15 @@ public class Display {
 				}
 				else if(event == EVENT_ATTEMPT_CREATE_SCHEDULABLE){
 					String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
+					System.out.println("Head: " + header);
+
 					String[] titles = Communication.get(Intermediary.CURR_SCHEDULABLE_TITLES).split("   ");
 					
 					for(int i = 0; i < titles.length; i++) {
+						System.out.println(getElementStoredText(header + "_" + titles[i] + "_text"));
 						Communication.set(header + "_" + titles[i], getElementStoredText(header + "_" + titles[i] + "_text"));
 					}
-					Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, header);
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SCHEDULABLE_CREATE);
 				}
 				
 			}
@@ -458,7 +464,7 @@ public class Display {
 				int wid = width/(columns + 3);
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
-				
+				System.out.println(header+"_"+s);
 				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
 				designBackedLabel(mR, s + "_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, s, across, down - height/10, wid, (int)(heiLabel*.9), 3, true);
 				count++;
@@ -481,7 +487,7 @@ public class Display {
 		
 		for(int i = 0; i < headers.size(); i++) {
 			int eve = i == 0 ? EVENT_GO_TO_MAIN : i;
-			designReactiveButton(e, headers.get(i), COLOR_TWO, COLOR_BLACK, FONT_TAB, headers.get(i), i * width/headers.size() + width/headers.size()/2, height/34, width/headers.size(), height/17, 18, eve, true);
+			designReactiveButton(e, headers.get(i), COLOR_TWO, COLOR_BLACK, FONT_TAB, headers.get(i), i * width/headers.size() + width/headers.size()/2, height/34, width/headers.size() + width % headers.size(), height/17, 18, eve, true);
 		}
 	}
 	
@@ -503,15 +509,15 @@ public class Display {
 	 * @param otherPos - int value representing the index in sl that corresponds to a variable piece of data
 	 */
 	
-	public void displayItemList(ElementPanel e, String scheduleType, HashMap<String, HashMap<String, String>> data){
+	public void displayItemList(ElementPanel e, String scheduleType, HashMap<String, DisplayData> data){
 		designTwoColorBorder(e, "border_in", COLOR_WHITE, COLOR_BLACK, width/6, height /4, width*2/3, height/2, 50, 30, 1, false);
 		
 		for(int i = 0; i < data.keySet().size(); i++) {
 			ArrayList<String> key = new ArrayList<String>(data.keySet());
-			HashMap<String, String> map = data.get(key.get(i));
-			designReactiveButton(e, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, map.get("Title"), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
-			e.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.get("Description"), FONT_ENTRY, true);
-			e.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.get("Start Date") + " - " + map.get("End Date"), FONT_ENTRY, true);
+			DisplayData map = data.get(key.get(i));
+			designReactiveButton(e, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, map.getData("Name"), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
+			e.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Description"), FONT_ENTRY, true);
+			e.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Start Date") + " - " + map.getData("End Date"), FONT_ENTRY, true);
 		}	
 	}
 
@@ -547,7 +553,7 @@ public class Display {
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 			return true;
 		}
-		else if(event != -1 && event < intermediary.getSchedulableTypeHeaders().size()){
+		else if(event != -1 && event <= intermediary.getSchedulableTypeHeaders().size()){
 			Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, intermediary.getSchedulableTypeHeaders().get(event-1));
 			Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCHEDULABLE_SELECT);
 			return true;

@@ -1,5 +1,6 @@
 package model.trip.schedule;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class SchedulableLongString implements Schedulable{
@@ -13,12 +14,12 @@ public class SchedulableLongString implements Schedulable{
 	public SchedulableLongString(String[] type, String[] components, Object[] datum) {
 		title = components[0];
 		data = (String)datum[0];
-		next = SchedulableFactory.getScheduleComponent(type, components, datum);
+		next = SchedulableFactory.getScheduleComponent(Arrays.copyOfRange(type, 1, type.length),Arrays.copyOfRange(components, 1, components.length),Arrays.copyOfRange(datum, 1, datum.length));
 	}
 
 	@Override
-	public HashMap<String, String> getDisplayData(HashMap<String, String> fill) {
-		fill.put(title, data);
+	public DisplayData getDisplayData(DisplayData fill) {
+		fill.addData(title, data);
 		if(next == null)
 			return fill;
 		return next.getDisplayData(fill);

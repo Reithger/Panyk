@@ -8,7 +8,7 @@ public class ScheduledItem implements Schedulable{
 	
 	private Schedulable next;
 	private String title;
-	private String type;
+	private SchedulableType type;
 	private int sizeDatum;
 	private int buffer;
 	
@@ -22,25 +22,24 @@ public class ScheduledItem implements Schedulable{
 	 */
 	
 	public ScheduledItem(SchedulableType typeIn, Object[] datum, int buf) {
-		title = "Composite typeIn";
-		type = typeIn.getType();
+		title = "Composite Type";
+		type = typeIn;
 		next = SchedulableFactory.getScheduleComponent(typeIn.getDataTypes(), typeIn.getTitles(), datum);
 		sizeDatum = next.count();
 		buffer = buf;
 	}
 	
 	@Override
-	public HashMap<String, String> getDisplayData(HashMap<String, String> fill) {
+	public DisplayData getDisplayData(DisplayData fill) {
 		if(fill == null)
-			fill = new HashMap<String, String>();
-		fill.put(title, type);
+			fill = new DisplayData(type);
 		if(next == null)
 			return fill;
 		return next.getDisplayData(fill);
 	}
 
 	@Override
-	public String getData() {
+	public SchedulableType getData() {
 		return type;
 	}
 	
@@ -56,7 +55,7 @@ public class ScheduledItem implements Schedulable{
 	@Override
 	public void setData(String provTitle, Object in) {
 		if(getTitle().equals(provTitle))
-			type = (String)in;
+			type = (SchedulableType)in;
 		else
 			next.setData(provTitle, in);
 	}
@@ -72,7 +71,7 @@ public class ScheduledItem implements Schedulable{
 	public String[] generateDataType(String[] append, int plc) {
 		append = new String[sizeDatum + buffer];
 		plc = buffer;
-		append[plc] = type;
+		append[plc] = type.getType();
 		return next.generateDataType(append, plc);
 	}
 	

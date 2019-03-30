@@ -9,6 +9,7 @@ import java.util.List;
 import controller.Encryptor;
 import database.*;
 import model.trip.Trip;
+import model.trip.schedule.DisplayData;
 import model.trip.schedule.Schedulable;
 import model.trip.schedule.SchedulableType;
 import model.trip.schedule.ScheduledItem;
@@ -107,12 +108,14 @@ public class User {
 		List<String[]> tripsIn = Database.search(TableType.trips, getUsername(), null, null, null, null, null);
 		ArrayList<Trip> out = new ArrayList<Trip>();
 		for(String[] rawData : tripsIn) {
-			System.out.println(Arrays.toString(rawData));
 			out.add(new Trip(rawData[1], rawData[2], rawData[5], rawData[3], rawData[4]));
 		}
 		for(Trip t : out) {
 			if(t != null)
 				trips.put(t.getTitle(), t);
+			for(SchedulableType sched : scheduleTypes.values()) {
+				t.pullFromDatabase(username, sched);
+			}
 		}
 	}
 	
@@ -168,9 +171,9 @@ public class User {
 		return true;
 	}
 	
-	public boolean addSchedulableItem(String tripName, String type, String ... data) {
-		trips.get(tripName).addScheduledItem(data[0], new ScheduledItem(scheduleTypes.get(type), data, 2));
-		return false;
+	public void addSchedulableItem(String tripName, String type, String ... data) {
+		trips.get(tripName).addScheduledItem(data[0], type, new ScheduledItem(scheduleTypes.get(type), data, 2));
+		trips.get(tripName).saveToDatabase(username);
 	}
 	
 	public void addSchedulableType(String header, String[] titles, String[] types) {
@@ -227,18 +230,19 @@ public class User {
 		return scheduleTypes.get(header).getTitles();
 	}
 
-	public HashMap<String, HashMap<String, String>> getDisplaySchedulablesData(String tripName, String schedulableType){
+	public HashMap<String, DisplayData> getDisplaySchedulablesData(String tripName, String schedulableType){
+		HashMap<String, DisplayData> out = new HashMap<String, DisplayData>();
 		ArrayList<Schedulable> sched = getSchedulables(tripName, schedulableType);
-		HashMap<String, HashMap<String, String>> out = new HashMap<String, HashMap<String, String>>();
+		
 		for(Schedulable sc : sched) {
-			HashMap<String,String> in = new HashMap<String, String>();
-			out.put(sc.getTitle(), sc.getDisplayData(in));
+			DisplayData in = sc.getDisplayData(null);
+			System.out.println(sc.getData() + "\n" + in.getScheduleType());
+			out.put(in.getData("Name"), in);
 		}
 		return out;
 	}
 	
 	public HashMap<String, String> getCreateSchedulablesData(String schedulableType){
-		System.out.println(schedulableType + " " + scheduleTypes.get(schedulableType).getSchedulableFormatted());
 		return scheduleTypes.get(schedulableType).getSchedulableFormatted();
 	}
 	

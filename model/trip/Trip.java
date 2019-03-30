@@ -4,10 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
 import database.Database;
 import database.TableType;
 import model.trip.feature.Feature;
 import model.trip.schedule.Schedulable;
+import model.trip.schedule.SchedulableType;
+import model.trip.schedule.ScheduledItem;
 
 /**
  * This class models a Trip that the User has designed for themselves; a Trip consists
@@ -89,12 +93,31 @@ public class Trip {
 		boolean success = true;
 		for(String title : schedulables.keySet()) {
 			for(Schedulable s : schedulables.get(title).values()) {
-				success = Database.addEntry((String)s.getData(), s.generateDataType(null, 0), s.generateDataEntry(null, 0));
-				if(!success)
+				String[] types = s.generateDataType(null, 0);
+				String[] data = s.generateDataEntry(null, 0);
+				types[0] = "username"; types[1] = "tripTitle";
+				data[0] = username; data[1] = getTitle();
+				success = Database.addEntry(s.getData().toString(), types, data);
+				if(!success) {
+					System.out.println("Failed Database Entry for " + username + " in trip " + getTitle() + ".");
 					return false;
+				}
 			}
 		}
 		return Database.addEntry(TableType.trips, username, getTitle(), getDestination(), simplifyDate(getStartDate()), simplifyDate(getEndDate()), getDescription());
+	}
+	
+	public void pullFromDatabase(String username, SchedulableType scheduleType) {
+		List<String[]> scheds = Database.search(scheduleType.getType(), scheduleType.getDataTypes(), new String[] {username, getTitle()});
+		if(scheds == null || scheds.size() == 0)
+			return;
+		if(schedulables.get(scheduleType.getType()) == null) {
+			schedulables.put(scheduleType.getType(), new HashMap<String, Schedulable>());
+		}
+		for(String[] sc : scheds) {
+			ScheduledItem schedIt = new ScheduledItem(scheduleType, sc, 2);
+			schedulables.get(scheduleType.getType()).put(schedIt.getDisplayData(null).getData("Name"), schedIt);
+		}
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -238,8 +261,12 @@ public class Trip {
 	 * @param a
 	 */
 	
-	public void addScheduledItem(String name, Schedulable a) {
-		schedulables.get(a.getTitle()).put(name, a);
+	public void addScheduledItem(String name, String type, Schedulable a) {
+		if(schedulables.get(type) == null) {
+			schedulables.put(type, new HashMap<String, Schedulable>());
+		}
+		System.out.println("H:" + type + " " + schedulables.get(type).toString());
+		schedulables.get(type).put(name, a);
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------

@@ -169,10 +169,11 @@ public class Intermediary {
 			String head = s[0];
 			String[] titles = new String[s.length];
 			String[] types = new String[s.length];
-			int count = 0;
-			int index = 0;
+			titles[0] = "username"; titles[1] = "tripTitle";
+			types[0] = "sString"; types[1] = "sString";
+			int count = -2;
+			int index = 2;
 			for(int i = 0; i < s.length; i++) {
-				System.out.println("D: " + s[i]);
 				if(s[i].indexOf("_") == -1) {
 					count++;
 				}
@@ -184,7 +185,7 @@ public class Intermediary {
 			}
 			System.out.println(Arrays.toString(titles) + "\n" + Arrays.toString(types));
 			Database.includeTableType(head, Arrays.copyOfRange(titles, 0, titles.length - count), Arrays.copyOfRange(types, 0, types.length - count));
-			user.addSchedulableType(head, Arrays.copyOfRange(titles, 0, titles.length - count), Arrays.copyOfRange(types, 0, types.length - count));
+			user.addSchedulableType(head, Arrays.copyOfRange(titles, 2, titles.length - count), Arrays.copyOfRange(types, 2, types.length - count));
 		}
 	}
 	
@@ -304,11 +305,13 @@ public class Intermediary {
 
 	public void addSchedulable() {
 		String header = Communication.get(CURR_SCHEDULABLE_TYPE);
+		System.out.println("G:" + header);
 		String[] titles = user.getSchedulableTypeTitles(header);
 		String[] data = new String[titles.length];
 		for(int i = 0; i < data.length; i++) {
-			data[i] = Communication.get(CURR_SCHEDULABLE_TYPE + "_" + titles[i]);
+			data[i] = Communication.get(header + "_" + titles[i]);
 		}
+		System.out.println(Arrays.toString(titles) + "\n" + Arrays.toString(data));
 		user.addSchedulableItem(Communication.get(CURR_TRIP), header, data);
 		Communication.set(CONTROL, CONTROL_SCHEDULABLE_SELECT);
 	}
@@ -394,7 +397,7 @@ public class Intermediary {
 	
 	public void goToSchedulableSelect() {
 		display.resetView();
-		display.schedulableSelectScreen(Communication.get(CURR_SCHEDULABLE_TYPE), user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)));
+		display.schedulableSelectScreen(user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)));
 	}
 	
 	public void goToSchedulableCreation() {
