@@ -34,7 +34,15 @@ Details: edit existing Schedulables and Trip objects
 Posted By: Mac
 Picked Up By: 
 
+Class(es):
+Details:Schedulables not being displayed after logging out and then logging in again
+Posted By: Nick
+Picked Up By: Nick
 
+Class(es):Display
+Details:Create
+Posted By: Nick
+Picked Up By: Nick
 
 
 ----------------------------------TESTING------------------------------------------
