@@ -1,18 +1,23 @@
 package model.user;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import controller.Encryptor;
 import database.*;
 import model.trip.Trip;
+import model.trip.schedule.DisplayData;
+import model.trip.schedule.Schedulable;
+import model.trip.schedule.SchedulableType;
+import model.trip.schedule.ScheduledItem;
 
 /**
  * This class is the contact point that the Intermediary can use to access the data in the
  * Model (only one User is logged in at a time, and their info is necessary to access the
  * information, so it seemed a good focal point.)
- * 
- * TODO: Need some way that the User retrieves/stores data from/to the Database
  * 
  * @author Mac Clevinger
  * @author Regan Lynch
@@ -29,6 +34,8 @@ public class User {
 	/** String object representing the provided password for decrypting data stored under the username heading*/
 	private String password;
 	
+	private HashMap<String, SchedulableType> scheduleTypes;
+	
 //---  Constructors   -------------------------------------------------------------------------
 		
 	/**	
@@ -43,7 +50,7 @@ public class User {
 	 * @param passwordIn - String object representing the Password of this user
 	 */
 	
-	public User(String fname, String lname, String usernameIn, String passwordIn){
+ 	public User(String fname, String lname, String usernameIn, String passwordIn){
 		username = usernameIn;
 		password = passwordIn;
 		String day = Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
@@ -61,10 +68,12 @@ public class User {
 		
 		boolean result = Database.addEntry(TableType.users, username, fname, lname, createdOn, hash[0], hash[1]);
 		trips = new HashMap<String, Trip>();
+		scheduleTypes = new HashMap<String, SchedulableType>();
 		if(!result) {
 			username = null;
 			password = null;
 			trips = null;
+			scheduleTypes = null;
 		}
 	}
 	
@@ -80,6 +89,8 @@ public class User {
 		username = usernameIn;
 		password = passwordIn;
 		trips = new HashMap<String, Trip>();
+		scheduleTypes = new HashMap<String, SchedulableType>();
+		retrieveData();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -93,28 +104,53 @@ public class User {
 	 * @return - Returns a boolean value describing the success of retrieving and using data from the database. 
 	 */
 	
-	private boolean retrieveData() {
-		return false;
+	private void retrieveData() {
+		List<String[]> tripsIn = Database.search(TableType.trips, getUsername(), null, null, null, null, null);
+		ArrayList<Trip> out = new ArrayList<Trip>();
+		for(String[] rawData : tripsIn) {
+			out.add(new Trip(rawData[1], rawData[2], rawData[5], rawData[3], rawData[4]));
+		}
+		for(Trip t : out) {
+			if(t != null)
+				trips.put(t.getTitle(), t);
+			for(SchedulableType sched : scheduleTypes.values()) {
+				t.pullFromDatabase(username, sched);
+			}
+		}
 	}
 	
 	/**
 	 * This method should create a new Trip object for the User to design/have access to.
-	 * TODO: Do this
 	 */
 	
-	private void makeTrip() {
-		
-		Trip t = new Trip(null);
+	public boolean makeTrip(String title, String destination, String description, String dateStart, String dateEnd) {
+		if(trips.get(title) != null) {
+			return false;
+		}
+		Trip t = new Trip(title, destination, description, dateStart, dateEnd);
+		if(t.getTitle() != null) {
+			trips.put(t.getTitle(), t);
+			t.saveToDatabase(username);
+			return true;
+		}
+		return false;
 		
 	}
 	
 	/**
 	 * This method should delete the defined Trip object from the list stored by this User.
-	 * TODO: Do this, make sure we have confirmation messages before deletion
+	 * TODO: Do this, make sure we have confirmation messages before deletion But confirmation is
+	 * not handled by the User object, it is handled by the user interface.
 	 */
 	
-	private void deleteTrip() {
-		
+	private boolean deleteTrip(String tripName) {
+		if(trips.get(tripName) == null) {
+			return false;
+		}
+		trips.get(tripName).deleteTrip();
+		Database.deleteEntry(TableType.trips, username, tripName, null, null, null, null);
+		trips.remove(tripName);
+		return true;
 	}
 	
 	/**
@@ -125,9 +161,24 @@ public class User {
 	 */
 	
 	private boolean saveData() {
+		boolean result = true;
+		for(Trip t : trips.values()) {
+			result = t.saveToDatabase(username);
+			if(!result) {
+				return false;
+			}
+		}
 		return true;
 	}
 	
+	public void addSchedulableItem(String tripName, String type, String ... data) {
+		trips.get(tripName).addScheduledItem(data[0], type, new ScheduledItem(scheduleTypes.get(type), data, 2));
+		trips.get(tripName).saveToDatabase(username);
+	}
+	
+	public void addSchedulableType(String header, String[] titles, String[] types) {
+		scheduleTypes.put(header, new SchedulableType(header, titles, types));
+	}
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -161,6 +212,42 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public ArrayList<Trip> getTrips(){
+		return new ArrayList<Trip>(trips.values());
+	}
+	
+	public ArrayList<Schedulable> getSchedulables(String tripName, String schedulableType){
+		return trips.get(tripName).getSchedulables(schedulableType);
+	}
+	
+	public String[] getSchedulableTypeTitles(String header) {
+		return scheduleTypes.get(header).getTitles();
+	}
+
+	public HashMap<String, DisplayData> getDisplaySchedulablesData(String tripName, String schedulableType){
+		HashMap<String, DisplayData> out = new HashMap<String, DisplayData>();
+		ArrayList<Schedulable> sched = getSchedulables(tripName, schedulableType);
+		
+		for(Schedulable sc : sched) {
+			DisplayData in = sc.getDisplayData(null);
+			System.out.println(sc.getData() + "\n" + in.getScheduleType());
+			out.put(in.getData("Name"), in);
+		}
+		return out;
+	}
+	
+	public HashMap<String, String> getCreateSchedulablesData(String schedulableType){
+		return scheduleTypes.get(schedulableType).getSchedulableFormatted();
+	}
+	
+	public ArrayList<String> getSchedulableTypes(){
+		return new ArrayList<String>(scheduleTypes.keySet());
+	}
 	
 }
-

@@ -1,8 +1,5 @@
 package model.trip.schedule;
 
-import java.util.Date;
-import java.util.HashMap;
-
 public interface Schedulable {
 
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -19,21 +16,7 @@ public interface Schedulable {
 	 * @return
 	 */
 	
-	public HashMap<String, String> getDisplayData();
-	
-	/**
-	 * Getter method to request the Date in which this Schedulable object exists (in a Trip, Scheduled
-	 * Items exist on certain dates even if they extend over multiple days. This date would be the first
-	 * day, with extended periods implementing a second date on their own/adding a second Schedulable item
-	 * for the end of the period.)
-	 * 
-	 * Primarily intended for integration with a Calendar of some kind; all Schedulable items have a related
-	 * Date, though. Exceptions may come up, but pretty sure we're good.
-	 * 
-	 * @return
-	 */
-	
-	public Date getDate();
+	public DisplayData getDisplayData(DisplayData fill);
 	
 	/**
 	 * Getter method to access the type of Schedulable object this is. Typically undesirable in
@@ -44,8 +27,30 @@ public interface Schedulable {
 	
 	public String getType();
 	
-//---  Setter Methods   -----------------------------------------------------------------------
+	/**
+	 * 
+	 * @return
+	 */
 	
-	public void setDate(Date in);
+	public String getTitle();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public Object getData();
+	
+	//InsertionSQL String
+	public String[] generateDataType(String[] append, int plc);
+	
+	//
+	public String[] generateDataEntry(String[] append, int plc);
+
+	public int count();
+	
+//---  Setter Methods   -----------------------------------------------------------------------
+
+	public void setData(String title, Object in);
 	
 }

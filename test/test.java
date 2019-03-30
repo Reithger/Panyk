@@ -19,7 +19,7 @@ public class test {
 
 			    for ( int i = 0; i < fonts.length; i++ )
 			    {
-			      System.out.println(fonts[i]);
+			      //System.out.println(fonts[i]);
 			    }
 		
 		Intermediary inter = new Intermediary();
