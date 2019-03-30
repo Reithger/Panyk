@@ -171,9 +171,56 @@ public class User {
 		return true;
 	}
 	
-	public void addSchedulableItem(String tripName, String type, String ... data) {
-		trips.get(tripName).addScheduledItem(data[0], type, new ScheduledItem(scheduleTypes.get(type), data, 2));
-		trips.get(tripName).saveToDatabase(username);
+	/**
+	 * Adds a schedulable item, unless its dates are bad in which case it throws an error
+	 * and the user has to fix things and resubmit
+	 * 
+	 */
+	public void addSchedulableItem(String tripName, String type, String ... data) throws BadTimeException
+	{
+		Trip theTrip = trips.get(tripName);
+		boolean okToSave = true;
+		Date d1=null;
+		Date d2=null;
+		int numDates=0;
+		BadTimeException e = new BadTimeException();
+		for(int i=0; i<data.length; i++)
+		{
+			try {
+				Date myDate = new SimpleDateFormat("dd/MM/yyyy").parse((String)data[i]);//try to parse dates
+				numDates++;//keep track of how many there are
+				if(d1==null)//track starting date
+				{
+					d1=myDate;
+				}
+				else//and ending date
+				{
+					d2 = myDate;
+				}
+				if(myDate.before(theTrip.getStartDate()) || myDate.after(theTrip.getEndDate()))//make sure the dates are in the right range
+				{
+					okToSave=false;
+					throw e;
+					
+				}
+			}
+			catch(ParseException pe) {
+				//do nothing because most fields won't be dates and thats fine
+			}
+			
+			if((d2!=null && d1!=null && d2.before(d1)) || numDates!=2)//if you plan on traveling backwards in time our application does not currently support that
+			{
+				okToSave=false;
+				throw e;
+				
+			}
+
+		}
+		if(okToSave)//if appropriate, save the item
+		{
+			theTrip.addScheduledItem(data[0], type, new ScheduledItem(scheduleTypes.get(type), data, 2));
+			trips.get(tripName).saveToDatabase(username);
+		}
 	}
 	
 	public void addSchedulableType(String header, String[] titles, String[] types) {
