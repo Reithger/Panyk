@@ -303,7 +303,12 @@ public class Intermediary {
 		
 	}
 
-	public void addSchedulable() {
+	/**
+	 * Changed to give errors for bad dates
+	 * Receives a bad time exception if dates are incorrect and reports the error to the user
+	 */
+	public void addSchedulable()
+	{
 		String header = Communication.get(CURR_SCHEDULABLE_TYPE);
 		System.out.println("G:" + header);
 		String[] titles = user.getSchedulableTypeTitles(header);
@@ -312,8 +317,14 @@ public class Intermediary {
 			data[i] = Communication.get(header + "_" + titles[i]);
 		}
 		System.out.println(Arrays.toString(titles) + "\n" + Arrays.toString(data));
-		user.addSchedulableItem(Communication.get(CURR_TRIP), header, data);
-		Communication.set(CONTROL, CONTROL_SCHEDULABLE_SELECT);
+		try {
+			user.addSchedulableItem(Communication.get(CURR_TRIP), header, data);
+			Communication.set(CONTROL, CONTROL_SCHEDULABLE_SELECT);
+		}catch (BadTimeException e)
+		{
+			errorReport("These fields don't make sense... Let's try that last one again");
+		}
+		
 	}
 		
 //--- Getter Methods --------------------------------------------------------------------------
