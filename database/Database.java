@@ -25,6 +25,13 @@ import controller.Encryptor;
 
 public class Database {
 	
+	public Database()
+	{
+		super();
+		FIELD_TYPE_CONVERT.put("lString", "varChar(300)");
+		FIELD_TYPE_CONVERT.put("sString", "varChar(60)");
+		FIELD_TYPE_CONVERT.put("Date", "varChar(10)");
+	}
 //---  Constant Values   ----------------------------------------------------------------------
 	
 	/** */
@@ -32,9 +39,7 @@ public class Database {
 	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
 	
-	public static final HashMap<String, String> FIELD_TYPE_CONVERT = new HashMap<String, String>(Map.of(
-			"lString", "varChar(300)", "sString", "varChar(60)", "Date", "varChar(10)"
-	));
+	public static final HashMap<String, String> FIELD_TYPE_CONVERT = new HashMap<String, String>();
 
 	
 //---  Static Variables   -------------------------------------------------------------------
