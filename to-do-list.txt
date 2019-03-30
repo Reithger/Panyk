@@ -1,0 +1,70 @@
+To-Do List
+
+Note: If you aren't sure which classes are involves, it can be left blank
+!!!!!TEMPLATE!!!!!!
+
+COPY
+
+
+Class(es):
+Details:
+Posted By: 
+Picked Up By:
+
+
+-----------------------------------PRIORITY---------------------------------------
+
+
+Class(es):-
+Details: Format for user input isn't checking for valid date. e.g. 55/27/7873
+Posted By: Sienna
+Picked Up By:
+
+
+
+Class(es):
+Details: Finish getting current format saving to the database/retrieving properly between instances of the program being used 
+Posted By: Mac
+Picked Up By: Regan?
+
+
+
+Class(es):
+Details: edit existing Schedulables and Trip objects
+Posted By: Mac
+Picked Up By: 
+
+
+
+
+----------------------------------TESTING------------------------------------------
+
+
+		NEED TO IDENTIFY WHAT IS WORKING AND WHAT ISN'T
+
+-user testing
+	making accounts/schedulables, 
+	logging out, 
+	functionality across instances
+	
+-test suites
+
+
+---------------------------------WISHLIST------------------------------------------
+
+
+Class(es):
+Details: Make the Display prettier (specialized displays for each type or generic format)
+Posted By: 
+Picked Up By:
+
+
+
+Class(es):
+Details: Calendar display using existing Display objects to display all the Schedulables in a Trip that would be reachable from the Main Menu 
+could add its link to the Header Tabs to direct towards it, probably.
+Posted By:
+Picked Up By:
+
+
+
