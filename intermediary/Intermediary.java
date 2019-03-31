@@ -1,19 +1,15 @@
 package intermediary;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
-
 import database.Database;
-import database.TableType;
 import input.Communication;
 import model.trip.Trip;
 import model.user.User;
 import view.Display;
+import exceptions.BadTimeException;
 
 /**
  * This class serves as the link between the Model and the View, facilitating the movement
@@ -137,7 +133,7 @@ public class Intermediary {
 				createNewUser(); break;
 			case CONTROL_ATTEMPT_CREATE_TRIP:		//Attempts to create a new Trip with the provided information
 				addTrip(); break;
-			case CONTROL_ATTEMPT_SCHEDULABLE_CREATE:
+			case CONTROL_ATTEMPT_SCHEDULABLE_CREATE://Attempts to create a new Schedulable Object with the provided information
 				addSchedulable(); break;
 			case CONTROL_INITIAL_SCREEN:			//Orders display to show the initial screen
 				goToInitialScreen(); break;
@@ -149,15 +145,23 @@ public class Intermediary {
 				goToTripSelect(); break;
 			case CONTROL_TRIP_CREATION:				//Orders display to show the trip creation screen
 				goToTripCreation(); break;
-			case CONTROL_SCHEDULABLE_SELECT:
+			case CONTROL_SCHEDULABLE_SELECT:		//Orders display to show the schedulable select screen
 				goToSchedulableSelect(); break;
-			case CONTROL_SCHEDULABLE_CREATION:
+			case CONTROL_SCHEDULABLE_CREATION:		//Orders display to show the schedulable creation screen
 				goToSchedulableCreation(); break;
-			case CONTROL_MAIN_SCREEN:
+			case CONTROL_MAIN_SCREEN:				//Orders display to show the main screen
 				goToMainScreen(); break;
 			default: break;
 		}
 	}
+	
+	/**
+	 * This method handles the dynamic Schedulable Types by adding the default types
+	 * if they are not yet present to the metaFields table, from which all added
+	 * Schedulable Types are pulled from the database, made available for usage,
+	 *  and given to the User for interpreting/making Schedulable objects.
+	 * 
+	 */
 	
 	public void initializeSchedulableTypes() {
 		Database.includeTableType(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, SCHEDULABLE_META_FIELD_TYPES);
@@ -183,7 +187,6 @@ public class Intermediary {
 					index++;
 				}
 			}
-			System.out.println(Arrays.toString(titles) + "\n" + Arrays.toString(types));
 			Database.includeTableType(head, Arrays.copyOfRange(titles, 0, titles.length - count), Arrays.copyOfRange(types, 0, types.length - count));
 			user.addSchedulableType(head, Arrays.copyOfRange(titles, 2, titles.length - count), Arrays.copyOfRange(types, 2, types.length - count));
 		}
@@ -214,7 +217,9 @@ public class Intermediary {
 		}
 		user = new User(username, password);
 		initializeSchedulableTypes();
+		user.retrieveData();
 		System.out.println("IN ATTEMPT LOGIN..." + username);
+		
 		Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 	}
 	
@@ -304,19 +309,21 @@ public class Intermediary {
 	}
 
 	/**
-	 * Changed to give errors for bad dates
-	 * Receives a bad time exception if dates are incorrect and reports the error to the user
+	 * This method attempts to add a new Schedulable Object to the current User and Trip
+	 * using information stored in the Communication Object at CURR_SCHEDULABLE_TYPE and
+	 * the unique codes generated for each of its entries.
+	 * 
+	 * Also processes the input to make sure its viable.
 	 */
+	
 	public void addSchedulable()
 	{
 		String header = Communication.get(CURR_SCHEDULABLE_TYPE);
-		System.out.println("G:" + header);
 		String[] titles = user.getSchedulableTypeTitles(header);
 		String[] data = new String[titles.length];
 		for(int i = 0; i < data.length; i++) {
 			data[i] = Communication.get(header + "_" + titles[i]);
 		}
-		System.out.println(Arrays.toString(titles) + "\n" + Arrays.toString(data));
 		try {
 			user.addSchedulableItem(Communication.get(CURR_TRIP), header, data);
 			Communication.set(CONTROL, CONTROL_SCHEDULABLE_SELECT);
@@ -330,14 +337,24 @@ public class Intermediary {
 //--- Getter Methods --------------------------------------------------------------------------
 
 	/**
-	 * Getter method to query the database for all entries associated to the current user.
+	 * Getter method to query the current user for all Trips associated to them.
 	 * 
-	 * @return - Returns a List<<r>String[]> object containing the Trips associated to the current User.
+	 * @return - Returns an ArrayList<<r>Trip> object containing the Trips associated to the current User.
 	 */
 	
 	public ArrayList<Trip> getUsersTrips() {
 		return user.getTrips();
 	}
+	
+	/**
+	 * Getter method to retrieve the titles of each Schedulable Type for which the user's
+	 * current trip has more than 0 Schedulable Objects associated to it.
+	 * 
+	 * Calls on the user to get all Schedulable Objects associated to that Schedulable Type,
+	 * and then checks if the returned ArrayList is empty or not.
+	 * 
+	 * @return - Returns an ArrayList<<r>String> object containing all Schedulable Type names for which the user's trip has Schedulable Objects.
+	 */
 	
 	public ArrayList<String> getSchedulableTypeHeaders(){
 		ArrayList<String> out = user.getSchedulableTypes();
@@ -351,6 +368,11 @@ public class Intermediary {
 	}
 		
 //---  Navigation   ---------------------------------------------------------------------------
+	
+	/**
+	 * This method navigates the Display to the landing screen of the program.
+	 * 
+	 */
 	
 	private void goToInitialScreen() {
 		display.resetView();
@@ -401,15 +423,34 @@ public class Intermediary {
 		display.makeTripScreen();
 	}
 
+	/**
+	 * This method navigates the Display to the makeMainScreen screen by hiding the current
+	 * panels in the WindowFrame and calling display.makeMainScreen(), passing to it the list
+	 * of all SchedulableTypes available to the user.  
+	 */
+	
 	private void goToMainScreen() {
 		display.resetView();
 		display.makeMainScreen(user.getSchedulableTypes());
 	}
 	
+	/**
+	 * This method navigates the Display to the schedulableSelect screen by hiding the
+	 * current panels in the WindowFrame and calling display.schedulableSelectScreen(),
+	 * passing to it the Strings of the current trip and schedulable type.  
+	 */
+	
 	public void goToSchedulableSelect() {
 		display.resetView();
 		display.schedulableSelectScreen(user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)));
 	}
+	
+	/**
+	 * This method navigates the Display to the schedulableCreation screen by hiding the
+	 * current panels in the WindowFrame and calling display.makeSchedulableScreen(), providing
+	 * it with the HashMap<<r>String, String> representing the data requisite for the current
+	 * schedulable type to be made by the user.
+	 */
 	
 	public void goToSchedulableCreation() {
 		display.resetView();

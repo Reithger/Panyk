@@ -98,6 +98,18 @@ public enum TableType {
 		System.out.println(sql);
 	}
 	
+	/**
+	 * This method generates an sql statement used to submit a new Table Type to the database
+	 * to create a new type of repository for information. Takes in two String[] objects, the
+	 * first to describe the title for each column in this new repository and the second to
+	 * define the data type of each.
+	 * 
+	 * @param tableTitle - String object representing the name of the new Table Type being added to the database
+	 * @param fieldsDyn - String[] representing the column titles for the new Table Type in the database
+	 * @param fieldTypesDyn - String[] representing the data types for each title in the new Table Type
+	 * @return - Returns a String object representing the generated sql statement.
+	 */
+	
 	public static String generateCreateTableSQL(String tableTitle, String[] fieldsDyn, String[] fieldTypesDyn) {
 		String sql = "CREATE TABLE " + tableTitle + "(";
 		for(int i = 0; i < fieldsDyn.length; i++) {
@@ -126,6 +138,20 @@ public enum TableType {
 		sql = sql + valueStr;
 		sqlInsertTable = sql;
 	}
+	
+	/**
+	 * This method creates the sql statement required to insert a new entry into the
+	 * database for a given Table Type with its column titles (provided separately).
+	 * 
+	 * Format is 'INSERT INTO [tableTitle] ([title1],[title2],...) (?,?,...)'
+	 * 
+	 * Used in tandem with another process that will fill in the '?' part using a
+	 * PreparedStatement object's .setString method. 
+	 * 
+	 * @param tableTitle - String object representing the Table Type being inserted into.
+	 * @param fieldsDyn - String[] representing the column titles for this Table Type
+	 * @return - Returns a String object representing the sql statement for inserting data into the database.
+	 */
 	
 	public static String generateCreateTableInsertionSQL(String tableTitle, String[] fieldsDyn) {
 		String sql = "INSERT INTO " + tableTitle + "(";

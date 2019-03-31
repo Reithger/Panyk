@@ -1,11 +1,14 @@
 package model.user;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
+import exceptions.BadTimeException;
 import controller.Encryptor;
 import database.*;
 import model.trip.Trip;
@@ -33,7 +36,7 @@ public class User {
 	private String username;
 	/** String object representing the provided password for decrypting data stored under the username heading*/
 	private String password;
-	
+	/** HashMap<<r>String, SchedulableType> object containing the Schedulable Types this user has access to*/
 	private HashMap<String, SchedulableType> scheduleTypes;
 	
 //---  Constructors   -------------------------------------------------------------------------
@@ -90,7 +93,6 @@ public class User {
 		password = passwordIn;
 		trips = new HashMap<String, Trip>();
 		scheduleTypes = new HashMap<String, SchedulableType>();
-		retrieveData();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -104,7 +106,7 @@ public class User {
 	 * @return - Returns a boolean value describing the success of retrieving and using data from the database. 
 	 */
 	
-	private void retrieveData() {
+	public void retrieveData() {
 		List<String[]> tripsIn = Database.search(TableType.trips, getUsername(), null, null, null, null, null);
 		ArrayList<Trip> out = new ArrayList<Trip>();
 		for(String[] rawData : tripsIn) {
@@ -172,10 +174,15 @@ public class User {
 	}
 	
 	/**
-	 * Adds a schedulable item, unless its dates are bad in which case it throws an error
+	 * This method adds a Schedulable Object, unless its dates are bad in which case it throws an error
 	 * and the user has to fix things and resubmit
 	 * 
+	 * @param tripName
+	 * @param type
+	 * @param data
+	 * @throws BadTimeException
 	 */
+	
 	public void addSchedulableItem(String tripName, String type, String ... data) throws BadTimeException
 	{
 		Trip theTrip = trips.get(tripName);
@@ -221,6 +228,14 @@ public class User {
 			trips.get(tripName).saveToDatabase(username);
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param header
+	 * @param titles
+	 * @param types
+	 */
 	
 	public void addSchedulableType(String header, String[] titles, String[] types) {
 		scheduleTypes.put(header, new SchedulableType(header, titles, types));
@@ -268,29 +283,59 @@ public class User {
 		return new ArrayList<Trip>(trips.values());
 	}
 	
+	/**
+	 * 
+	 * @param tripName
+	 * @param schedulableType
+	 * @return
+	 */
+	
 	public ArrayList<Schedulable> getSchedulables(String tripName, String schedulableType){
 		return trips.get(tripName).getSchedulables(schedulableType);
 	}
+
+	/**
+	 * 
+	 * @param header
+	 * @return
+	 */
 	
 	public String[] getSchedulableTypeTitles(String header) {
 		return scheduleTypes.get(header).getTitles();
 	}
 
+	/**
+	 * 
+	 * @param tripName
+	 * @param schedulableType
+	 * @return
+	 */
+	
 	public HashMap<String, DisplayData> getDisplaySchedulablesData(String tripName, String schedulableType){
 		HashMap<String, DisplayData> out = new HashMap<String, DisplayData>();
 		ArrayList<Schedulable> sched = getSchedulables(tripName, schedulableType);
 		
 		for(Schedulable sc : sched) {
 			DisplayData in = sc.getDisplayData(null);
-			System.out.println(sc.getData() + "\n" + in.getScheduleType());
 			out.put(in.getData("Name"), in);
 		}
 		return out;
 	}
 	
+	/**
+	 * 
+	 * @param schedulableType
+	 * @return
+	 */
+	
 	public HashMap<String, String> getCreateSchedulablesData(String schedulableType){
 		return scheduleTypes.get(schedulableType).getSchedulableFormatted();
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	
 	public ArrayList<String> getSchedulableTypes(){
 		return new ArrayList<String>(scheduleTypes.keySet());

@@ -20,7 +20,6 @@ public class SchedulableShortString implements Schedulable{
 	@Override
 	public DisplayData getDisplayData(DisplayData fill) {
 		fill.addData(title, data);
-		System.out.println(title + " " + data);
 		if(next == null)
 			return fill;
 		return next.getDisplayData(fill);
@@ -48,7 +47,6 @@ public class SchedulableShortString implements Schedulable{
 			next.setData(provTitle, in);
 	}
 
-
 	@Override
 	public String[] generateDataType(String[] append, int plc) {
 		append[plc] = title;
@@ -56,7 +54,6 @@ public class SchedulableShortString implements Schedulable{
 			return append;
 		return next.generateDataType(append, plc + 1);
 	}
-	
 
 	@Override
 	public String[] generateDataEntry(String[] append, int plc) {

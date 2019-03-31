@@ -2,6 +2,7 @@ package model.trip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -98,24 +99,27 @@ public class Trip {
 				types[0] = "username"; types[1] = "tripTitle";
 				data[0] = username; data[1] = getTitle();
 				success = Database.addEntry(s.getData().toString(), types, data);
-				if(!success) {
-					System.out.println("Failed Database Entry for " + username + " in trip " + getTitle() + ".");
-					return false;
-				}
 			}
 		}
 		return Database.addEntry(TableType.trips, username, getTitle(), getDestination(), simplifyDate(getStartDate()), simplifyDate(getEndDate()), getDescription());
 	}
 	
 	public void pullFromDatabase(String username, SchedulableType scheduleType) {
-		List<String[]> scheds = Database.search(scheduleType.getType(), scheduleType.getDataTypes(), new String[] {username, getTitle()});
+		String[] frstTit = scheduleType.getTitles();
+		String[] titles = new String[frstTit.length+2];
+		for(int i = 2; i < titles.length; i++) {
+			titles[i] = frstTit[i-2];
+		}
+		titles[0] = "username";
+		titles[1] = "tripTitle";
+		List<String[]> scheds = Database.search(scheduleType.getType(), titles, new String[] {username, getTitle()});
 		if(scheds == null || scheds.size() == 0)
 			return;
 		if(schedulables.get(scheduleType.getType()) == null) {
 			schedulables.put(scheduleType.getType(), new HashMap<String, Schedulable>());
 		}
 		for(String[] sc : scheds) {
-			ScheduledItem schedIt = new ScheduledItem(scheduleType, sc, 2);
+			ScheduledItem schedIt = new ScheduledItem(scheduleType, Arrays.copyOfRange(sc, 2, sc.length), 2);
 			schedulables.get(scheduleType.getType()).put(schedIt.getDisplayData(null).getData("Name"), schedIt);
 		}
 	}
@@ -265,7 +269,6 @@ public class Trip {
 		if(schedulables.get(type) == null) {
 			schedulables.put(type, new HashMap<String, Schedulable>());
 		}
-		System.out.println("H:" + type + " " + schedulables.get(type).toString());
 		schedulables.get(type).put(name, a);
 	}
 	

@@ -1,5 +1,6 @@
 package model.trip.schedule;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ScheduledItem implements Schedulable{

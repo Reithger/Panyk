@@ -28,9 +28,6 @@ public class Database {
 	public Database()
 	{
 		super();
-		FIELD_TYPE_CONVERT.put("lString", "varChar(300)");
-		FIELD_TYPE_CONVERT.put("sString", "varChar(60)");
-		FIELD_TYPE_CONVERT.put("Date", "varChar(10)");
 	}
 //---  Constant Values   ----------------------------------------------------------------------
 	
@@ -39,7 +36,6 @@ public class Database {
 	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
 	
-	public static final HashMap<String, String> FIELD_TYPE_CONVERT = new HashMap<String, String>();
 
 	
 //---  Static Variables   -------------------------------------------------------------------
@@ -51,6 +47,9 @@ public class Database {
 	
 	//keeping track of if the database has been d 
 	private static boolean db_is_initialized;
+	
+	public static HashMap<String, String> FIELD_TYPE_CONVERT;
+
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -68,9 +67,15 @@ public class Database {
 		
 		name = DB_NAME;
    	 	connection = null;
+
+		FIELD_TYPE_CONVERT = new HashMap<String, String>();
+		FIELD_TYPE_CONVERT.put("lString", "varChar(300)");
+		FIELD_TYPE_CONVERT.put("sString", "varChar(60)");
+		FIELD_TYPE_CONVERT.put("Date", "varChar(10)");
 		
         connect();
 
+        
         if (connection != null) {
             System.out.println("connected to database --> "+ DB_DIRECTORY + name + ".db");
 
@@ -83,9 +88,13 @@ public class Database {
 	        		if(getTable(table.toString()) == null) {
 							state.execute(table.sqlCreateTable);
 	        		}
+	        		else {
+	        			System.out.println("Attempted to Add Duplicate Database Entry of Type " + table.toString() + ".");
+	        		}
 	        	}
         	}
 			catch(Exception e) {
+				e.printStackTrace();
         		System.out.println(e.getMessage());
         	}
         }
@@ -94,6 +103,15 @@ public class Database {
         	db_is_initialized = false;
         }
 	}
+	
+	/**
+	 * Method that takes dynamic Table Types retrieved from the metaFields database table
+	 * and adds them to the Database as tables for adding Schedulables to.
+	 *  
+	 * @param tableType - String object representing which database table to include (the header name of this table type)
+	 * @param fields - String[] representing the title of each database column
+	 * @param fieldTypes - String[] representing the data type (varChar(60), etc.) for each database column
+	 */
 	
 	public static void includeTableType(String tableType, String[] fields, String[] fieldTypes) {
 		if(!db_is_initialized) {
@@ -105,6 +123,7 @@ public class Database {
 			return;
 		}
 		if(getTable(tableType) != null) {
+			System.out.println(tableType + " already extant during includeTableType");
 			return;
 		}
 		String[] convert = new String[fieldTypes.length];
@@ -116,7 +135,7 @@ public class Database {
 		Statement state = null;
 		try {
 			state = connection.createStatement();
-			state.execute(sqp);
+    		state.execute(sqp);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -268,8 +287,18 @@ public class Database {
 		return true;
 	}
 	
+	/**
+	 * This method adds an entry into the table described by tableTitle, using the String[]
+	 * types as the header for each column in that tableTitle table from the database and
+	 * the String[] values representing the data to be stored therein.
+	 * 
+	 * @param tableTitle - String object representing the table in the database to interact with
+	 * @param types - String[] object representing the headers for which values should be added in the database
+	 * @param values - String[] object representing the values to be added to corresponding column headers in the database
+	 * @return - returns a Boolean value representing the result of this operation.
+	 */
+	
 	public static boolean addEntry(String tableTitle, String[] types, String[] values) {
-		System.out.println(tableTitle + "\n" + Arrays.toString(types) + "\n" + Arrays.toString(values));
 		if(!db_is_initialized) {
 			initialize();
 		}
@@ -449,7 +478,6 @@ public class Database {
 				}
 			}
 			sqlSearch += ";";
-			System.out.println(sqlSearch);
 			if(nullCount != searchKeys.length) {
 				Statement state = null;
 				try {
@@ -471,17 +499,31 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * This method queries the database in the specified tableType section given the defined
+	 * fields and values for each to narrow down the results by. If fields is longer than
+	 * search, then the extraneous field terms are left out.
+	 * 
+	 * @param tableType - String object representing the table in the database to interact with
+	 * @param fields - String[] containing the column headers for each piece of data stored in this table in the database
+	 * @param search - String[] containing the search terms for each column header to possess when searching
+	 * @return - Returns a List<String[]> object containing a list of all matching rows in the database
+	 */
+	
 	public static List<String[]> search(String tableType, String[] fields, String[] search){
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
 		try {
 			String sqlSearch = "SELECT * FROM " + tableType + (fields.length == 0 ? "" : " WHERE");
 			boolean priorSearch = false;
 			ResultSet result = null;
 			for(int i = 0; i < fields.length; i++) {
 				if(fields[i] != null) {
-					if(priorSearch) {
-						sqlSearch += " AND";
-					}
-					sqlSearch += " '" + fields[i].replaceAll(" ", "_") + "'='" + search[i].replaceAll(" ", "_") + "'";
+					if(i < search.length) 
+						sqlSearch += (priorSearch ? " AND" : "") + " " + fields[i].replaceAll(" ", "_") + "='" + search[i].replaceAll(" ", "_") + "'";
+					
 					priorSearch = true;
 				}
 			}
@@ -489,7 +531,6 @@ public class Database {
 			Statement state = null;
 			try {
 				state = connection.createStatement();
-				System.out.println("Quer: " + sqlSearch);
 				result = state.executeQuery(sqlSearch);
 				return ResultSetToList(result);
 			}

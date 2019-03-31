@@ -78,7 +78,7 @@ public class SchedulableDate implements Schedulable{
 
 	@Override
 	public String[] generateDataType(String[] append, int plc) {
-		append[plc] = title;
+		append[plc] =  title;
 		if(next == null)
 			return append;
 		return next.generateDataType(append, plc + 1);
