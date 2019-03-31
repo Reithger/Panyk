@@ -25,7 +25,7 @@ Picked Up By: Nick - in progress
 Class(es):
 Details: Finish getting current format saving to the database/retrieving properly between instances of the program being used 
 Posted By: Mac
-Picked Up By: Regan?
+Picked Up By: Mac - works now
 
 
 
@@ -37,7 +37,7 @@ Picked Up By:
 Class(es):
 Details:Schedulables not being displayed after logging out and then logging in again
 Posted By: Nick
-Picked Up By: Nick
+Picked Up By: Mac - works now
 
 Class(es):Display
 Details:Create
