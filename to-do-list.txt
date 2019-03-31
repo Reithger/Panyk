@@ -46,6 +46,7 @@ Picked Up By: Nick
 
 Class(es):
 Details: text overruns in boxes - need to limit size of inputs, and size of displayed strings
+Related: overflows of boxes listing reservations, transportations and accomodations
 Posted By: Nick
 Picked Up By:
 
