@@ -372,7 +372,10 @@ public class Display {
 		display.addPanel("Trip Select", mainScreen);
 	}
 	
-	public void schedulableSelectScreen(HashMap<String, DisplayData> data) {
+	public void schedulableSelectScreen(HashMap<String, DisplayData> data, int pagenum) 
+	{
+		System.out.println("\n \n \n called \n \n \n");
+		String scheduleType = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
 		
 		ElementPanel rS = new ElementPanel(0, 0, width, height){
 			public void clickBehaviour(int event) {
@@ -382,11 +385,21 @@ public class Display {
 					else if(event == EVENT_GO_TO_SELECT_TRIP) {
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 					}
+					else if(event == EVENT_NEXT_PAGE) {
+						
+						resetView();
+						schedulableSelectScreen(data, pagenum+1);//this is ugly, but pagenum++ throws a strange error
+					}
+					else if(event == EVENT_PREV_PAGE) {
+						resetView();
+						schedulableSelectScreen(data, pagenum-1);
+					}
+					
 				}
 			}
 		};
 				
-		String scheduleType = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
+		
 		
 		designTwoColorBorder(rS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
@@ -396,10 +409,51 @@ public class Display {
 		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
 		designReactiveButton(rS, "create_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New " + scheduleType + "!", width*4/30, height*3/20, width/7, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE, true);
 		
-		displayItemList(rS, scheduleType, data);		//Display list of stored reservations
-		
+		//displayItemList(rS, scheduleType, data, 0);		//Display list of stored reservations - start from page 0
 		display.addPanel("Reservations", rS);
+		/**
+		 * below used to be a helper method, but needed to be called recursively to go forward or back to more schedulables
+		 * So now it's one really big method and the behaviour can be set appropriately and pagecount can be accessed easily
+		 */
+		designTwoColorBorder(rS, "border_in", COLOR_WHITE, COLOR_BLACK, width/6, height /4, width*2/3, height/2, 50, 30, 1, false);
+		int scheds;// the number of schedulables that will be displayed
+		if((data.keySet().size() - pagenum*MAX_VIS_LIST_ITEMS) > MAX_VIS_LIST_ITEMS)//if there are too many of this thing to fit on the page
+		{
+			scheds = MAX_VIS_LIST_ITEMS;//present the maximum number we're able to show with the current window style (currently 3)
+		}
+		else//otherwise
+		{
+			scheds = data.keySet().size() - (pagenum*MAX_VIS_LIST_ITEMS);//just show all the schedulables here
+		}
+		
+		int itemnum;//variable to keep track of which schedulable in the chronological order this one is
+		if(data.keySet().size()!=0)// so long as there actually are schedulables to print
+		{
+			for(int i = 0; i < scheds; i++) //show all the schedulables for the page with correct placement and info
+			{
+				ArrayList<String> key = new ArrayList<String>(data.keySet());
+				itemnum = (MAX_VIS_LIST_ITEMS*pagenum) + i;
+				
+				DisplayData map = data.get(key.get(itemnum));
+				designReactiveButton(rS, "trip_"+itemnum, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, map.getData("Name"), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+itemnum, true);
+				rS.addText("trip_desc_"+itemnum, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Description"), FONT_ENTRY, true);
+				rS.addText("trip_date_"+itemnum, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Start Date") + " - " + map.getData("End Date"), FONT_ENTRY, true);
+			}
+		}
+		
+		
+		if(pagenum!=0)
+		{
+			designReactiveButton(rS, "prev", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Previous", 2*width/5, height * 10 / 12, width/12, height/20, 4, EVENT_PREV_PAGE, true);
+		}
+		if((MAX_VIS_LIST_ITEMS*pagenum + scheds)<data.keySet().size())
+		{
+			designReactiveButton(rS, "next", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Next", 3*width/5, height * 10 / 12, width/12, height/20, 3, EVENT_NEXT_PAGE, true);
+			
+		}
+		
 	}
+
 	
 	public void makeSchedulableScreen(HashMap<String, String> data) {
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
@@ -491,36 +545,6 @@ public class Display {
 		}
 	}
 	
-	/**
-	 * This method creates a vertical list of items (reservations, accommodations, transportations) that
-	 * are displayed to the user; the information provided is specified by a provided list object and an
-	 * ordered set of indexes to direct the retrieval of data from.
-	 * 
-	 * The consistent design is a rectangular region with the title of the item displayed centrally, with
-	 * the range of dates to the lower left and its description to the lower right.
-	 * 
-	 * TODO: when number of items overloads the given space, need slider for further display (or page switch)
-	 * 
-	 * @param e - ElementPanel object representing the visual panel to which these composite elements are being added. 
-	 * @param sl - List<<r>String[]> object containing the data that is being selectively chosen from 
-	 * @param titlePos - int value representing the index in sl that corresponds to the title data
-	 * @param startPos - int value representing the index in sl that corresponds to the start date data
-	 * @param endPos - int value representing the index in sl that corresponds to the end date data
-	 * @param otherPos - int value representing the index in sl that corresponds to a variable piece of data
-	 */
-	
-	public void displayItemList(ElementPanel e, String scheduleType, HashMap<String, DisplayData> data){
-		designTwoColorBorder(e, "border_in", COLOR_WHITE, COLOR_BLACK, width/6, height /4, width*2/3, height/2, 50, 30, 1, false);
-		
-		for(int i = 0; i < data.keySet().size(); i++) {
-			ArrayList<String> key = new ArrayList<String>(data.keySet());
-			DisplayData map = data.get(key.get(i));
-			designReactiveButton(e, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, map.getData("Name"), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
-			e.addText("trip_desc_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Description"), FONT_ENTRY, true);
-			e.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, map.getData("Start Date") + " - " + map.getData("End Date"), FONT_ENTRY, true);
-		}	
-	}
-
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	/**
