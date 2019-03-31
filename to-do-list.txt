@@ -18,7 +18,7 @@ Picked Up By:
 Class(es):-
 Details: Format for user input isn't checking for valid date. e.g. 55/27/7873
 Posted By: Sienna
-Picked Up By: Nick - completed
+Picked Up By: Nick - in progress
 
 
 
@@ -37,7 +37,7 @@ Picked Up By:
 Class(es):
 Details:Schedulables not being displayed after logging out and then logging in again
 Posted By: Nick
-Picked Up By: Nick - in progress
+Picked Up By: Nick
 
 Class(es):Display
 Details:Create
