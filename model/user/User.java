@@ -207,14 +207,13 @@ public class User {
 			catch(ParseException pe) {
 				//do nothing because most fields won't be dates and thats fine
 			}
-			
-			if((d2!=null && d1!=null && d2.before(d1)) || numDates!=2)//if you plan on traveling backwards in time our application does not currently support that
-			{
-				okToSave=false;
-				throw e;
-				
-			}
 
+		}
+		if((d2!=null && d1!=null && d2.before(d1)) || numDates!=2)//if you plan on traveling backwards in time our application does not currently support that
+		{
+			okToSave=false;
+			throw e;
+				
 		}
 		if(okToSave)//if appropriate, save the item
 		{
