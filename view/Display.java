@@ -91,9 +91,15 @@ public class Display {
 	private static final int EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE = 62;
 	/** */
 	private final static int EVENT_GO_TO_ITEM = 20;		//TODO: This a very duct tape and bubble gum solution, should make robust 
+	
+	private final static int EVENT_NEXT_PAGE = 62;
+	
+	private final static int EVENT_PREV_PAGE = 63;
 
 	/** This is not a limitation of how many elements can be in a composite, increase if you need more space; handles priority room*/
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
+	
+	private static final int MAX_VIS_LIST_ITEMS=3;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
