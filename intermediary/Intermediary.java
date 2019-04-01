@@ -442,7 +442,7 @@ public class Intermediary {
 	
 	public void goToSchedulableSelect() {
 		display.resetView();
-		display.schedulableSelectScreen(user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)));
+		display.schedulableSelectScreen(user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)), 0);
 	}
 	
 	/**
