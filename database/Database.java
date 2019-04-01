@@ -36,8 +36,6 @@ public class Database {
 	/** static final database name -> so that other classes can access the database */
 	public static final String DB_NAME = "PLEIN_AIR_DATABASE";
 	
-
-	
 //---  Static Variables   -------------------------------------------------------------------
 	
 	/** */
@@ -325,7 +323,7 @@ public class Database {
 			}
 			PreparedStatement prep = connection.prepareStatement(TableType.generateCreateTableInsertionSQL(tableTitle, types));
 			for(int i = 0; i < values.length; i++) {
-				prep.setString(i + 1, values[i].replaceAll(" ", "_"));
+				prep.setString(i + 1, values[i].replaceAll(" ", " "));
 			}
 			prep.executeUpdate();
 		} catch(Exception e) {
@@ -405,6 +403,7 @@ public class Database {
 	 * @param searchKeys		the search keys to find the entry you want to edit
 	 * @return
 	 */
+
 	public static boolean editEntry(TableType table, int editIndex, String newValue, String... searchKeys) {
 		List<String[]> old_entry = search(table, searchKeys);
 		if(old_entry.size() == 0) {
@@ -592,6 +591,3 @@ public class Database {
 	} 
 	
 }//end class DataBase---------------------------------------------------------------------------------------------------------
-
-
-

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import database.Database;
 import database.TableType;
 import model.trip.feature.Feature;
@@ -37,33 +36,39 @@ public class Trip {
 	
 //---  Constant Values   ----------------------------------------------------------------------
 	
+	/** String[] constant containing the months of the year for converting Date formats from Text to Numerical*/
 	private final static String[] MONTHS = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** */
+	/** String object representing the title of this Trip object*/
 	private String title;
-	/** */
+	/** Date object describing the start Date of this Trip object*/
 	private Date start;
-	/** */
+	/** Date object describing the end Date of this Trip object*/
 	private Date end;
-	/** */
+	/** String object containing a description of this Trip object*/
 	private String description;
-	/** */
-	private String destination;		//Client specified that this is a custom descriptor from the user
-	/** */
+	/** String object containing the destination for this Trip object*/
+	private String destination;
+	/** HashMap<<r>String, Feature> object containing all attributed Feature objects to this Trip object, accessed via their name*/
 	private HashMap<String, Feature> features;
-	/** Schedulable Type -> Set of <Item name, Item object>*/
+	/** HashMap<<r>String, HashMap<<r>String, Schedulable>> object containing a HashMap of Schedulable objects for each Schedulable Type*/
 	private HashMap<String, HashMap<String, Schedulable>> schedulables;
 	
 //---  Constructors   -------------------------------------------------------------------------
 
 	/**
+	 * Constructor for objects of the Trip type that receives information to initialize the Trip: a
+	 * name, a destination, a description, and Start/End dates.
 	 * 
-	 * @param inTitle
-	 * @param inStart
-	 * @param inEnd
-	 * @param inDescribe
+	 * Ensures provided dates are in dd/MM/yyyy format.
+	 * 
+	 * @param inTitle - String object representing the title to be assigned to this Trip object
+	 * @param inDestination - String object representing the destination to be assigned to this Trip object
+	 * @param inDescription - String object representing the description to be assigned to this Trip object
+	 * @param inStart - String object representing the Start Date to be assigned to this Trip object, interpreted as dd/MM/yyyy
+	 * @param inEnd - String object representing the End Date to be assigned to this Trip object, interpreted as dd/MM/yyyy
 	 */
 	
 	public Trip(String inTitle, String inDestination, String inDescription, String inStart, String inEnd){
@@ -85,24 +90,38 @@ public class Trip {
 //---  Operations   ---------------------------------------------------------------------------
 	
 	/**
+	 * This method instructs this Trip object to process all of the Schedulable Objects stored
+	 * by this Trip to a format that can be saved to the Database, and then store them all to
+	 * the Database. Similarly, the Trip object itself is processed and saved as well.
 	 * 
-	 * 
-	 * @param username
+	 * @param username - String object informing us of the User under which this Trip object should save its Schedulables and itself
 	 */
 	
 	public boolean saveToDatabase(String username) {
-		boolean success = true;
 		for(String title : schedulables.keySet()) {
 			for(Schedulable s : schedulables.get(title).values()) {
 				String[] types = s.generateDataType(null, 0);
 				String[] data = s.generateDataEntry(null, 0);
 				types[0] = "username"; types[1] = "tripTitle";
 				data[0] = username; data[1] = getTitle();
-				success = Database.addEntry(s.getData().toString(), types, data);
+				Database.addEntry(s.getData().toString(), types, data);
 			}
 		}
 		return Database.addEntry(TableType.trips, username, getTitle(), getDestination(), simplifyDate(getStartDate()), simplifyDate(getEndDate()), getDescription());
 	}
+	
+	/**
+	 * This method instructs the Trip to access the Database to receive specific Schedulable Object data
+	 * corresponding to the provided username, the Trip's title, and being of the type specified by the
+	 * provided SchedulableType object.
+	 * 
+	 * The received data is processed to generate Schedulable Objects that are stored by this Trip object.
+	 * 
+	 * SchedulableType objects do not store the User and Trip information, so this function also prepends those.
+	 * 
+	 * @param username - String object representing the User under which this Trip and the desired Schedulables exist.
+	 * @param scheduleType - SchedulableType object informing this Trip as to what kind of Schedulables to search for.
+	 */
 	
 	public void pullFromDatabase(String username, SchedulableType scheduleType) {
 		String[] frstTit = scheduleType.getTitles();
@@ -238,6 +257,14 @@ public class Trip {
 		return destination;
 	}
 	
+	/**
+	 * This method requests a list of Schedulable objects corresponding to the defined Schedulable Type
+	 * that are stored by this Trip object.
+	 * 
+	 * @param schedType - String object representing the type of Schedulable objects to retrieve
+	 * @return - Returns an ArrayList<<r>Schedulable> containing the Schedulable objects corresponding to the defined Schedulable Type
+	 */
+	
 	public ArrayList<Schedulable> getSchedulables(String schedType){
 		ArrayList<Schedulable> out = new ArrayList<Schedulable>();
 		if(schedulables.get(schedType) == null) {
@@ -260,9 +287,13 @@ public class Trip {
 	}
 	
 	/**
+	 * This method takes the provided information to add a new Schedulable object to this Trip's
+	 * storage, using the given name and type to find the correct location to store the provided
+	 * Schedulable object.
 	 * 
-	 * @param name
-	 * @param a
+	 * @param name - String object representing the name of the new Schedulable object
+	 * @param type - String object representing the Schedulable Type of the new Schedulable object
+	 * @param a - Schedulable object that is being added to this Trip object for storage/later access
 	 */
 	
 	public void addScheduledItem(String name, String type, Schedulable a) {
@@ -275,7 +306,7 @@ public class Trip {
 //---  Remover Methods   ----------------------------------------------------------------------
 	
 	public void deleteTrip() {
-		//TODO
+		//TODO Has to be able to remove stuff from the database
 	}
 	
 	/**
@@ -301,10 +332,28 @@ public class Trip {
 	
 //---  Mechanics   ----------------------------------------------------------------------------
 	
+	/**
+	 * This method processes the large quantity of data given by a Date object to
+	 * only use the relevant information in the desired format.
+	 * 
+	 * @param in - Date object whose information needs to be processed and simplified for display
+	 * @return - Returns a String object representing the simplified information derived from the Date object
+	 */
+	
 	public String simplifyDate(Date in) {
 		String[] hold = in.toString().split(" ");
 		return hold[2] + "/" + indexOf(MONTHS, hold[1]) + "/" + hold[5];
 	}
+
+	/**
+	 * This method lets us do the array thing where we find where something is that for some reason
+	 * isn't just a default functionality; so many projects need a method like this for convenience,
+	 * make it official you cowards.
+	 * 
+	 * @param arr - String[] that is being searched through for the key value 
+	 * @param key - String object representing the term we are looking for in the String[] arr
+	 * @return - Returns an int value representing the location in arr that key is, or -1 if it is not present.
+	 */
 	
 	public int indexOf(String[] arr, String key) {
 		for(int i = 0; i < arr.length; i++)

@@ -3,7 +3,6 @@ package model.user;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,12 +44,10 @@ public class User {
 	 * Constructor for objects of the User type that creates an entry in the database for this User using
 	 * the provided input to the constructor; input is assumed to be perfect.
 	 * 
-	 * TODO: Handle bad input
-	 * 
-	 * @param fname - String object representing the First Name of this user
-	 * @param lname - String object representing the Last Name of this user
-	 * @param usernameIn - String object representing the Username of this user
-	 * @param passwordIn - String object representing the Password of this user
+	 * @param fname - String object representing the First Name of this new User
+	 * @param lname - String object representing the Last Name of this new User
+	 * @param usernameIn - String object representing the Username of this new User
+	 * @param passwordIn - String object representing the Password of this new User
 	 */
 	
  	public User(String fname, String lname, String usernameIn, String passwordIn){
@@ -99,11 +96,8 @@ public class User {
 	
 	/**
 	 * This method accesses the database entries associated to this User and constructs Trip
-	 * objects from that data for display/manipulation. 
-	 * 
-	 * TODO: this!
-	 * 
-	 * @return - Returns a boolean value describing the success of retrieving and using data from the database. 
+	 * objects from that data for display/manipulation, storing that information as instance
+	 * variables across the breadth of the Model.
 	 */
 	
 	public void retrieveData() {
@@ -122,7 +116,10 @@ public class User {
 	}
 	
 	/**
-	 * This method should create a new Trip object for the User to design/have access to.
+	 * This method creates a new Trip object for the User to design/have access to, and saves
+	 * it to the database.
+	 * 
+	 * @return - Returns a boolean value representing whether or not the Trip was added successfully
 	 */
 	
 	public boolean makeTrip(String title, String destination, String description, String dateStart, String dateEnd) {
@@ -141,6 +138,7 @@ public class User {
 	
 	/**
 	 * This method should delete the defined Trip object from the list stored by this User.
+	 * 
 	 * TODO: Do this, make sure we have confirmation messages before deletion But confirmation is
 	 * not handled by the User object, it is handled by the user interface.
 	 */
@@ -212,6 +210,7 @@ public class User {
 				}
 			}
 			catch(ParseException pe) {
+				pe.printStackTrace();
 				//do nothing because most fields won't be dates and thats fine
 			}
 
@@ -230,11 +229,13 @@ public class User {
 	}
 	
 	/**
+	 * This method takes in descriptive input to create a new SchedulableType object for
+	 * the User to have access to in prompting the program user when creating SchedulableType
+	 * objects.
 	 * 
-	 * 
-	 * @param header
-	 * @param titles
-	 * @param types
+	 * @param header - String object representing the name of the Schedulable Type
+	 * @param titles - String[] containing the labels for each piece of data stored by this Schedulable Type
+	 * @param types - String[] containing the data types for each piece of data stored by this Schedulable Type
 	 */
 	
 	public void addSchedulableType(String header, String[] titles, String[] types) {
@@ -275,8 +276,9 @@ public class User {
 	}
 
 	/**
+	 * Getter method that requests a list of the Trip objects stored to this User object
 	 * 
-	 * @return
+	 * @return - Returns an ArrayList<<r>Trip> object containing all extant Trip objects for this User object
 	 */
 	
 	public ArrayList<Trip> getTrips(){
@@ -284,10 +286,12 @@ public class User {
 	}
 	
 	/**
+	 * Getter method to retrieve a list of all Schedulables associated to a defined Trip that
+	 * come under the defined SchedulableType (i.e., all Accommodations, all Reservations, etc.)
 	 * 
-	 * @param tripName
-	 * @param schedulableType
-	 * @return
+	 * @param tripName - String object representing the Trip of this User to request the Schedulable objects from
+	 * @param schedulableType - String object representing which Schedulable objects are viable to be returned
+	 * @return - Returns an ArrayList<<r>Schedulable> object containing all Schedulables of type schedulableType
 	 */
 	
 	public ArrayList<Schedulable> getSchedulables(String tripName, String schedulableType){
@@ -295,9 +299,16 @@ public class User {
 	}
 
 	/**
+	 * Getter method to retrieve a String[] of the labels for each piece of data stored by
+	 * Schedulable Objects of a type defined by the input 'header'. These would be user-friendly
+	 * descriptors of the data in the Schedulable Type described by the input, with terms such
+	 * as 'Name' or 'Start Date'.
 	 * 
-	 * @param header
-	 * @return
+	 * It functions by retrieving the SchedulableType object stored by the User object and having
+	 * it provide this information directly.
+	 * 
+	 * @param header - String object representing the SchedulableType to retrieve the titles thereof.
+	 * @return - Returns a String[] containing the titles of the data in the defined SchedulableType
 	 */
 	
 	public String[] getSchedulableTypeTitles(String header) {
@@ -305,10 +316,17 @@ public class User {
 	}
 
 	/**
+	 * Getter method to request a HashMap<String, DisplayData> containing the title of specific
+	 * Schedulable objects leading to a DisplayData object that can be conveniently used for
+	 * accessing its data by specific data titles (such as 'Name' or 'Start Date').
 	 * 
-	 * @param tripName
-	 * @param schedulableType
-	 * @return
+	 * It requests a list of all Schedulables in the defined Trip of the defined SchedulableType
+	 * and has those objects generate their DisplayData object via a recursive Wrapper method
+	 * used for Schedulable objects.
+	 * 
+	 * @param tripName - String object representing the Trip to retrieve Schedulables from
+	 * @param schedulableType - String object representing the SchedulableType for which all retrieved Schedulables should be a type of
+	 * @return - Returns a HashMap<<r>String, DisplayData> object containing entries for each viable Schedulable object in the defined Trip
 	 */
 	
 	public HashMap<String, DisplayData> getDisplaySchedulablesData(String tripName, String schedulableType){
@@ -323,9 +341,16 @@ public class User {
 	}
 	
 	/**
+	 * Getter method to access a pairing of each title for the data in a specified SchedulableType
+	 * object to the type of data that represents it; i.e., for the title 'Name', the generated
+	 * HashMap<<r>String, String> would lead to 'sString' to define it as a 'short String' type
+	 * of stored data.
 	 * 
-	 * @param schedulableType
-	 * @return
+	 * Used for specifying what data is desired for the creation of a Schedulable object; a title
+	 * to label the kind of input and a dataType for its interpretation/implementation of a receiver.
+	 * 
+	 * @param schedulableType - String object representing the desired kind of SchedulableType to retrieve the titles and types of
+	 * @return - Returns a HashMap<<r>String, String> object containing the titles of the stored data leading to their types
 	 */
 	
 	public HashMap<String, String> getCreateSchedulablesData(String schedulableType){
@@ -333,8 +358,9 @@ public class User {
 	}
 	
 	/**
+	 * Getter method to request a list of all SchedulableType objects associated to this User object.
 	 * 
-	 * @return
+	 * @return - Returns an ArrayList<<r>String> object containing all the SchedulableType objects that this User object possesses.
 	 */
 	
 	public ArrayList<String> getSchedulableTypes(){

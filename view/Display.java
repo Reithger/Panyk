@@ -342,6 +342,16 @@ public class Display {
 		
 		display.addPanel("Trip Creation", tripCreate);
 	}
+	
+	/**
+	 * This method designs the screen that displays to the user what Schedulable objects can be generated,
+	 * and acts as a general 'hub' for accessing/using a Trip object.
+	 * 
+	 * Has access to the Header tab that allows transitioning between different screens via Schedulable Types
+	 * and potentially Features.
+	 * 
+	 * @param scheduleTypes - ArrayList<<r>String> object containing the viable Schedulable Type objects
+	 */
 
 	public void makeMainScreen(ArrayList<String> scheduleTypes) {
 		ElementPanel mainScreen = new ElementPanel(0, 0, width, height) {
@@ -377,6 +387,21 @@ public class Display {
 
 		display.addPanel("Trip Select", mainScreen);
 	}
+	
+	/**
+	 * This method designs the screen that displays to the user what Schedulable objects are extant for
+	 * the current SchedulableType for this program. It only displays a subset of the total number of
+	 * Schedulable objects, the location of that subset in the full set of Schedulable objects being
+	 * defined by the provided int pagenum.
+	 * 
+	 * Can also create a new Schedulable object of the current type from this screen.
+	 * 
+	 * Has access to the Header tab that allows transitioning between different screens via Schedulable Types
+	 * and potentially Features.
+	 * 
+	 * @param data
+	 * @param pagenum
+	 */
 	
 	public void schedulableSelectScreen(HashMap<String, DisplayData> data, int pagenum) 
 	{
@@ -459,8 +484,17 @@ public class Display {
 		}
 		
 	}
-
 	
+	/**
+	 * This method designs the screen that facilitates the creation of a new Schedulable object by
+	 * providing the user with a series of text fields to fill, each attributed to a label for the
+	 * kind of data they should be providing.
+	 * 
+	 * Can return to Schedulable Select screen from here.
+	 * 
+	 * @param data - HashMap<<r>String, String> object containing the data fields and their types for making the current Schedulable Object
+	 */
+
 	public void makeSchedulableScreen(HashMap<String, String> data) {
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -540,6 +574,15 @@ public class Display {
 		display.addPanel("Res Creation", mR);
 	}
 	
+	/**
+	 * This method handles the inclusion of a header-strip at the top of the screen which allows the
+	 * user to transition to a new screen as described by that portion of the header.
+	 * 
+	 * It's a tab system for navigation.
+	 * 
+	 * @param e - ElementPanel object to which this header will be added on to
+	 */
+	
 	public void addHeaderTabs(ElementPanel e){
 		ArrayList<String> headers = new ArrayList<String>();
 		headers.add(Intermediary.CONTROL_MAIN_SCREEN);
@@ -571,8 +614,6 @@ public class Display {
 	 * To mesh with other input-interpretations by specific screens, this method
 	 * returns a boolean value informing the calling method whether or not a Control
 	 * value was assigned here.
-	 * 
-	 * TODO If Header tabs are made dynamic, make this respect that
 	 * 
 	 * @param event - int value representing the user's mouse input as a coded value to be interpreted
 	 * @return - Returns a boolean value representing whether the event triggered a Control value to be assigned or not.

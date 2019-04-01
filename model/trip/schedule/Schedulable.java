@@ -1,5 +1,16 @@
 package model.trip.schedule;
 
+/**
+ * This interface describes the behavior of any class that implements it, requiring that
+ * they behave in a way which facilitates their usage as a Wrapper Structure for having
+ * Schedulable objects be dynamic in what information they store.
+ * 
+ * Each class that implements this defines a data type 
+ *  
+ * @author Mac Clevinger
+ *
+ */
+
 public interface Schedulable {
 
 //---  Getter Methods   -----------------------------------------------------------------------
