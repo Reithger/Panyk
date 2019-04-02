@@ -2,11 +2,13 @@ package intermediary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import database.Database;
 import input.Communication;
 import model.trip.Trip;
+import model.trip.schedule.DisplayData;
 import model.user.User;
 import view.Display;
 import exceptions.BadTimeException;
@@ -50,6 +52,7 @@ public class Intermediary {
 	public final static String CONTROL_SCHEDULABLE_SELECT = "select_Sched_nav";
 	public final static String CONTROL_SCHEDULABLE_CREATION = "create_Sched_nav";
 	public final static String CONTROL_ATTEMPT_SCHEDULABLE_CREATE = "create_Sched_act";
+	public final static String CONTROL_SCHED_SCREEN = "see_Sched";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -75,6 +78,7 @@ public class Intermediary {
 	public final static String CURR_TRIP = "current_trip";
 	public final static String CURR_SCHEDULABLE_TYPE = "current_sched";
 	public final static String CURR_SCHEDULABLE_TITLES = "schedulable_titles";
+	public final static String CURR_SCHED = "-1";
 	
 	private final static String SCHEDULABLE_META_FIELD_LABEL = "metaField";
 	private final static String[] SCHEDULABLE_META_FIELD_TYPES = new String[] {"sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString"};
@@ -149,6 +153,8 @@ public class Intermediary {
 				goToSchedulableSelect(); break;
 			case CONTROL_SCHEDULABLE_CREATION:		//Orders display to show the schedulable creation screen
 				goToSchedulableCreation(); break;
+			case CONTROL_SCHED_SCREEN:
+				goToSchedScreen(); break;
 			case CONTROL_MAIN_SCREEN:				//Orders display to show the main screen
 				goToMainScreen(); break;
 			default: break;
@@ -460,6 +466,20 @@ public class Intermediary {
 			out += titles[i] + (i+1 < titles.length ? "   " : "");	//TODO Constant value for the splitter here
 		Communication.set(CURR_SCHEDULABLE_TITLES, out);
 		display.makeSchedulableScreen(user.getCreateSchedulablesData(Communication.get(CURR_SCHEDULABLE_TYPE)));
+	}
+	
+	/**
+	 * method to go to a pre-existing schedulable and either edit or delete it - still a work in progress
+	 */
+	public void goToSchedScreen() {
+		display.resetView();
+		String[] titles = user.getSchedulableTypeTitles(Communication.get(CURR_SCHEDULABLE_TYPE));
+		String out = "";
+		for(int i = 0; i < titles.length; i++)
+			out += titles[i] + (i+1 < titles.length ? "   " : "");	//TODO Constant value for the splitter here
+		Communication.set(CURR_SCHEDULABLE_TITLES, out);
+		// TODO: line below is inefficient, refactor if at all possible
+		display.schedScreen(user.getCreateSchedulablesData(Communication.get(CURR_SCHEDULABLE_TYPE)), user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)), Integer.valueOf(Communication.get(CURR_SCHED)));
 	}
 		
 //---  Mechanics   ----------------------------------------------------------------------------	
