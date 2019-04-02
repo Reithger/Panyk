@@ -90,16 +90,20 @@ public class Display {
 	
 	private static final int EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE = 62;
 	/** */
-	private final static int EVENT_GO_TO_ITEM = 20;		//TODO: This a very duct tape and bubble gum solution, should make robust 
+	private final static int EVENT_GO_TO_ITEM = 10000;		//this has to be the biggest by far to allow for the check done in listing the trips
 	
-	private final static int EVENT_NEXT_PAGE = 62;
+	//TODO: This a very duct tape and bubble gum solution, should make robust 
 	
-	private final static int EVENT_PREV_PAGE = 63;
+	private final static int EVENT_NEXT_PAGE = 63;
+	
+	private final static int EVENT_PREV_PAGE = 64;
 
 	/** This is not a limitation of how many elements can be in a composite, increase if you need more space; handles priority room*/
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
 	
 	private static final int MAX_VIS_LIST_ITEMS=3;
+	
+	private static final int MAX_VIS_TRIPS=4;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -249,10 +253,15 @@ public class Display {
 	/**
 	 * This method designs the screen to allow the user to choose from pre-existing trips
 	 * for their manipulation or to create a new trip by accessing a new screen.
+	 * Updated for next/prev buttons
 	 */
 	
-	public void tripSelectScreen() {		
+	public void tripSelectScreen(int pagenum) {		
+		
+		
 		ArrayList<Trip> trips = intermediary.getUsersTrips();
+		
+		System.out.println(" \n \n \n trips.size() gives me "+trips.size() + " \n \n \n");
 		
 		ElementPanel tripSelect = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -267,6 +276,16 @@ public class Display {
 					Communication.set(Intermediary.CURR_TRIP, trips.get(tripNum).getTitle());
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 				}
+				else if(event == EVENT_NEXT_PAGE)
+				{
+					resetView();
+					tripSelectScreen(pagenum+1);
+				}
+				else if(event == EVENT_PREV_PAGE)
+				{
+					resetView();
+					tripSelectScreen(pagenum-1);
+				}
 			}
 		};
 
@@ -276,13 +295,46 @@ public class Display {
 		designReactiveButton(tripSelect, "logout", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Logout", width*11/12, height*5/6, width/12, height/14, 2, EVENT_GO_TO_LOGIN, true);
 		designReactiveButton(tripSelect, "create_trip", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Trip", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_CREATE_TRIP, true);
 		designTwoColorBorder(tripSelect, "background_backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
-
-		//Display list of trips
-		for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) {
-			designReactiveButton(tripSelect, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(i).getTitle(), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
-			tripSelect.addText("trip_description_"+i, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDestination(), FONT_ENTRY, true);
-			tripSelect.addText("trip_date_"+i, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(i).getDisplayStartDate() + " - " + trips.get(i).getDisplayEndDate(), FONT_ENTRY, true);
+		
+		int scheds;
+		if((trips.size() - pagenum*MAX_VIS_TRIPS) > MAX_VIS_TRIPS)//if there are too many of this thing to fit on the page
+		{
+			scheds = MAX_VIS_TRIPS;//present the maximum number we're able to show with the current window style (currently 3)
 		}
+		else//otherwise
+		{
+			scheds = trips.size() - (pagenum*MAX_VIS_TRIPS);//just show all the schedulables here
+		}
+		
+		int itemnum;//variable to keep track of which schedulable in the chronological order this one is
+		if(trips.size()!=0)// so long as there actually are schedulables to print
+		{
+			
+			for(int i = 0; i < scheds; i++)//for(int i = 0; i < (trips == null ? 0 : trips.size()); i++) 
+			{
+				itemnum = (MAX_VIS_TRIPS*pagenum) + i;
+				
+				designReactiveButton(tripSelect, "trip_"+itemnum, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, trips.get(itemnum).getTitle(), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+itemnum, true);
+				tripSelect.addText("trip_description_"+itemnum, 35, width/2 + width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(itemnum).getDestination(), FONT_ENTRY, true);
+				tripSelect.addText("trip_date_"+itemnum, 35, width/2 - width*7/48, height*2/9 + (i+1)*(height/8) + height/30, width*7/12, height/10, trips.get(itemnum).getDisplayStartDate() + " - " + trips.get(itemnum).getDisplayEndDate(), FONT_ENTRY, true);
+			}
+			
+		}
+		
+		
+		if(pagenum!=0)
+		{
+			designReactiveButton(tripSelect, "prev", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Previous", 2*width/5, height * 11 / 12, width/12, height/20, 4, EVENT_PREV_PAGE, true);
+		}
+		System.out.println(" \n \n \n MAX_VIS_LIST_ITEMS*pagenum + scheds gives me "+(MAX_VIS_LIST_ITEMS*pagenum + scheds) + " \n \n \n");
+		if(trips.size() > scheds + pagenum*MAX_VIS_TRIPS)
+		{
+			designReactiveButton(tripSelect, "next", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Next", 3*width/5, height * 11 / 12, width/12, height/20, 3, EVENT_NEXT_PAGE, true);
+			
+		}
+		
+		//Display list of trips
+		
 
 		display.addPanel("Trip Select", tripSelect);
 	}
