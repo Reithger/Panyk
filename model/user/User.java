@@ -3,6 +3,7 @@ package model.user;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -183,6 +184,7 @@ public class User {
 	
 	public void addSchedulableItem(String tripName, String type, String ... data) throws BadTimeException
 	{
+			
 		Trip theTrip = trips.get(tripName);
 		boolean okToSave = true;
 		Date d1=null;
@@ -210,8 +212,7 @@ public class User {
 				}
 			}
 			catch(ParseException pe) {
-				pe.printStackTrace();
-				//do nothing because most fields won't be dates and thats fine
+				//do nothing
 			}
 
 		}
@@ -224,6 +225,8 @@ public class User {
 		if(okToSave)//if appropriate, save the item
 		{
 			theTrip.addScheduledItem(data[0], type, new ScheduledItem(scheduleTypes.get(type), data, 2));
+			
+			//this 
 			trips.get(tripName).saveToDatabase(username);
 		}
 	}
