@@ -47,7 +47,7 @@ Picked Up By: Nick
 Class(es):
 Details: text overruns in boxes - need to limit size of inputs, and size of displayed strings
 Posted By: Nick
-Picked Up By: Regan
+Picked Up By: 
 
 Class(es):
 Details: overflows of boxes listing reservations, transportations and accomodations
@@ -58,17 +58,17 @@ Class(es):
 Details: After logging out and back in again any spaces in schedulable descriptions are made into underscores, also underscores in
 start date and end date are inserted
 Posted By: Nick
-Picked Up By: Regan
+Picked Up By: 
 
 Class(es):
 Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Remove/make it do something?
 Posted By: Regan
-Picked Up By:
+Picked Up By: Regan
 
-Class(es): Display, Database
+Class(es): Display, Database, User
 Details: creating a reservation/transportation/accommodation causes several database insertion errors -> crashes program
 Posted By: Regan
-Picked Up By:
+Picked Up By: Regan
 
 
 ----------------------------------TESTING------------------------------------------
