@@ -98,12 +98,12 @@ public class Trip {
 	 */
 	
 	public boolean saveToDatabase(String username) {
-		for(String title : schedulables.keySet()) {
+		for(String title : schedulables.keySet()) {	
 			for(Schedulable s : schedulables.get(title).values()) {
 				String[] types = s.generateDataType(null, 0);
 				String[] data = s.generateDataEntry(null, 0);
 				types[0] = "username"; types[1] = "tripTitle";
-				data[0] = username; data[1] = getTitle();
+				data[0] = username; data[1] = getTitle();				
 				Database.addEntry(s.getData().toString(), types, data);
 			}
 		}
