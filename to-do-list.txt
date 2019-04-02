@@ -65,6 +65,11 @@ Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Rem
 Posted By: Regan
 Picked Up By:
 
+Class(es): Display, Database
+Details: creating a reservation causes several database insertion errors -> crashes program
+Posted By: Regan
+Picked Up By:
+
 
 ----------------------------------TESTING------------------------------------------
 
