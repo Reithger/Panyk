@@ -107,6 +107,7 @@ public class Intermediary {
 	
 	public Intermediary() {
 		display = new Display(1000, 600, this);
+//		display = new Display(2560, 1080, this);
 		timer = new Timer();
 		timer.schedule(new TimerRepeat(this), 0, REFRESH_RATE);
 	}
@@ -326,6 +327,7 @@ public class Intermediary {
 	{
 		String header = Communication.get(CURR_SCHEDULABLE_TYPE);
 		String[] titles = user.getSchedulableTypeTitles(header);
+		
 		String[] data = new String[titles.length];
 		for(int i = 0; i < data.length; i++) {
 			data[i] = Communication.get(header + "_" + titles[i]);
