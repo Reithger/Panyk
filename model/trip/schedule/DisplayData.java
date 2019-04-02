@@ -55,6 +55,9 @@ public class DisplayData {
 	 */
 	
 	public void addData(String title, String data) {
+		
+		title = title.replaceAll(" ", "_");
+		
 		titles.add(title);
 		datum.add(data);
 	}
