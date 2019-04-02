@@ -409,7 +409,7 @@ public class Intermediary {
 
 	private void goToTripSelect() {
 		display.resetView();
-		display.tripSelectScreen();
+		display.tripSelectScreen(0);
 	}
 	
 	/**
