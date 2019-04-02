@@ -3,8 +3,11 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import database.Database;
 import input.Communication;
 import intermediary.Intermediary;
 import model.trip.Trip;
@@ -260,8 +263,7 @@ public class Display {
 		
 		
 		ArrayList<Trip> trips = intermediary.getUsersTrips();
-		
-		System.out.println(" \n \n \n trips.size() gives me "+trips.size() + " \n \n \n");
+	
 		
 		ElementPanel tripSelect = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -457,7 +459,7 @@ public class Display {
 	
 	public void schedulableSelectScreen(HashMap<String, DisplayData> data, int pagenum) 
 	{
-		System.out.println("\n \n \n called \n \n \n");
+		
 		String scheduleType = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
 		ArrayList<String> key = new ArrayList<String>(data.keySet());
 		
@@ -498,7 +500,7 @@ public class Display {
 		addHeaderTabs(rS);
 		
 		designBackedLabel(rS, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, scheduleType + ":", width/2, height/6, width*8/21, height/10, 1, true);
-		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
+		designReactiveButton(rS, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back to Trip Select", width*5/6, height*5/6, width/9, height/15, 2, EVENT_GO_TO_SELECT_TRIP, true);
 		designReactiveButton(rS, "create_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a New " + scheduleType + "!", width*4/30, height*3/20, width/7, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE, true);
 		
 		//displayItemList(rS, scheduleType, data, 0);		//Display list of stored reservations - start from page 0
@@ -519,6 +521,7 @@ public class Display {
 		}
 		
 		int itemnum;//variable to keep track of which schedulable in the chronological order this one is
+		
 		if(data.keySet().size()!=0)// so long as there actually are schedulables to print
 		{
 			for(int i = 0; i < scheds; i++) //show all the schedulables for the page with correct placement and info
@@ -557,6 +560,7 @@ public class Display {
 	public void schedScreen(HashMap<String, String> typeData, HashMap<String, DisplayData> specifics, int schedNum) {
 		ArrayList<String> key = new ArrayList<String>(specifics.keySet());
 		
+		
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_SELECT_SCHEDULABLE){
@@ -566,12 +570,10 @@ public class Display {
 					//insert deletion code here
 					
 					String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
-					System.out.println("Head: " + header);
-
+						
 					String[] titles = Communication.get(Intermediary.CURR_SCHEDULABLE_TITLES).split("   ");
 					
 					for(int i = 0; i < titles.length; i++) {
-						System.out.println(getElementStoredText(header + "_" + titles[i] + "_text"));
 						Communication.set(header + "_" + titles[i], getElementStoredText(header + "_" + titles[i] + "_text"));
 					}
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SCHEDULABLE_CREATE);
@@ -579,6 +581,7 @@ public class Display {
 				
 			}
 		};
+		
 		
 		designTwoColorBorder(mR, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter " + Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE) + " Details", width/2, height/8, width*2/3, height/10, 1, true);
@@ -624,9 +627,7 @@ public class Display {
 				int wid = width/(columns + 3);
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
-				System.out.println(header+"_"+s);
 				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
-				System.out.println( detailMap.getData(s));
 				//
 				//setElementStoredText(header + "_" + detailMap.getData(header) + "_text");
 				
@@ -658,6 +659,8 @@ public class Display {
 	 */
 
 	public void makeSchedulableScreen(HashMap<String, String> data) {
+		
+		
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_SELECT_SCHEDULABLE){
@@ -665,12 +668,13 @@ public class Display {
 				}
 				else if(event == EVENT_ATTEMPT_CREATE_SCHEDULABLE){
 					String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
-					System.out.println("Head: " + header);
 
 					String[] titles = Communication.get(Intermediary.CURR_SCHEDULABLE_TITLES).split("   ");
 					
+//					System.out.println(Arrays.toString(titles));
+					
 					for(int i = 0; i < titles.length; i++) {
-						System.out.println(getElementStoredText(header + "_" + titles[i] + "_text"));
+			
 						Communication.set(header + "_" + titles[i], getElementStoredText(header + "_" + titles[i] + "_text"));
 					}
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SCHEDULABLE_CREATE);
@@ -720,7 +724,7 @@ public class Display {
 				int wid = width/(columns + 3);
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
-				System.out.println(header+"_"+s);
+	
 				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
 				designBackedLabel(mR, s + "_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, s, across, down - height/10, wid, (int)(heiLabel*.9), 3, true);
 				count++;
