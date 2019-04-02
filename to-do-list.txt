@@ -68,7 +68,7 @@ Picked Up By: Regan
 Class(es): Display, Database, User
 Details: creating a reservation/transportation/accommodation causes several database insertion errors -> crashes program
 Posted By: Regan
-Picked Up By: Regan
+Picked Up By: Regan - fixed
 
 
 ----------------------------------TESTING------------------------------------------
