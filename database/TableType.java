@@ -1,5 +1,7 @@
 package database;
 
+import java.util.Arrays;
+
 /**	
  * Enumeration definition for each table type in the database
  * 
@@ -111,9 +113,10 @@ public enum TableType {
 	 */
 	
 	public static String generateCreateTableSQL(String tableTitle, String[] fieldsDyn, String[] fieldTypesDyn) {
+
 		String sql = "CREATE TABLE " + tableTitle + "(";
 		for(int i = 0; i < fieldsDyn.length; i++) {
-			sql += fieldsDyn[i] + " " + fieldTypesDyn[i] + (i + 1 < fieldsDyn.length ? "," : ");");
+			sql += fieldsDyn[i].replaceAll(" ", "_") + " " + fieldTypesDyn[i] + (i + 1 < fieldsDyn.length ? "," : ");");
 		}
 		return sql;
 	}
