@@ -61,7 +61,7 @@ Posted By: Nick
 Picked Up By: Regan
 
 Class(es):
-Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Remove/make it does something?
+Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Remove/make it do something?
 Posted By: Regan
 Picked Up By:
 
