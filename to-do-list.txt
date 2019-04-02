@@ -60,6 +60,11 @@ start date and end date are inserted
 Posted By: Nick
 Picked Up By: Regan
 
+Class(es):
+Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Remove/make it does something?
+Posted By: Regan
+Picked Up By:
+
 
 ----------------------------------TESTING------------------------------------------
 
