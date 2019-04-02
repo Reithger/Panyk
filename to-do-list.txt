@@ -47,7 +47,7 @@ Picked Up By: Nick
 Class(es):
 Details: text overruns in boxes - need to limit size of inputs, and size of displayed strings
 Posted By: Nick
-Picked Up By: 
+Picked Up By: Regan
 
 Class(es):
 Details: overflows of boxes listing reservations, transportations and accomodations
@@ -58,7 +58,7 @@ Class(es):
 Details: After logging out and back in again any spaces in schedulable descriptions are made into underscores, also underscores in
 start date and end date are inserted
 Posted By: Nick
-Picked Up By:
+Picked Up By: Regan
 
 
 ----------------------------------TESTING------------------------------------------
