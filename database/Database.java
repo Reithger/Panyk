@@ -316,11 +316,14 @@ public class Database {
 				}
 				values = copy;
 			}
+
 			List<String[]> check = search(tableTitle, types, values);
 			if(check != null && check.size() != 0) {
 				System.out.println("Attempted to Add Duplicate Database Entry of Type " + tableTitle + ".");
 				return false;
 			}
+			//must reconnect here for some reason
+			connect();
 			PreparedStatement prep = connection.prepareStatement(TableType.generateCreateTableInsertionSQL(tableTitle, types));
 			for(int i = 0; i < values.length; i++) {
 				prep.setString(i + 1, values[i].replaceAll(" ", " "));
@@ -522,6 +525,7 @@ public class Database {
 				if(fields[i] != null) {
 					if(i < search.length) 
 						sqlSearch += (priorSearch ? " AND" : "") + " " + fields[i].replaceAll(" ", "_") + "='" + search[i].replaceAll(" ", "_") + "'";
+//						sqlSearch += (priorSearch ? " AND" : "") + " " + fields[i] + "='" + search[i] + "'";
 					
 					priorSearch = true;
 				}
@@ -560,6 +564,20 @@ public class Database {
 		}
 		connect();
 		DBTablePrinter.printTable(connection, type.toString());
+	}
+	
+	/**	
+	 * This method prints the defined table to console
+	 * 
+	 * @param type - TableType object representing the table you want to print
+	 */
+	
+	public static void printTable(String table) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		DBTablePrinter.printTable(connection, table);
 	}
 	
 // -- Helper Methods --------------------------------------------------------------------------
