@@ -122,6 +122,8 @@ public class Trip {
 		return Database.addEntry(TableType.trips, username, getTitle(), getDestination(), simplifyDate(getStartDate()), simplifyDate(getEndDate()), getDescription());
 	}
 	
+	
+	
 	/**
 	 * This method instructs the Trip to access the Database to receive specific Schedulable Object data
 	 * corresponding to the provided username, the Trip's title, and being of the type specified by the
@@ -335,7 +337,8 @@ public class Trip {
 	 * @param name
 	 */
 	
-	public void removedScheduledItem(String schedType, String name) {
+	public void removedScheduledItem(String schedType, String name) 
+	{
 		schedulables.get(schedType).remove(name);
 	}
 	
