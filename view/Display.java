@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import database.Database;
 import input.Communication;
 import intermediary.Intermediary;
@@ -100,6 +102,14 @@ public class Display {
 	private final static int EVENT_NEXT_PAGE = 63;
 	
 	private final static int EVENT_PREV_PAGE = 64;
+	
+	private final static int EVENT_ATTEMPT_DELETE_SCHEDULABLE = 65;
+	
+	private final static int EVENT_CONFIRM_DELETE = 66;
+	
+	private final static int EVENT_CONFIRM = 67;
+	
+	private final static int EVENT_DENY = 68;
 
 	/** This is not a limitation of how many elements can be in a composite, increase if you need more space; handles priority room*/
 	private static final int MAX_COMPOSITE_ELEMENTS = 10;
@@ -415,7 +425,10 @@ public class Display {
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 					}
 					else if(event == EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE) {
-						
+						//TODO: fill this in or scrap feature
+					}
+					else if(event == EVENT_CONFIRM_DELETE) {
+						confirmBox("Are you sure you want to delete this trip?", Intermediary.CONTROL_DELETE_TRIP, Intermediary.CONTROL_MAIN_SCREEN);
 					}
 					else if(event != -1 && event != EVENT_GO_TO_MAIN) {
 						Communication.set(Intermediary.CURR_SCHEDULABLE_TYPE, scheduleTypes.get(event - EVENT_GO_TO_ITEM));
@@ -433,7 +446,8 @@ public class Display {
 		designReactiveButton(mainScreen, "back", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*11/12, height*5/6, width/12, height/14, 2, EVENT_GO_TO_SELECT_TRIP, true);
 		designReactiveButton(mainScreen, "create_schedule_type", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create a Schedulable", width*5/6, height*2/15, width/10, height/12, 2, EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE, true);
 		designTwoColorBorder(mainScreen, "background_backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
-
+		designReactiveButton(mainScreen, "delete_trip", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Delete Trip", width*1/12, height*5/6, width/12, height/14, 2, EVENT_CONFIRM_DELETE, true);
+		
 		//Display list of trips
 		for(int i = 0; i < scheduleTypes.size(); i++) {
 			designReactiveButton(mainScreen, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, scheduleTypes.get(i), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
@@ -548,6 +562,7 @@ public class Display {
 		
 	}
 	
+	
 	/**
 	 * A pretty ugly method to let us edit existing schedulables - still needs work
 	 * problems attempting to write to text boxes, going to go back and try to refamiliarize with the
@@ -568,7 +583,7 @@ public class Display {
 				}
 				else if(event == EVENT_ATTEMPT_CREATE_SCHEDULABLE){
 					//insert deletion code here
-					
+					Communication.set(Intermediary.CURR_DELETE_SCHED, key.get(0));
 					String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
 						
 					String[] titles = Communication.get(Intermediary.CURR_SCHEDULABLE_TITLES).split("   ");
@@ -576,7 +591,20 @@ public class Display {
 					for(int i = 0; i < titles.length; i++) {
 						Communication.set(header + "_" + titles[i], getElementStoredText(header + "_" + titles[i] + "_text"));
 					}
-					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SCHEDULABLE_CREATE);
+					Communication.set(Intermediary.CURR_DELETE_SCHED, key.get(0));
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_REPLACE_SCHED);
+					//Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SCHEDULABLE_CREATE);
+				}
+				else if(event == EVENT_ATTEMPT_DELETE_SCHEDULABLE)
+				{
+					specifics.remove(schedNum);
+					
+					Communication.set(Intermediary.CURR_DELETE_SCHED, key.get(0));
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_DELETE_SCHED);
+				}
+				else if(event==EVENT_GO_TO_ITEM)
+				{
+					System.out.println("here");
 				}
 				
 			}
@@ -587,7 +615,8 @@ public class Display {
 		designBackedLabel(mR, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Enter " + Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE) + " Details", width/2, height/8, width*2/3, height/10, 1, true);
 		designReactiveButton(mR, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_SELECT_SCHEDULABLE, true);
 		designReactiveButton(mR, "edit_schedulable", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", width/2, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_SCHEDULABLE, true);
-				
+		designReactiveButton(mR, "delete_schedulable", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Delete", width/3, height*13/16, width/8, height/15, 2, EVENT_ATTEMPT_DELETE_SCHEDULABLE, true);
+		
 		ArrayList<String> titles = new ArrayList<String>(typeData.keySet());
 		String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
 		int singleSize = 0, doubleSize = 0;
@@ -627,9 +656,10 @@ public class Display {
 				int wid = width/(columns + 3);
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
-				designTextField(mR, header+"_"+s, "", across, down, wid, hei, 2, 1000 + i * columns + j, true);
+				designTextField(mR, header+"_"+s, detailMap.getData(s), across, down, wid, hei, 2, 1000 + i * columns + j, true);
+				//designReactiveButton(mR, "existing_"+typeData.get(s), COLOR_WHITE, COLOR_BLACK, FONT_ENTRY, detailMap.getData(s), across, down, wid, hei, 2, EVENT_GO_TO_ITEM, true);
 				//
-				//setElementStoredText(header + "_" + detailMap.getData(header) + "_text");
+				//header+"_"+s.addText(header + "_" + detailMap.getData(header) + "_text");
 				
 				designBackedLabel(mR, s + "_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, s, across, down - height/10, wid, (int)(heiLabel*.9), 3, true);
 				count++;
@@ -646,7 +676,6 @@ public class Display {
 		
 		
 	}
-	
 	
 	/**
 	 * This method designs the screen that facilitates the creation of a new Schedulable object by
@@ -921,6 +950,40 @@ public class Display {
 		pan.addText("tex_2", 5, wid/2, hei*4/5, wid, hei/5, "Click Anywhere to Remove", FONT_ONE, true);
 		pan.addButton("but1", 10, 0, 0, pan.getWidth(), pan.getHeight(), 1, false);
 		error.add(pan);
+	}
+	
+	/**
+	 * This method generates a small window frame that confirms the users intent
+	 * 
+	 * @param in - String object representing the message to be displayed to the user regarding the user's intent
+	 * @param commandConfirm - the command you would like to send to intermediary if the user confirms
+	 * @param commandConfirm - the command you would like to send to intermediary if the user does not confirm
+	 */
+	
+	public void confirmBox(String in, String commandConfirm, String commandDeny) {
+		int wid = 300;
+		int hei = 500;
+		WindowFrame confirm = new WindowFrame(wid, hei);
+		confirm.setExitOnClose(false);
+		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
+			public void clickBehaviour(int event) {
+				if(event == EVENT_CONFIRM) {
+					System.out.println("confirm");
+					Communication.set(Intermediary.CONTROL, commandConfirm);
+					getParentFrame().remove();
+				}
+				else if (event == EVENT_DENY)
+				{
+					System.out.println("deny");
+					Communication.set(Intermediary.CONTROL, commandDeny);
+					getParentFrame().remove();
+				}
+			}
+		};
+		pan.addText("tex", 5, wid/2, hei/5, wid*9/10, hei*2/5, in, FONT_ONE, true);
+		designReactiveButton(pan, "say_no", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "No", wid/2, hei/2, wid/2, hei/6, 2, EVENT_DENY, true);
+		designReactiveButton(pan, "say_yes", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Yes", wid/2, hei*3/4, wid/2, hei/6, 2, EVENT_CONFIRM, true);
+		confirm.add(pan);
 	}
 	
 }
