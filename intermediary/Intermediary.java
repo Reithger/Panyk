@@ -53,6 +53,9 @@ public class Intermediary {
 	public final static String CONTROL_SCHEDULABLE_CREATION = "create_Sched_nav";
 	public final static String CONTROL_ATTEMPT_SCHEDULABLE_CREATE = "create_Sched_act";
 	public final static String CONTROL_SCHED_SCREEN = "see_Sched";
+	public final static String CONTROL_DELETE_SCHED = "delete_Sched";
+	public final static String CONTROL_REPLACE_SCHED = "delete_and_replace";
+	public final static String CONTROL_DELETE_TRIP = "begone_foul_trip";
 	
 	//-- Value Storage  ---------------------------------------
 	
@@ -79,6 +82,7 @@ public class Intermediary {
 	public final static String CURR_SCHEDULABLE_TYPE = "current_sched";
 	public final static String CURR_SCHEDULABLE_TITLES = "schedulable_titles";
 	public final static String CURR_SCHED = "-1";
+	public final static String CURR_DELETE_SCHED = "an_undesirable_appointment";
 	
 	private final static String SCHEDULABLE_META_FIELD_LABEL = "metaField";
 	private final static String[] SCHEDULABLE_META_FIELD_TYPES = new String[] {"sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString"};
@@ -156,6 +160,12 @@ public class Intermediary {
 				goToSchedulableCreation(); break;
 			case CONTROL_SCHED_SCREEN:
 				goToSchedScreen(); break;
+			case CONTROL_DELETE_SCHED:
+				deleteSched(); break;
+			case CONTROL_REPLACE_SCHED:
+				replaceSched(); break;
+			case CONTROL_DELETE_TRIP:
+				deleteTrip(); break;
 			case CONTROL_MAIN_SCREEN:				//Orders display to show the main screen
 				goToMainScreen(); break;
 			default: break;
@@ -340,6 +350,25 @@ public class Intermediary {
 			errorReport("These fields don't make sense... Let's try that last one again");
 		}
 		
+	}
+	
+	public void deleteSched()
+	{
+		//System.out.println("\n \n \n deleting in inter");
+		user.deleteSchedulable(Communication.get(CURR_TRIP), Communication.get(CURR_DELETE_SCHED), Communication.get(CURR_SCHEDULABLE_TYPE));
+		goToSchedulableSelect();
+	}
+	
+	public void replaceSched()
+	{
+		user.deleteSchedulable(Communication.get(CURR_TRIP), Communication.get(CURR_DELETE_SCHED), Communication.get(CURR_SCHEDULABLE_TYPE));
+		addSchedulable();
+	}
+	
+	public void deleteTrip()
+	{
+		user.deleteTrip(Communication.get(CURR_TRIP));
+		goToTripSelect();
 	}
 		
 //--- Getter Methods --------------------------------------------------------------------------
