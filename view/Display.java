@@ -195,7 +195,7 @@ public class Display {
 		
 		for(int i = 0; i < displayName.length; i++) {
 			designBackedLabel(login, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*2/15, height/2 + i * height/9, width/6, height/20, 3, true);
-			designTextField(login, elementName[i], width/3, height/2 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
+			designTextField(login, elementName[i], "", width/3, height/2 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 				
 		designReactiveButton(login, "log_in", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Log In", width/3, height * 5 / 6, width/9, height/20, 1, EVENT_ATTEMPT_LOGIN, true);
@@ -244,7 +244,7 @@ public class Display {
 		
 		for(int i = 0; i < displayName.length; i++) {
 			designBackedLabel(createAcc, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*3/10, height/3 + i * height/9, width/6, height/20, 3, true);
-			designTextField(createAcc, elementName[i], width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
+			designTextField(createAcc, elementName[i], "", width/2, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 		
 		designReactiveButton(createAcc, "create_account", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Create my account", width/2, height*5/6, width/8, height/15, 2, EVENT_ATTEMPT_CREATE_ACCOUNT, true);
@@ -388,11 +388,11 @@ public class Display {
 		for(int i = 0; i < displayName.length; i++) {
 			designBackedLabel(tripCreate, elementName[i]+"_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, displayName[i], width*2/15, height/3 + i * height/9, width/6, height/20, 3, true);
 			if(!elementName[i].equals("null"))
-				designTextField(tripCreate, elementName[i], width/3, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
+				designTextField(tripCreate, elementName[i], "", width/3, height/3 + i * height / 9, width/5, height/20, 3, 1000 + i, true);
 		}
 		
 		designBackedLabel(tripCreate, "tripDescrip_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "Description", width*2/3, height/3 , width/6, height/20, 3, true);
-		designTextField(tripCreate, "tripDescrip", width / 2, height * 7 / 18, width/3, height * 2/ 9, 3, 1000 + displayName.length, false);
+		designTextField(tripCreate, "tripDescrip", "", width / 2, height * 7 / 18, width/3, height * 2/ 9, 3, 1000 + displayName.length, false);
 		
 		display.addPanel("Trip Creation", tripCreate);
 	}
@@ -627,7 +627,7 @@ public class Display {
 				int wid = width/(columns + 3);
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
-				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
+				designTextField(mR, header+"_"+s, "", across, down, wid, hei, 2, 1000 + i * columns + j, true);
 				//
 				//setElementStoredText(header + "_" + detailMap.getData(header) + "_text");
 				
@@ -725,7 +725,7 @@ public class Display {
 				int hei = height/14 * mult;
 				int heiLabel = height/14;
 	
-				designTextField(mR, header+"_"+s, across, down, wid, hei, 2, 1000 + i * columns + j, true);
+				designTextField(mR, header+"_"+s, "", across, down, wid, hei, 2, 1000 + i * columns + j, true);
 				designBackedLabel(mR, s + "_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, s, across, down - height/10, wid, (int)(heiLabel*.9), 3, true);
 				count++;
 				if(data.get(s).equals("lString"))
@@ -818,9 +818,9 @@ public class Display {
 	 * @param centered - boolean value representing whether or not this composite structure should be drawn with x, y at the center or top-left corner
 	 */
 	
-	private void designTextField(ElementPanel pan, String name, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
+	private void designTextField(ElementPanel pan, String name, String defaultText, int x, int y, int panWid, int panHei, int priority, int code, boolean centered) {
 		pan.addRectangle(name + "_rect", priority * MAX_COMPOSITE_ELEMENTS, x, y, panWid + 10, panHei, COLOR_WHITE, COLOR_BLACK, centered);
-		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid - 30, panHei - 5, code, FONT_ENTRY, centered);	
+		pan.addTextEntry(name + "_text", priority * MAX_COMPOSITE_ELEMENTS + 1, x, y, panWid - 30, panHei - 5, code, FONT_ENTRY, defaultText, centered);	
 	}
 	
 	/**

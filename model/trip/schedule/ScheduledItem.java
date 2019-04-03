@@ -1,8 +1,5 @@
 package model.trip.schedule;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
 public class ScheduledItem implements Schedulable{
 
 	private final static String TYPE = "lString";
@@ -49,6 +46,7 @@ public class ScheduledItem implements Schedulable{
 		return title;
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}
