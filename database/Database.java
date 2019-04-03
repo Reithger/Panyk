@@ -394,6 +394,49 @@ public class Database {
 		}
 		return true;
 	}
+
+	public static boolean deleteEntry(String tableType, String[] fields, String[] values) {
+		if(!db_is_initialized) {
+			initialize();
+		}
+		connect();
+		if(connection == null) {
+			System.out.println("no connection can be established to the database");
+			return false;
+		}
+		if(fields.length != values.length) {
+			System.out.println("error deleting from table "+ tableType + ": number of search fields provided does not equal number of fields needed");
+			return false;
+		}
+		try {
+			String sqlDelete = "DELETE FROM " + tableType + " WHERE";
+			int nullCount = 0;
+			boolean priorSearch = false;
+			for(int i = 0; i < fields.length; i++) {
+				if(fields[i] != null) {
+					if(priorSearch) {
+						sqlDelete += " AND";
+					}
+					sqlDelete += " " + fields[i] + "='" + values[i] + "'";
+					priorSearch = true;
+				}else {
+					nullCount++;
+				}
+			}
+			sqlDelete += ";";
+			if(nullCount != values.length) {
+				PreparedStatement prep = connection.prepareStatement(sqlDelete);
+				prep.executeUpdate();
+			}else {
+				System.out.println("error deleting table: " + tableType + " --> no search keys defined");
+				return false;
+			}
+		}catch(Exception e) {
+			System.out.println("error deleting from table: " + tableType);
+			return false;
+		}
+		return true;
+	}
 	
 //--- entryEdit method -----------------------------------------------------------------------
 	

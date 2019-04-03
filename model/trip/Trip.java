@@ -104,7 +104,19 @@ public class Trip {
 				String[] data = s.generateDataEntry(null, 0);
 				types[0] = "username"; types[1] = "tripTitle";
 				data[0] = username; data[1] = getTitle();				
-				Database.addEntry(s.getData().toString(), types, data);
+				if(!Database.addEntry(s.getData().toString(), types, data)) {
+					List<String[]> currVal = Database.search(s.getData().toString(), types, Arrays.copyOfRange(data, 0, 3));
+					boolean different = false;
+					for(int i = 0; i < currVal.get(0).length; i++) {
+						if(!currVal.get(0)[i].equals(data[i])) {
+							different = true;
+						}
+					}
+					if(different) {
+						Database.deleteEntry(s.getData().toString(), types, data);
+						Database.addEntry(s.getData().toString(), types, data);
+					}
+				}
 			}
 		}
 		return Database.addEntry(TableType.trips, username, getTitle(), getDestination(), simplifyDate(getStartDate()), simplifyDate(getEndDate()), getDescription());
