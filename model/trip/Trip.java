@@ -32,6 +32,40 @@ import model.trip.schedule.ScheduledItem;
  *
  */
 
+package model.trip;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import database.Database;
+import database.TableType;
+import model.trip.feature.Feature;
+import model.trip.schedule.Schedulable;
+import model.trip.schedule.SchedulableType;
+import model.trip.schedule.ScheduledItem;
+
+/**
+ * This class models a Trip that the User has designed for themselves; a Trip consists
+ * of meta-information (Title, Start/End Date, Description, etc.), Schedulables (scheduled
+ * activities/events for certain days of the Trip), and Features (aggregates of Schedulable
+ * information for user inspection/enjoyment.)
+ * 
+ * Trips can also be exported to memory in a format that can be read back in to generate
+ * a Trip associated to a User. Functionalities need to exist that permit a User object to
+ * query the Trip for data that encompasses the properties of an Schedulable or Feature so
+ * that a disjoint entity for displaying this information can use/interpret it.
+ * 
+ * Two forms of export: to memory and to the view. The former can be done via a database
+ * (SQLite if you like), the latter some data format that encompasses labeled Strings 
+ * (a HashMap can do this; KeySet are labels, Values are display data).
+ * 
+ * @author Mac Clevinger
+ *
+ */
+
 public class Trip {
 	
 //---  Constant Values   ----------------------------------------------------------------------
@@ -43,6 +77,8 @@ public class Trip {
 	
 	/** String object representing the title of this Trip object*/
 	private String title;
+	/**String object holding dateformat*/
+	private String dateformat="dd/MM/yyyy";
 	/** Date object describing the start Date of this Trip object*/
 	private Date start;
 	/** Date object describing the end Date of this Trip object*/
@@ -78,8 +114,8 @@ public class Trip {
 		features = new HashMap<String, Feature>();
 		schedulables = new HashMap<String, HashMap<String, Schedulable>>();
 		try {
-			setStartDate(new SimpleDateFormat("dd/MM/yyyy").parse(inStart));
-			setEndDate(new SimpleDateFormat("dd/MM/yyyy").parse(inEnd));
+			setStartDate(new SimpleDateFormat(dateformat).parse(inStart));
+			setEndDate(new SimpleDateFormat(dateformat).parse(inEnd));
 		}
 		catch(Exception e) {
 			setTitle(null);
