@@ -1,5 +1,6 @@
 package model.user;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,12 +124,55 @@ public class User {
 	 * @return - Returns a boolean value representing whether or not the Trip was added successfully
 	 */
 	
-	public boolean makeTrip(String title, String destination, String description, String dateStart, String dateEnd) {
-		if(trips.get(title) != null) {
+	public boolean makeTrip(String title, String destination, String description, String dateStart, String dateEnd) 
+	{
+		if(trips.get(title) != null) 
+		{
 			return false;
 		}
+		
+		
+		
+		boolean datesOK = true;
+		//
+		Date d1=null,d2=null;
+		
+		//
+		
+		
+		try {
+			d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateStart);//try to parse dates
+			d2 = new SimpleDateFormat("dd/MM/yyyy").parse(dateEnd);
+		
+			
+			///
+			DateFormat df=new SimpleDateFormat("dd/MM/yyyy");
+			df.setLenient(false);
+			df.parse(dateStart);
+			df.parse(dateEnd);
+			
+			
+			
+			
+			
+		}catch(ParseException pe)
+		{
+			//datesOK = false;
+			return false;
+		}//try to parse dates
+		
+		if(d1.after(d2))//make sure the dates don't indicate time travel
+		{
+			//datesOK=false;
+			return false;
+			
+		}//time travel if
+				
+		
+		
+		
 		Trip t = new Trip(title, destination, description, dateStart, dateEnd);
-		if(t.getTitle() != null) {
+		if((t.getTitle() != null) && datesOK) {
 			trips.put(t.getTitle(), t);
 			t.saveToDatabase(username);
 			return true;
@@ -144,7 +188,7 @@ public class User {
 	 * not handled by the User object, it is handled by the user interface.
 	 */
 	
-	private boolean deleteTrip(String tripName) {
+	public boolean deleteTrip(String tripName) {
 		if(trips.get(tripName) == null) {
 			return false;
 		}
@@ -188,6 +232,8 @@ public class User {
 		Trip theTrip = trips.get(tripName);
 		boolean okToSave = true;
 		Date d1=null;
+		int d1pos = -1;
+		int d2pos = -1;
 		Date d2=null;
 		int numDates=0;
 		BadTimeException e = new BadTimeException();
@@ -199,10 +245,12 @@ public class User {
 				if(d1==null)//track starting date
 				{
 					d1=myDate;
+					d1pos = i;
 				}
 				else//and ending date
 				{
 					d2 = myDate;
+					d2pos = i;
 				}
 				if(myDate.before(theTrip.getStartDate()) || myDate.after(theTrip.getEndDate()))//make sure the dates are in the right range
 				{
@@ -221,6 +269,18 @@ public class User {
 			okToSave=false;
 			throw e;
 				
+		}
+		try
+		{
+			DateFormat df=new SimpleDateFormat("dd/MM/yyyy");
+			df.setLenient(false);
+			df.parse((String)data[d1pos]);
+			df.parse((String)data[d2pos]);
+			
+		}
+		catch(ParseException pe)
+		{
+			throw e;
 		}
 		if(okToSave)//if appropriate, save the item
 		{
@@ -244,6 +304,18 @@ public class User {
 	public void addSchedulableType(String header, String[] titles, String[] types) {
 		scheduleTypes.put(header, new SchedulableType(header, titles, types));
 	}
+	
+	/**
+	 * Does what it says on the tin - deletion galore!
+	 * @param tripName - name of the trip with the to be deleted schedulable
+	 * @param schedName - the name of that schedulable
+	 * @param schedulableType - the type of that schedulable
+	 */
+	public void deleteSchedulable(String tripName, String schedName, String schedulableType){
+		
+		trips.get(tripName).removedScheduledItem(schedulableType, schedName);
+	}
+
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
