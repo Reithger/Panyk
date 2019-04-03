@@ -70,6 +70,12 @@ Details: creating a reservation/transportation/accommodation causes several data
 Posted By: Regan
 Picked Up By: Regan - fixed
 
+Class(es): Display
+Details: We're not getting times with our dates, lets switch to a SimpleDateFormat that includes times
+Posted By: Nick
+Picked Up By:
+
+
 
 ----------------------------------TESTING------------------------------------------
 
