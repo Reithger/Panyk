@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import database.Database;
+import database.TableType;
 import input.Communication;
 import model.trip.Trip;
 import model.user.User;
@@ -240,6 +241,8 @@ public class Intermediary {
 			Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, new_titles);
 			Database.includeTableType(NEW_SCHED_ARC_HEADER, new_fields, new_types);
 			user.addSchedulableType(NEW_SCHED_ARC_HEADER, NEW_SCHED_ARC_FIELDS, NEW_SCHED_ARC_TYPES);
+			
+			Database.addEntry(TableType.shed_arc_types, new String[] {user.getUsername(), NEW_SCHED_ARC_HEADER});		//keeps track of which user has what schedulable arctype
 			
 		}
 		NEW_SCHED_ARC_HEADER = "";

@@ -421,6 +421,7 @@ public class Display {
 	 */
 
 	public void makeMainScreen(ArrayList<String> scheduleTypes) {
+		
 		ElementPanel mainScreen = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(!interpretHeader(event)) {
@@ -451,12 +452,12 @@ public class Display {
 		designTwoColorBorder(mainScreen, "background_backdrop", COLOR_WHITE, COLOR_BLACK, width/6, height*2/9, width*2/3, height*5/8, 30, 20, 1, false);
 		designReactiveButton(mainScreen, "delete_trip", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "Delete Trip", width*1/12, height*5/6, width/12, height/14, 2, EVENT_CONFIRM_DELETE, true);
 		
-		//Display list of trips
+		//Display list of schedulables
 		for(int i = 0; i < scheduleTypes.size(); i++) {
-			designReactiveButton(mainScreen, "trip_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, scheduleTypes.get(i), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
+			designReactiveButton(mainScreen, "shed_"+i, COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, scheduleTypes.get(i), width/2, height*2/9 + (i+1)*(height/8), width*7/12, height/10, 3, EVENT_GO_TO_ITEM+i, true);
 		}
 
-		display.addPanel("Trip Select", mainScreen);
+		display.addPanel("Schedulable Select", mainScreen);
 	}
 	
 	/**
