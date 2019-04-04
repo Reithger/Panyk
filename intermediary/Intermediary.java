@@ -328,8 +328,9 @@ public class Intermediary {
 		NEW_SCHED_ARC_FIELDS = new String[0];
 		NEW_SCHED_ARC_TYPES = new String[0];
 		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
+
 	}
-	
+//---------------------------------------------------------------------	
 	public void deleteSched()
 	{
 		//System.out.println("\n \n \n deleting in inter");
@@ -391,6 +392,13 @@ public class Intermediary {
 		display.scheduleArcTypeCreateScreen();
 	}
 
+	/**
+	 * This method navigates the Display to the landing screen of the program. 
+	 */
+
+//---------------------------------------------------------------------------------------------	
+//    								   NAVIGATION		
+//---------------------------------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the landing screen of the program. 
 	 */
