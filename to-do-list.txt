@@ -63,12 +63,17 @@ Picked Up By:
 Class(es):
 Details: "Create a Schedulable" button on Main Menu for a trip does nothing. Remove/make it do something?
 Posted By: Regan
-Picked Up By: Regan
+Picked Up By: Regan - done
 
 Class(es): Display, Database, User
 Details: creating a reservation/transportation/accommodation causes several database insertion errors -> crashes program
 Posted By: Regan
 Picked Up By: Regan - fixed
+
+Class(es):
+Details: New schedulable arc types carrying accross users - fix this
+Posted By: Regan
+Picked Up By: Regan
 
 Class(es): Display
 Details: We're not getting times with our dates, lets switch to a SimpleDateFormat that includes times
