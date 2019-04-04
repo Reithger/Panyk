@@ -273,8 +273,6 @@ public class Intermediary {
 		user = new User(username, password);
 		initializeSchedulableTypes();
 		user.retrieveData();
-		System.out.println("IN ATTEMPT LOGIN..." + username);
-		
 		Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 	}
 //---------------------------------------------------------------------	

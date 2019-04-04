@@ -97,7 +97,6 @@ public enum TableType {
 		}
 		sql += ");";
 		this.sqlCreateTable = sql;
-		System.out.println(sql);
 	}
 	
 	/**

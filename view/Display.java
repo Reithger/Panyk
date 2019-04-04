@@ -149,7 +149,6 @@ public class Display {
 		display = new WindowFrame(width + 14, height + 37);	//offset because java windows aren't quite accurate
 		intermediary = relation;		
 		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_INITIAL_SCREEN);
-		
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
