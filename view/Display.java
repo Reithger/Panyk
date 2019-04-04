@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import database.Database;
@@ -94,6 +95,10 @@ public class Display {
 	private static final int EVENT_GO_TO_MAIN = 61;
 	
 	private static final int EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE = 62;
+	
+	private static final int EVENT_ATTEMPT_CREATE_NEW_SCHED_ARC_TYPE = 69;
+	
+	private static final int EVENT_ADD_FIELD_TO_NEW_SCHED_ARC_TYPE = 70;
 	/** */
 	private final static int EVENT_GO_TO_ITEM = 10000;		//this has to be the biggest by far to allow for the check done in listing the trips
 	
@@ -128,7 +133,6 @@ public class Display {
 	private int width;
 	/** int value representing the height of the WindowFrame object created for this program*/
 	private int height;
-	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -143,7 +147,7 @@ public class Display {
 		width = inWidth;
 		height = inHeight;
 		display = new WindowFrame(width + 14, height + 37);	//offset because java windows aren't quite accurate
-		intermediary = relation;
+		intermediary = relation;		
 		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_INITIAL_SCREEN);
 		
 	}
@@ -425,7 +429,7 @@ public class Display {
 						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_TRIP_SELECT);
 					}
 					else if(event == EVENT_GO_TO_CREATE_SCHEDULABLE_ARCHETYPE) {
-						//TODO: fill this in or scrap feature
+						Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCREEN_SHEDULABLE_ARC_CREATE);
 					}
 					else if(event == EVENT_CONFIRM_DELETE) {
 						confirmBox("Are you sure you want to delete this trip?", Intermediary.CONTROL_DELETE_TRIP, Intermediary.CONTROL_MAIN_SCREEN);
@@ -506,9 +510,7 @@ public class Display {
 				}
 			}
 		};
-				
-		
-		
+					
 		designTwoColorBorder(rS, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);
 		
 		addHeaderTabs(rS);
@@ -574,7 +576,6 @@ public class Display {
 	 */
 	public void schedScreen(HashMap<String, String> typeData, HashMap<String, DisplayData> specifics, int schedNum) {
 		ArrayList<String> key = new ArrayList<String>(specifics.keySet());
-		
 		
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
@@ -768,6 +769,120 @@ public class Display {
 		
 		display.addPanel("Res Creation", mR);
 	}
+	
+	
+	/**
+	 * 	Screen for schedulable archetype creation
+	 */
+	public void scheduleArcTypeCreateScreen() {
+		ElementPanel screen = new ElementPanel(0, 0, width, height) {
+			public void clickBehaviour(int event) {
+				if(event == EVENT_GO_TO_MAIN) { //when going back
+					Intermediary.NEW_SCHED_ARC_HEADER = "";
+					Intermediary.NEW_SCHED_ARC_FIELDS = new String[0];
+					Intermediary.NEW_SCHED_ARC_TYPES = new String[0];
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
+				}else if (event == EVENT_ATTEMPT_CREATE_NEW_SCHED_ARC_TYPE) {
+					
+					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SHEDULABLE_ARC_CREATE);
+					
+				}else if (event == EVENT_ADD_FIELD_TO_NEW_SCHED_ARC_TYPE) {
+					JFrame jf = new JFrame();
+					jf.setAlwaysOnTop(true);
+					String new_field_name = JOptionPane.showInputDialog(jf, "Enter new Field Name: ");
+					if(new_field_name != null) { //only continue if there wasnt a cancel
+						String test = new_field_name;
+						if(test.replaceAll(" ", "").length() > 0) {		//if not all spaces
+							String new_field_type_ind_str = JOptionPane.showInputDialog(jf, "Enter Number of desired Field type: \n \t 1) String \n \t 2) Date \n");
+							test = new_field_type_ind_str;
+							if(new_field_type_ind_str != null && test.replaceAll(" ", "").length() > 0) {		//if the number isnt null or all spaces
+								int field_index = 0;
+								try {
+									field_index = Integer.parseInt(new_field_type_ind_str);
+								}catch(Exception e) {
+									errorBox("Invalid field type selection");
+								}
+								if(field_index != 1 && field_index != 2) {
+									errorBox("Invalid field type selection");
+								}else { //if a valid selection
+									
+									String[] curr_field_names =  Intermediary.NEW_SCHED_ARC_FIELDS;
+									String[] curr_field_types =  Intermediary.NEW_SCHED_ARC_TYPES;
+									
+									String new_field_type = field_index == 1? "lString" : "Date";
+									String[] newFields = new String[curr_field_names.length + 1];
+									String[] newFieldTypes = new String[curr_field_names.length + 1];
+									for(int i = 0; i < curr_field_names.length; i++) {
+										newFields[i] = curr_field_names[i];
+										newFieldTypes[i] = curr_field_types[i];
+									}
+									newFields[newFields.length - 1] = new_field_name;
+									newFieldTypes[newFieldTypes.length - 1] = new_field_type;
+									String curr_header = getElementStoredText("name_entry_text");
+										
+									Intermediary.NEW_SCHED_ARC_HEADER = curr_header;
+									Intermediary.NEW_SCHED_ARC_FIELDS = newFields;
+									Intermediary.NEW_SCHED_ARC_TYPES = newFieldTypes;
+									
+									Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_SCREEN_SHEDULABLE_ARC_CREATE);
+								}
+							}else {
+								errorBox("Invalid field type selection");
+							}
+						}
+					}
+				}
+			}	
+		};
+		int name_code = 500;
+		int box_w = 300;
+		int box_h = 200;
+		//background
+		designTwoColorBorder(screen, "background", COLOR_ONE, COLOR_THREE, 0, 0, width, height, 30, 20, 0, false);		
+		//title
+		designBackedLabel(screen, "title", COLOR_WHITE, COLOR_BLACK, FONT_TWO, "Create a Schedulable", width/2, height/8, width/2, height/10, 1, true);
+		//back button
+		designReactiveButton(screen, "exit", COLOR_ERR, COLOR_BLACK, FONT_ENTRY, "back", width*5/6, height*5/6, width/12, height/15, 2, EVENT_GO_TO_MAIN, true);
+		//name label
+		designBackedLabel(screen, "name_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "Name", 200, 175, 100, 40, 3, true);
+		//name text entry
+		designTextField(screen, "name_entry", Intermediary.NEW_SCHED_ARC_HEADER, 285, 155, width/2, 40, 4, name_code, false);
+		//fields label
+		designBackedLabel(screen, "fields_label", COLOR_SEPARATOR, COLOR_BLACK, FONT_ONE, "Fields", width/2, height/2-50, 100, 40, 5, true);
+		//fields empty box
+		screen.addRectangle("fields_rect", 6, width/2, height/2 + box_h/2, box_w, box_h, COLOR_WHITE, COLOR_BLACK, true);
+		//add field button
+		screen.addRectangle("fields_btn_rect", 7, width/2 + 80, height/2-50, 40, 40, COLOR_LOGIN, COLOR_BLACK, true);
+		screen.addRectangle("fields_btn_rect_1", 8, width/2 + 80, height/2-50, 5, 20, COLOR_WHITE, COLOR_WHITE, true);
+		screen.addRectangle("fields_btn_rect_2", 9, width/2 + 80, height/2-50, 20, 5, COLOR_WHITE, COLOR_WHITE, true);
+		screen.addButton("fields_btn", 10, width/2 + 80, height/2-50, 40, 40, EVENT_ADD_FIELD_TO_NEW_SCHED_ARC_TYPE, true);
+		//filling in fields separators
+		screen.addText("field_name", 11, width/2 - box_w/4, height/2 + 15, 100, 100, "Field Name", FONT_TAB, true);
+		screen.addText("field_type", 12, width/2 + box_w/4, height/2 + 15, 100, 100, "Field Type", FONT_TAB, true);
+		screen.addRectangle("fields_sep_vert", 13, width/2, height/2 + box_h/2, 3, box_h, COLOR_BLACK, COLOR_BLACK, true);
+		screen.addRectangle("fields_sep_hor", 14, width/2, height/2 + 27 , box_w, 3, COLOR_BLACK, COLOR_BLACK, true);
+		//fill in field box values
+		
+		String[] curr_field_names =  Intermediary.NEW_SCHED_ARC_FIELDS;
+		String[] curr_field_types =  Intermediary.NEW_SCHED_ARC_TYPES;
+		
+		if(curr_field_names != null && curr_field_types != null) {
+			int start_prior = 15;
+			int start_y = height/2 + 45;
+			int gap = 25;
+			int x_left = width/2 - box_w/4;
+			int x_right = width/2 + box_w/4;
+			for(int i  = 0; i < curr_field_names.length; i++) {
+				screen.addText("field_name_"+i, ++start_prior, x_left, start_y+gap*i, 100, 100, curr_field_names[i], FONT_TAB, true);
+				screen.addText("field_type_"+i, ++start_prior, x_right, start_y+gap*i, 100, 100, curr_field_types[i], FONT_TAB, true);
+			}
+		}
+		//submit button
+		designReactiveButton(screen, "create_schedulable_arc_type", COLOR_LOGIN, COLOR_BLACK, FONT_ENTRY, "Submit", 130 , height-100, width/12, height/16, 1000, EVENT_ATTEMPT_CREATE_NEW_SCHED_ARC_TYPE, true);
+		//add to display
+		display.addPanel("Sched Arc Create Screen", screen);
+	}
+	
 	
 	/**
 	 * This method handles the inclusion of a header-strip at the top of the screen which allows the

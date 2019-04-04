@@ -2,13 +2,11 @@ package intermediary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import database.Database;
 import input.Communication;
 import model.trip.Trip;
-import model.trip.schedule.DisplayData;
 import model.user.User;
 import view.Display;
 import exceptions.BadTimeException;
@@ -32,12 +30,9 @@ import exceptions.BadTimeException;
 public class Intermediary {
 	
 //---  Constant Values   ----------------------------------------------------------------------
-	
 	/** Constant value representing the speed at which the program responds to user input (call rate of clock())*/
 	private final static int REFRESH_RATE = 1000/60;
-	
 	//-- Control  -------------------------------------------
-	
 	public final static String CONTROL = "Control";
 	public final static String CONTROL_NULL = null;
 	public final static String CONTROL_INITIAL_SCREEN = "start_screen";
@@ -52,25 +47,27 @@ public class Intermediary {
 	public final static String CONTROL_SCHEDULABLE_SELECT = "select_Sched_nav";
 	public final static String CONTROL_SCHEDULABLE_CREATION = "create_Sched_nav";
 	public final static String CONTROL_ATTEMPT_SCHEDULABLE_CREATE = "create_Sched_act";
+	public final static String CONTROL_SCREEN_SHEDULABLE_ARC_CREATE = "screen_create_sched_arc";
+	public final static String CONTROL_ATTEMPT_SHEDULABLE_ARC_CREATE = "attempt_create_sched_arc";
 	public final static String CONTROL_SCHED_SCREEN = "see_Sched";
 	public final static String CONTROL_DELETE_SCHED = "delete_Sched";
 	public final static String CONTROL_REPLACE_SCHED = "delete_and_replace";
 	public final static String CONTROL_DELETE_TRIP = "begone_foul_trip";
-	
 	//-- Value Storage  ---------------------------------------
-	
 	/*
 	 * These are labels for storage, not the actual values that will be retrieved
 	 * from using them; make sure they're unique from one another.
-	 * 
 	 */
-	
 	public final static String LOGIN_USERNAME = "login_username";
 	public final static String LOGIN_PASSWORD = "login_password";
 	public final static String CREATE_USER_USERNAME = "create_username";
 	public final static String CREATE_USER_PASSWORD = "create_password";
 	public final static String CREATE_USER_FIRSTNAME = "create_firstname";
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
+	
+	public static String NEW_SCHED_ARC_HEADER = "";
+	public static String[] NEW_SCHED_ARC_FIELDS = new String[0];
+	public static String[] NEW_SCHED_ARC_TYPES = new String[0];
 	
 	public final static String CREATE_TRIP_TITLE = "trip_title";
 	public final static String CREATE_TRIP_DESTINATION = "trip_dest";
@@ -93,31 +90,26 @@ public class Intermediary {
 	private final static String[] DEFAULT_SCHEDULABLE_TRANSPORTATION_TITLES = new String[] {"Transportation","username", "tripTitle", "sString_Name", "sString_Mode", "Date_Start Date", "Date_End Date", "lString_Description"};
 	
 //---  Instance Variables   -------------------------------------------------------------------
-	
 	/** The Timer object periodically calls the clock() method of this Intermediary object*/
 	private Timer timer;
 	/** The Display object is the contact point this Intermediary object has to the View for Input/Output*/
 	private Display display;
 	/** The User object is the contact point this Intermediary object has to the Model for data access/manipulation*/
 	private static User user;
-	
 //---  Constructors   -------------------------------------------------------------------------
-	
 	/**
 	 * Constructor for objects of the Intermediary type: sets the size of the Display and
-	 * starts the Timer for having the clock() method be called repeatedly.
-	 * 
+	 * starts the Timer for having the clock() method be called repeatedly. 
 	 */
-	
 	public Intermediary() {
 		display = new Display(1000, 600, this);
 //		display = new Display(2560, 1080, this);
 		timer = new Timer();
 		timer.schedule(new TimerRepeat(this), 0, REFRESH_RATE);
 	}
-	
-//---  Operations   ---------------------------------------------------------------------------
-	
+//---------------------------------------------------------------------------------------------	
+//	   									OPERATIONS		
+//---------------------------------------------------------------------------------------------		
 	/**
 	 * This method represents the control structure of the program, constantly querying the Communication
 	 * singleton object for updates as to what behaviors should occur in the Display and Model objects. 
@@ -127,9 +119,7 @@ public class Intermediary {
 	 * commands are sent along to the Display and Model, but some things are convenient to do here.)
 	 * 
 	 * Uses the TimerRepeat class to have a Timer repeatedly order this class to call clock().
-	 * 
 	 */
-	
 	public void clock() {
 		String happen = Communication.get(CONTROL);
 		Communication.set(CONTROL, CONTROL_NULL);
@@ -168,18 +158,20 @@ public class Intermediary {
 				deleteTrip(); break;
 			case CONTROL_MAIN_SCREEN:				//Orders display to show the main screen
 				goToMainScreen(); break;
+			case CONTROL_SCREEN_SHEDULABLE_ARC_CREATE:
+				goToScheduleArcTypeCreateScreen(); break;
+			case CONTROL_ATTEMPT_SHEDULABLE_ARC_CREATE:
+				addSchedulableArcType(); break;
 			default: break;
 		}
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method handles the dynamic Schedulable Types by adding the default types
 	 * if they are not yet present to the metaFields table, from which all added
 	 * Schedulable Types are pulled from the database, made available for usage,
 	 *  and given to the User for interpreting/making Schedulable objects.
-	 * 
 	 */
-	
 	public void initializeSchedulableTypes() {
 		Database.includeTableType(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, SCHEDULABLE_META_FIELD_TYPES);
 		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_ACCOMMODATION_TITLES);
@@ -208,7 +200,7 @@ public class Intermediary {
 			user.addSchedulableType(head, Arrays.copyOfRange(titles, 2, titles.length - count), Arrays.copyOfRange(types, 2, types.length - count));
 		}
 	}
-	
+//---------------------------------------------------------------------		
 	/**
 	 * This method requests the information stored by the Display in Communication's LOGIN_USERNAME
 	 * and LOGIN_PASSWORD key-values, passing that information to the Database to ensure that
@@ -216,9 +208,7 @@ public class Intermediary {
 	 * 
 	 * Errors are shown to the user if either input is invalid, otherwise the User object is initialized
 	 * and CONTROL is set to CONTROL_TRIP_SELECT.
-	 * 
 	 */
-	
 	public void attemptLogin() {
 		String username = Communication.get(LOGIN_USERNAME);
 		String password = Communication.get(LOGIN_PASSWORD);
@@ -239,7 +229,7 @@ public class Intermediary {
 		
 		Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method requests the information stored by Display in Communication's CREATE_USER_{USERNAME,
 	 * PASSWORD, DOB, FIRSTNAME, LASTNAME} for use in creating a new database entry for a new user
@@ -251,36 +241,18 @@ public class Intermediary {
 	 * 
 	 * The new User is then validated to ensure a username and password are present; if so, CONTROL is
 	 * set to CONTROL_TRIP_SELECT.
-	 * 
 	 */
-	
 	public void createNewUser() {
 		String username = Communication.get(CREATE_USER_USERNAME);
 		String password = Communication.get(CREATE_USER_PASSWORD);
 		String firstname = Communication.get(CREATE_USER_FIRSTNAME);
 		String lastname = Communication.get(CREATE_USER_LASTNAME);
 		
-		if(username == null || username.equals("")) {
-			System.out.println("Username invalid during User Account Creation: Intermediary > createNewUser");
-			errorReport("Invalid Username");
-			return;
-		}
-		if(password == null || password.equals("")) {
-			System.out.println("Password invalid during User Account Creation: Intermediary > createNewUser");
-			errorReport("Invalid Password");
-			return;
-		}
-		if(firstname == null || firstname.equals("")) {
-			System.out.println("Firstname invalid during User Account Creation: Intermediary > createNewUser");
-			errorReport("Invalid Firstname");
-			return;
-		}
-		if(lastname == null || lastname.equals("")) {
-			System.out.println("Lastname invalid during User Account Creation: Intermediary > createNewUser");
-			errorReport("Invalid Lastname");
-			return;
-		}
-			
+		if(newUserDataChecker(username, "username"))  return;
+		if(newUserDataChecker(password, "Password"))  return;
+		if(newUserDataChecker(firstname, "Firstname"))  return;
+		if(newUserDataChecker(lastname, "Lastname"))  return;
+		
 		boolean checkExists = Database.checkUserExists(username);
 		if(!checkExists) {
 			user = new User(firstname, lastname, username, password);
@@ -296,13 +268,11 @@ public class Intermediary {
 			errorReport("Username already in use");
 		}
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method requests the information stored by Display in Communication's CREATE_TRIP_{START, END}
-	 * to create a new Trip object associated to the current user.
-	 * 
+	 * to create a new Trip object associated to the current user. 
 	 */
-	
 	public void addTrip() {
 		String title = Communication.get(CREATE_TRIP_TITLE);
 		String beginStr = Communication.get(CREATE_TRIP_START);
@@ -322,9 +292,8 @@ public class Intermediary {
 				Communication.set(CONTROL, CONTROL_TRIP_SELECT);
 			}
 		}
-		
 	}
-
+//---------------------------------------------------------------------	
 	/**
 	 * This method attempts to add a new Schedulable Object to the current User and Trip
 	 * using information stored in the Communication Object at CURR_SCHEDULABLE_TYPE and
@@ -332,7 +301,6 @@ public class Intermediary {
 	 * 
 	 * Also processes the input to make sure its viable.
 	 */
-	
 	public void addSchedulable()
 	{
 		String header = Communication.get(CURR_SCHEDULABLE_TYPE);
@@ -349,7 +317,17 @@ public class Intermediary {
 		{
 			errorReport("These fields don't make sense... Let's try that last one again");
 		}
-		
+	}
+	
+	/**
+	 * 	adds a schedulable arctype to the user
+	 */
+	public void addSchedulableArcType() {
+		user.addSchedulableType(NEW_SCHED_ARC_HEADER, NEW_SCHED_ARC_FIELDS, NEW_SCHED_ARC_TYPES);
+		NEW_SCHED_ARC_HEADER = "";
+		NEW_SCHED_ARC_FIELDS = new String[0];
+		NEW_SCHED_ARC_TYPES = new String[0];
+		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 	}
 	
 	public void deleteSched()
@@ -358,19 +336,18 @@ public class Intermediary {
 		user.deleteSchedulable(Communication.get(CURR_TRIP), Communication.get(CURR_DELETE_SCHED), Communication.get(CURR_SCHEDULABLE_TYPE));
 		goToSchedulableSelect();
 	}
-	
+//---------------------------------------------------------------------	
 	public void replaceSched()
 	{
 		user.deleteSchedulable(Communication.get(CURR_TRIP), Communication.get(CURR_DELETE_SCHED), Communication.get(CURR_SCHEDULABLE_TYPE));
 		addSchedulable();
 	}
-	
+//---------------------------------------------------------------------		
 	public void deleteTrip()
 	{
 		user.deleteTrip(Communication.get(CURR_TRIP));
 		goToTripSelect();
-	}
-		
+	}		
 //--- Getter Methods --------------------------------------------------------------------------
 
 	/**
@@ -378,11 +355,10 @@ public class Intermediary {
 	 * 
 	 * @return - Returns an ArrayList<<r>Trip> object containing the Trips associated to the current User.
 	 */
-	
 	public ArrayList<Trip> getUsersTrips() {
 		return user.getTrips();
 	}
-	
+//---------------------------------------------------------------------		
 	/**
 	 * Getter method to retrieve the titles of each Schedulable Type for which the user's
 	 * current trip has more than 0 Schedulable Objects associated to it.
@@ -392,7 +368,6 @@ public class Intermediary {
 	 * 
 	 * @return - Returns an ArrayList<<r>String> object containing all Schedulable Type names for which the user's trip has Schedulable Objects.
 	 */
-	
 	public ArrayList<String> getSchedulableTypeHeaders(){
 		ArrayList<String> out = user.getSchedulableTypes();
 		ArrayList<String> pass = new ArrayList<String>();
@@ -406,82 +381,80 @@ public class Intermediary {
 		
 //---  Navigation   ---------------------------------------------------------------------------
 	
+	
 	/**
-	 * This method navigates the Display to the landing screen of the program.
+	 * This method navigates the schedulable arcetype creation screen
 	 * 
 	 */
-	
+	public void goToScheduleArcTypeCreateScreen() {
+		display.resetView();
+		display.scheduleArcTypeCreateScreen();
+	}
+
+	/**
+	 * This method navigates the Display to the landing screen of the program. 
+	 */
 	private void goToInitialScreen() {
 		display.resetView();
 		display.initialScreen();
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the logIn screen by hiding the current
-	 * panels in the WindowFrame and calling display.logInScreen().
-	 * 
+	 * panels in the WindowFrame and calling display.logInScreen(). 
 	 */
-	
 	private void goToLogin() {
 		display.resetView();
 		display.logInScreen();
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the createAccount screen by hiding the current
-	 * panels in the WindowFrame and calling display.createAccountScreen().
-	 * 
+	 * panels in the WindowFrame and calling display.createAccountScreen(). 
 	 */
-	
 	private void goToCreateAccount() {
 		display.resetView();
 		display.createAccountScreen();
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the tripSelect screen by hiding the current
-	 * panels in the WindowFrame and calling display.tripSelectScreen().
-	 * 
+	 * panels in the WindowFrame and calling display.tripSelectScreen(). 
 	 */
-
 	private void goToTripSelect() {
 		display.resetView();
 		display.tripSelectScreen(0);
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the tripCreation screen by hiding the current
-	 * panels in the WindowFrame and calling display.tripCreationScreen().
-	 * 
+	 * panels in the WindowFrame and calling display.tripCreationScreen(). 
 	 */
-	
 	private void goToTripCreation() {
 		display.resetView();
 		display.makeTripScreen();
 	}
-
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the makeMainScreen screen by hiding the current
 	 * panels in the WindowFrame and calling display.makeMainScreen(), passing to it the list
 	 * of all SchedulableTypes available to the user.  
 	 */
-	
 	private void goToMainScreen() {
 		display.resetView();
 		display.makeMainScreen(user.getSchedulableTypes());
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * This method navigates the Display to the schedulableSelect screen by hiding the
 	 * current panels in the WindowFrame and calling display.schedulableSelectScreen(),
 	 * passing to it the Strings of the current trip and schedulable type.  
 	 */
-	
 	public void goToSchedulableSelect() {
 		display.resetView();
 		display.schedulableSelectScreen(user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)), 0);
 	}
-	
+//---------------------------------------------------------------------		
 	/**
 	 * This method navigates the Display to the schedulableCreation screen by hiding the
 	 * current panels in the WindowFrame and calling display.makeSchedulableScreen(), providing
@@ -490,41 +463,47 @@ public class Intermediary {
 	 */
 	
 	public void goToSchedulableCreation() {
-		display.resetView();
-		String[] titles = user.getSchedulableTypeTitles(Communication.get(CURR_SCHEDULABLE_TYPE));
-		String out = "";
-		for(int i = 0; i < titles.length; i++)
-			out += titles[i] + (i+1 < titles.length ? "   " : "");	//TODO Constant value for the splitter here
-		Communication.set(CURR_SCHEDULABLE_TITLES, out);
+		setCurrSchedulableTitles();
 		display.makeSchedulableScreen(user.getCreateSchedulablesData(Communication.get(CURR_SCHEDULABLE_TYPE)));
 	}
-	
+//---------------------------------------------------------------------	
 	/**
 	 * method to go to a pre-existing schedulable and either edit or delete it - still a work in progress
 	 */
 	public void goToSchedScreen() {
-		display.resetView();
-		String[] titles = user.getSchedulableTypeTitles(Communication.get(CURR_SCHEDULABLE_TYPE));
-		String out = "";
-		for(int i = 0; i < titles.length; i++)
-			out += titles[i] + (i+1 < titles.length ? "   " : "");	//TODO Constant value for the splitter here
-		Communication.set(CURR_SCHEDULABLE_TITLES, out);
 		// TODO: line below is inefficient, refactor if at all possible
+		setCurrSchedulableTitles();
 		display.schedScreen(user.getCreateSchedulablesData(Communication.get(CURR_SCHEDULABLE_TYPE)), user.getDisplaySchedulablesData(Communication.get(CURR_TRIP), Communication.get(CURR_SCHEDULABLE_TYPE)), Integer.valueOf(Communication.get(CURR_SCHED)));
 	}
-		
-//---  Mechanics   ----------------------------------------------------------------------------	
-	
-
+//---------------------------------------------------------------------------------------------	
+//						             HELPER METHODS	
+//---------------------------------------------------------------------------------------------
 	/**
 	 * This method redirects the given String to the Display to create an error report box to 
 	 * display an error to the user; the design of the box is to close on being clicked.
 	 * 
 	 * @param displayError - String object representing the error message to display to the User.
 	 */
-
 	private void errorReport(String displayError) {
 		display.errorBox(displayError);
 	}
-	
+//---------------------------------------------------------------------	
+	private void setCurrSchedulableTitles() {
+		display.resetView();
+		String[] titles = user.getSchedulableTypeTitles(Communication.get(CURR_SCHEDULABLE_TYPE));
+		String out = "";
+		for(int i = 0; i < titles.length; i++)
+			out += titles[i] + (i+1 < titles.length ? "   " : "");	//TODO Constant value for the splitter here
+		Communication.set(CURR_SCHEDULABLE_TITLES, out);
+	}
+//---------------------------------------------------------------------	
+	private boolean newUserDataChecker(String dataVal, String designator) {
+		String invalidSuffix=" invalid during User Account Creation: Intermediary > createNewUser";
+		if(dataVal == null || dataVal.equals("")) {
+			System.out.println(designator+invalidSuffix);
+			errorReport("Invalid "+designator);
+			return true;
+		}
+		return false;
+	}
 }
