@@ -2,15 +2,10 @@ package model.trip.feature;
 
 import java.util.HashMap;
 
-/**
- * What is this?
- * 
- * @author
- * 
- */
+public class Calendar implements Feature{
 
-public class Class implements Feature {
-
+	
+	
 	@Override
 	public HashMap<String, String> exportDisplay() {
 		// TODO Auto-generated method stub

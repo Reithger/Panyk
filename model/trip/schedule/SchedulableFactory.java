@@ -1,6 +1,5 @@
 package model.trip.schedule;
 
-import java.util.Arrays;
 
 public class SchedulableFactory {
 
