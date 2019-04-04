@@ -121,7 +121,7 @@ public class Database {
 			return;
 		}
 		if(getTable(tableType) != null) {
-			System.out.println(tableType + " already extant during includeTableType");
+//			System.out.println(tableType + " already extant during includeTableType");
 			return;
 		}
 		String[] convert = new String[fieldTypes.length];
@@ -576,8 +576,12 @@ public class Database {
 			sqlSearch += ";";
 			Statement state = null;
 			try {
+				
+				System.out.println("search => " + sqlSearch);
+				
 				state = connection.createStatement();
 				result = state.executeQuery(sqlSearch);
+				
 				return ResultSetToList(result);
 			}
 			catch(SQLException sqlE2) {

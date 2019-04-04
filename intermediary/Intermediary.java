@@ -65,10 +65,6 @@ public class Intermediary {
 	public final static String CREATE_USER_FIRSTNAME = "create_firstname";
 	public final static String CREATE_USER_LASTNAME = "create_lastname";
 	
-	public static String NEW_SCHED_ARC_HEADER = "";
-	public static String[] NEW_SCHED_ARC_FIELDS = new String[0];
-	public static String[] NEW_SCHED_ARC_TYPES = new String[0];
-	
 	public final static String CREATE_TRIP_TITLE = "trip_title";
 	public final static String CREATE_TRIP_DESTINATION = "trip_dest";
 	public final static String CREATE_TRIP_START = "trip_start_date";
@@ -85,9 +81,17 @@ public class Intermediary {
 	private final static String[] SCHEDULABLE_META_FIELD_TYPES = new String[] {"sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString", "sString"};
 	private final static String[] SCHEDULABLE_META_FIELD_TITLES = new String[] {"fieldTitle","title1","title2","title3","title4","title5","title6","title7","title8"};
 
-	private final static String[] DEFAULT_SCHEDULABLE_ACCOMMODATION_TITLES = new String[] {"Accommodation","username", "tripTitle", "sString_Name", "sString_Address", "Date_Start Date", "Date_End Date", "lString_Description"};
-	private final static String[] DEFAULT_SCHEDULABLE_RESERVATION_TITLES = new String[] {"Reservation","username", "tripTitle", "sString_Name", "sString_Address", "Date_Start Date", "Date_End Date", "lString_Description"};
+	private final static String[] DEFAULT_SCHEDULABLE_ACCOMMODATION_TITLES = new String[]  {"Accommodation","username", "tripTitle", "sString_Name", "sString_Address", "Date_Start Date", "Date_End Date", "lString_Description"};
+	private final static String[] DEFAULT_SCHEDULABLE_RESERVATION_TITLES = new String[]    {"Reservation","username", "tripTitle", "sString_Name", "sString_Address", "Date_Start Date", "Date_End Date", "lString_Description"};
 	private final static String[] DEFAULT_SCHEDULABLE_TRANSPORTATION_TITLES = new String[] {"Transportation","username", "tripTitle", "sString_Name", "sString_Mode", "Date_Start Date", "Date_End Date", "lString_Description"};
+	
+	public static final String[] DEFAULT_NEW_SCHED_ARC_FIELDS = new String[] {  "Name"   , "Start Date", "End Date", "Description" };
+	public static final String[] DEFAULT_NEW_SCHED_ARC_TYPES  = new String[] {  "sString", "Date"    ,   "Date"    , "lString"     };
+	
+	public static String NEW_SCHED_ARC_HEADER = "";
+	public static String[] NEW_SCHED_ARC_FIELDS = DEFAULT_NEW_SCHED_ARC_FIELDS;
+	public static String[] NEW_SCHED_ARC_TYPES = DEFAULT_NEW_SCHED_ARC_TYPES;
+	
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	/** The Timer object periodically calls the clock() method of this Intermediary object*/
@@ -178,7 +182,9 @@ public class Intermediary {
 		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_RESERVATION_TITLES);
 		Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, DEFAULT_SCHEDULABLE_TRANSPORTATION_TITLES);
 		List<String[]> schedTypes = Database.search(SCHEDULABLE_META_FIELD_LABEL, new String[] {}, new String[] {});
+
 		for(String[] s : schedTypes) {
+			
 			String head = s[0];
 			String[] titles = new String[s.length];
 			String[] types = new String[s.length];
@@ -196,9 +202,51 @@ public class Intermediary {
 					index++;
 				}
 			}
+
 			Database.includeTableType(head, Arrays.copyOfRange(titles, 0, titles.length - count), Arrays.copyOfRange(types, 0, types.length - count));
 			user.addSchedulableType(head, Arrays.copyOfRange(titles, 2, titles.length - count), Arrays.copyOfRange(types, 2, types.length - count));
 		}
+	}
+	
+//-------------------------------------------------------------
+	/**
+	 * 	adds a schedulable arctype to the user
+	 */
+	public void addSchedulableArcType() {
+		//make sure a header was created first
+		
+		if(!NEW_SCHED_ARC_HEADER.equals("") && NEW_SCHED_ARC_HEADER != null) {
+			
+			String[] new_titles = new String[NEW_SCHED_ARC_FIELDS.length + 3];
+			String[] new_fields = new String[NEW_SCHED_ARC_FIELDS.length + 2];
+			String[] new_types = new String[NEW_SCHED_ARC_FIELDS.length + 2];
+			
+			new_titles[0] = NEW_SCHED_ARC_HEADER;
+			new_titles[1] = "username";
+			new_titles[2] = "tripTitle";
+			
+			new_fields[0] = "username";
+			new_fields[1] = "tripTitle";
+			
+			new_types[0] = "sString";
+			new_types[1] = "sString";
+			
+			for(int i = 0; i < NEW_SCHED_ARC_FIELDS.length; i++) {
+				new_titles[i + 3] = NEW_SCHED_ARC_TYPES[i] + "_" + NEW_SCHED_ARC_FIELDS[i];
+				new_fields[i + 2] = NEW_SCHED_ARC_FIELDS[i];
+				new_types[i + 2] = NEW_SCHED_ARC_TYPES[i];
+			}
+			
+			Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, new_titles);
+			Database.includeTableType(NEW_SCHED_ARC_HEADER, new_fields, new_types);
+			user.addSchedulableType(NEW_SCHED_ARC_HEADER, new_fields, new_types);
+			
+		}
+		NEW_SCHED_ARC_HEADER = "";
+		NEW_SCHED_ARC_FIELDS = DEFAULT_NEW_SCHED_ARC_FIELDS;
+		NEW_SCHED_ARC_TYPES = DEFAULT_NEW_SCHED_ARC_TYPES;
+		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
+
 	}
 //---------------------------------------------------------------------		
 	/**
@@ -319,17 +367,6 @@ public class Intermediary {
 		}
 	}
 	
-	/**
-	 * 	adds a schedulable arctype to the user
-	 */
-	public void addSchedulableArcType() {
-		user.addSchedulableType(NEW_SCHED_ARC_HEADER, NEW_SCHED_ARC_FIELDS, NEW_SCHED_ARC_TYPES);
-		NEW_SCHED_ARC_HEADER = "";
-		NEW_SCHED_ARC_FIELDS = new String[0];
-		NEW_SCHED_ARC_TYPES = new String[0];
-		Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
-
-	}
 //---------------------------------------------------------------------	
 	public void deleteSched()
 	{

@@ -342,7 +342,7 @@ public class Display {
 		{
 			designReactiveButton(tripSelect, "prev", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Previous", 2*width/5, height * 11 / 12, width/12, height/20, 4, EVENT_PREV_PAGE, true);
 		}
-		System.out.println(" \n \n \n MAX_VIS_LIST_ITEMS*pagenum + scheds gives me "+(MAX_VIS_LIST_ITEMS*pagenum + scheds) + " \n \n \n");
+		
 		if(trips.size() > scheds + pagenum*MAX_VIS_TRIPS)
 		{
 			designReactiveButton(tripSelect, "next", COLOR_SEPARATOR, COLOR_BLACK, FONT_ENTRY, "Next", 3*width/5, height * 11 / 12, width/12, height/20, 3, EVENT_NEXT_PAGE, true);
@@ -769,21 +769,22 @@ public class Display {
 		
 		display.addPanel("Res Creation", mR);
 	}
-	
-	
+
 	/**
 	 * 	Screen for schedulable archetype creation
 	 */
 	public void scheduleArcTypeCreateScreen() {
+		
 		ElementPanel screen = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_MAIN) { //when going back
 					Intermediary.NEW_SCHED_ARC_HEADER = "";
-					Intermediary.NEW_SCHED_ARC_FIELDS = new String[0];
-					Intermediary.NEW_SCHED_ARC_TYPES = new String[0];
+					Intermediary.NEW_SCHED_ARC_FIELDS = Intermediary.DEFAULT_NEW_SCHED_ARC_FIELDS;
+					Intermediary.NEW_SCHED_ARC_TYPES = Intermediary.DEFAULT_NEW_SCHED_ARC_TYPES;;
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_MAIN_SCREEN);
 				}else if (event == EVENT_ATTEMPT_CREATE_NEW_SCHED_ARC_TYPE) {
 					
+					Intermediary.NEW_SCHED_ARC_HEADER = getElementStoredText("name_entry_text");
 					Communication.set(Intermediary.CONTROL, Intermediary.CONTROL_ATTEMPT_SHEDULABLE_ARC_CREATE);
 					
 				}else if (event == EVENT_ADD_FIELD_TO_NEW_SCHED_ARC_TYPE) {
@@ -809,7 +810,7 @@ public class Display {
 									String[] curr_field_names =  Intermediary.NEW_SCHED_ARC_FIELDS;
 									String[] curr_field_types =  Intermediary.NEW_SCHED_ARC_TYPES;
 									
-									String new_field_type = field_index == 1? "lString" : "Date";
+									String new_field_type = field_index == 1? "sString" : "Date";
 									String[] newFields = new String[curr_field_names.length + 1];
 									String[] newFieldTypes = new String[curr_field_names.length + 1];
 									for(int i = 0; i < curr_field_names.length; i++) {
@@ -819,8 +820,8 @@ public class Display {
 									newFields[newFields.length - 1] = new_field_name;
 									newFieldTypes[newFieldTypes.length - 1] = new_field_type;
 									String curr_header = getElementStoredText("name_entry_text");
-										
-									Intermediary.NEW_SCHED_ARC_HEADER = curr_header;
+								
+									Intermediary.NEW_SCHED_ARC_HEADER = curr_header.replaceAll(" ", "");
 									Intermediary.NEW_SCHED_ARC_FIELDS = newFields;
 									Intermediary.NEW_SCHED_ARC_TYPES = newFieldTypes;
 									
@@ -882,7 +883,6 @@ public class Display {
 		//add to display
 		display.addPanel("Sched Arc Create Screen", screen);
 	}
-	
 	
 	/**
 	 * This method handles the inclusion of a header-strip at the top of the screen which allows the
