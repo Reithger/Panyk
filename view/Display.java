@@ -690,7 +690,6 @@ public class Display {
 
 	public void makeSchedulableScreen(HashMap<String, String> data) {
 		
-		
 		ElementPanel mR = new ElementPanel(0, 0, width, height) {
 			public void clickBehaviour(int event) {
 				if(event == EVENT_GO_TO_SELECT_SCHEDULABLE){
@@ -720,6 +719,7 @@ public class Display {
 				
 		ArrayList<String> titles = new ArrayList<String>(data.keySet());
 		String header = Communication.get(Intermediary.CURR_SCHEDULABLE_TYPE);
+		
 		int singleSize = 0, doubleSize = 0;
 		boolean date = false;
 		

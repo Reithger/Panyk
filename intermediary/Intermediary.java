@@ -239,7 +239,7 @@ public class Intermediary {
 			
 			Database.addEntry(SCHEDULABLE_META_FIELD_LABEL, SCHEDULABLE_META_FIELD_TITLES, new_titles);
 			Database.includeTableType(NEW_SCHED_ARC_HEADER, new_fields, new_types);
-			user.addSchedulableType(NEW_SCHED_ARC_HEADER, new_fields, new_types);
+			user.addSchedulableType(NEW_SCHED_ARC_HEADER, NEW_SCHED_ARC_FIELDS, NEW_SCHED_ARC_TYPES);
 			
 		}
 		NEW_SCHED_ARC_HEADER = "";
