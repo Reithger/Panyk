@@ -28,8 +28,10 @@ public enum TableType {
 	scheduleItem("username", "varchar(60)","tripTitle", "varchar(60)", "item", "varchar(60)", "type", "varchar(60)"),
 	
 	/** username, tripTitle, item, fname, lname, company, jobTitle, PhoneNumber, Address */				
-	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)");//,
+	contacts("username", "varchar(60)", "tripTitle", "varchar(60)", "item", "varchar(60)", "name", "varchar(60)", "description", "varchar(60)", "phoneNumber", "varchar(60)", "address", "varchar(60)"),
 	
+	//username, type
+	shed_arc_types("username", "varchar(60)", "type", "varchar(60)");
 	
 	
 	/** username, tripTitle, item, startTime, endTime, mode */			
@@ -95,7 +97,6 @@ public enum TableType {
 		}
 		sql += ");";
 		this.sqlCreateTable = sql;
-		System.out.println(sql);
 	}
 	
 	/**

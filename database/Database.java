@@ -129,7 +129,6 @@ public class Database {
 			convert[i] = FIELD_TYPE_CONVERT.get(fieldTypes[i]);
 		}
 		String sqp = TableType.generateCreateTableSQL(tableType, fields, convert);
-		System.out.println(sqp);
 		Statement state = null;
 		try {
 			state = connection.createStatement();
@@ -576,12 +575,8 @@ public class Database {
 			sqlSearch += ";";
 			Statement state = null;
 			try {
-				
-				System.out.println("search => " + sqlSearch);
-				
 				state = connection.createStatement();
 				result = state.executeQuery(sqlSearch);
-				
 				return ResultSetToList(result);
 			}
 			catch(SQLException sqlE2) {

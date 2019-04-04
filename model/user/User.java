@@ -245,6 +245,9 @@ public class User {
 	 * @param types - String[] containing the data types for each piece of data stored by this Schedulable Type
 	 */
 	public void addSchedulableType(String header, String[] titles, String[] types) {
+		
+//		System.out.println("adding type " + header);
+		
 		scheduleTypes.put(header, new SchedulableType(header, titles, types));
 	}
 //-----------------------------------------------------------------	
@@ -371,7 +374,16 @@ public class User {
 	 * @return - Returns an ArrayList<<r>String> object containing all the SchedulableType objects that this User object possesses.
 	 */
 	public ArrayList<String> getSchedulableTypes(){
-		return new ArrayList<String>(scheduleTypes.keySet());
+
+		ArrayList<String> ret_list =  new ArrayList<String>(scheduleTypes.keySet());
+		for(String table : ret_list) {
+			if(!table.equals("Reservation") && !table.equals("Accommodation") && !table.equals("Transportation")) {
+				if(Database.search(TableType.shed_arc_types, new String[] {this.getUsername(), table}).isEmpty()) {
+					ret_list.remove(table);
+				}
+			}
+		}
+		return ret_list;
 	}
 //---------------------------------------------------------------------------------------------	
 //    									HELPER METHODS	
