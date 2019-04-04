@@ -1,7 +1,5 @@
 package database;
 
-import java.util.Arrays;
-
 /**	
  * Enumeration definition for each table type in the database
  * 

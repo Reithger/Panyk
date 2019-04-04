@@ -3,14 +3,9 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import database.Database;
 import input.Communication;
 import intermediary.Intermediary;
 import model.trip.Trip;
